@@ -20,10 +20,10 @@ Since this service relies on REST API, so json is pretty much needed here. All e
   }
 }
 ```
-From the example, we can see there are 3 properties in the response body, which explained below.
+From the example, we can see there are 3 properties in the response body, which will be explained below.
 - `"statusCode"` - The status code of the service response (e.g. 2xx, 4xx, 5xx)
 - `"message"` - The message of the response, this could be either a success message, failed message, or error messages for inputs
 - `"data"` - The passed data to the frontend server. The data structure could be different for each endpoint response, so make sure to read the response carefully
 
 ## Run Proccess 
-To start the service, make sure you're in the root of the project, then simply run `go run cmd/api` or to make things easier run `./start.bash`
+To start the service, make sure you're in the root of the project, then simply run `go run cmd/api` or to make things easier, just run `./start.bash`
