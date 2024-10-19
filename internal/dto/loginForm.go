@@ -1,4 +1,4 @@
-package entities
+package dto
 
 // RegisterForm is a struct that represents the login form
 // that is sent by the client.

@@ -5,7 +5,6 @@ import (
 	"main/core/constants"
 	"main/core/types"
 	"main/data/models"
-	"main/domain/entities"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"main/internal/providers/database"
@@ -21,13 +20,13 @@ import (
 // data: The register form data.
 //
 // Returns void
-func sanitizeRegisterForm(data *entities.RegisterForm) {
+func sanitizeRegisterForm(data *dto.RegisterForm) {
 	data.Username = strings.TrimSpace(data.Username)
 	data.PhoneNumber = strings.TrimSpace(data.PhoneNumber)
 }
 
 // validateRegisterForm is a helper function that validates the register input.
-func validateRegisterForm(data entities.RegisterForm) (bool, types.ResponseMsg) {
+func validateRegisterForm(data dto.RegisterForm) (bool, types.ResponseMsg) {
 	// Create an empty error map
 	errs := make(types.ResponseMsg)
 
@@ -77,7 +76,7 @@ func validateRegisterForm(data entities.RegisterForm) (bool, types.ResponseMsg) 
 // Returns an error response if there is an error, otherwise a success response.
 func Register(c echo.Context) error {
 	// Create a new RegisterForm object
-	form := new(entities.RegisterForm)
+	form := new(dto.RegisterForm)
 
 	// Bind the request body to the RegisterForm object
 	if err := c.Bind(form); err != nil {

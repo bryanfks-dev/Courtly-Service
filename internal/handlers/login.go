@@ -4,7 +4,6 @@ import (
 	"log"
 	"main/core/types"
 	"main/data/models"
-	"main/domain/entities"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"main/internal/providers/database"
@@ -22,7 +21,7 @@ var user models.User
 // data: The login form data.
 //
 // Returns a boolean indicates the form is valid or not and a map of errors.
-func validateLoginForm(data entities.LoginForm) (bool, types.ResponseMsg) {
+func validateLoginForm(data dto.LoginForm) (bool, types.ResponseMsg) {
 	// Create an empty error map
 	errs := make(types.ResponseMsg)
 
@@ -72,7 +71,7 @@ func validateLoginForm(data entities.LoginForm) (bool, types.ResponseMsg) {
 // Returns an error response if there is an error, otherwise a success response.
 func Login(c echo.Context) error {
 	// Create a new LoginForm object
-	form := new(entities.LoginForm)
+	form := new(dto.LoginForm)
 
 	// Bind the request body to the LoginForm object
 	if err := c.Bind(form); err != nil {
