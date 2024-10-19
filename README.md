@@ -44,7 +44,6 @@ cd courtly-service
 2. Clone the environment file
 
 ```bash
-# Copy the .env.example
 cp .env.example .env
 ```
 
