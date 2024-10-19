@@ -16,7 +16,7 @@ Since this service relies on REST API, so json is pretty much needed here. All e
   "statusCode": 200,
   "message": "...",
   "data": {
-    ...
+    "..."
   }
 }
 ```
@@ -26,4 +26,4 @@ From the example, we can see there are 3 properties in the response body, which 
 - `"data"` - The passed data to the frontend server. The data structure could be different for each endpoint response, so make sure to read the response carefully
 
 ## Run Proccess 
-To start the service, make sure you're in the root of the project, then simply run `go run cmd/api` or to make things easier, just run `./start.bash`
+To start the service, make sure you're in the root of the project, then simply run `go run cmd/api/main.go` or to make things easier, just run `./start.bash`
