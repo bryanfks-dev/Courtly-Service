@@ -3,6 +3,7 @@ package server
 import (
 	"main/core/config"
 	"main/internal/handlers"
+	"main/internal/middlewares"
 	"strconv"
 
 	"github.com/labstack/echo-jwt/v4"
@@ -31,8 +32,8 @@ func NewServer(serverConfig config.Server) (*echo.Echo, error) {
 	// Endpoint list
 	prefix.POST("/register", handlers.Register)
 	prefix.POST("/login", handlers.Login)
-	prefix.POST("/logout", handlers.Logout)
-	prefix.GET("/users/me", handlers.GetUser)
+	prefix.POST("/logout", handlers.Logout, middlewares.AuthMiddleware)
+	prefix.GET("/users/me", handlers.GetCurrentUser, middlewares.AuthMiddleware)
 
 	return e, e.Start(":" + strconv.Itoa(serverConfig.Port))
 }
