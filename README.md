@@ -17,7 +17,7 @@ Since this service relies on REST API, so json is pretty much needed here. All e
 
 ```json
 {
-  "statusCode": 200,
+  "success": true,
   "message": "...",
   "data": {
     "..."
@@ -27,7 +27,7 @@ Since this service relies on REST API, so json is pretty much needed here. All e
 
 From the example, we can see there are 3 properties in the response body, which will be explained below.
 
-- `"statusCode"` - The status code of the service response (e.g. 2xx, 4xx, 5xx)
+- `"success"` - The success status of the response, this could be either true or false.
 - `"message"` - The message of the response, this could be either a success message, failed message, or error messages for inputs
 - `"data"` - The passed data to the frontend server. The data structure could be different for each endpoint response, so make sure to read the response carefully
 

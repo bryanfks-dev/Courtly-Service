@@ -29,15 +29,15 @@ func GetCurrentUser(c echo.Context) error {
 	// Return an error if any
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.Response{
-			StatusCode: http.StatusInternalServerError,
-			Message:    "An error occurred while getting the user",
-			Data:       nil,
+			Success: false,
+			Message: "An error occurred while getting the user",
+			Data:    nil,
 		})
 	}
 
 	return c.JSON(http.StatusOK, dto.Response{
-		StatusCode: http.StatusOK,
-		Message:    "User retrieved successfully",
+		Success: true,
+		Message: "User retrieved successfully",
 		Data: dto.CurrentUserResponseData{
 			User: dto.CurrentUser{}.FromModel(user),
 		},
@@ -60,9 +60,9 @@ func GetPublicUser(c echo.Context) error {
 	// Return an error if the ID is not a valid integer
 	if err != nil {
 		return c.JSON(400, dto.Response{
-			StatusCode: 400,
-			Message:    "Invalid user ID",
-			Data:       nil,
+			Success: false,
+			Message: "Invalid user ID",
+			Data:    nil,
 		})
 	}
 
@@ -72,15 +72,15 @@ func GetPublicUser(c echo.Context) error {
 	// Return an error if the user does not exist
 	if err != nil {
 		return c.JSON(404, dto.Response{
-			StatusCode: 404,
-			Message:    "User not found",
-			Data:       nil,
+			Success: false,
+			Message: "User not found",
+			Data:    nil,
 		})
 	}
 
 	return c.JSON(200, dto.Response{
-		StatusCode: 200,
-		Message:    "Success get user",
-		Data:       user,
+		Success: true,
+		Message: "Success get user",
+		Data:    user,
 	})
 }

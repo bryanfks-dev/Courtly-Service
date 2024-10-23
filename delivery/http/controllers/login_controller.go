@@ -86,9 +86,9 @@ func Login(c echo.Context) error {
 	// Check if there are any errors
 	if errs != nil {
 		return c.JSON(http.StatusBadRequest, dto.Response{
-			StatusCode: http.StatusBadRequest,
-			Message:    errs,
-			Data:       nil,
+			Success: false,
+			Message: errs,
+			Data:    nil,
 		})
 	}
 
@@ -100,15 +100,15 @@ func Login(c echo.Context) error {
 		log.Fatal("Error generating token: ", err)
 
 		return c.JSON(http.StatusInternalServerError, dto.Response{
-			StatusCode: http.StatusInternalServerError,
-			Message:    "Error generating token",
-			Data:       nil,
+			Success: false,
+			Message: "Error generating token",
+			Data:    nil,
 		})
 	}
 
 	return c.JSON(http.StatusOK, dto.Response{
-		StatusCode: http.StatusOK,
-		Message:    "Login Success",
+		Success: true,
+		Message: "Login Success",
 		Data: dto.LoginResponseData{
 			User:  dto.CurrentUser{}.FromModel(user),
 			Token: token,

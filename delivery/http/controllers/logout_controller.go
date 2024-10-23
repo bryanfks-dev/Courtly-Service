@@ -27,15 +27,15 @@ func Logout(c echo.Context) error {
 		log.Fatal("Error blacklisting token: ", err)
 
 		return c.JSON(http.StatusInternalServerError, dto.Response{
-			StatusCode: http.StatusInternalServerError,
-			Message:    "Could not blacklist token",
-			Data:       nil,
+			Success: false,
+			Message: "Could not blacklist token",
+			Data:    nil,
 		})
 	}
 
 	return c.JSON(http.StatusOK, dto.Response{
-		StatusCode: http.StatusOK,
-		Message:    "Successfully logged out",
-		Data:       nil,
+		Success: true,
+		Message: "Successfully logged out",
+		Data:    nil,
 	})
 }

@@ -91,9 +91,9 @@ func Register(c echo.Context) error {
 	// Validate the form
 	if ok, errs := validateRegisterForm(*form); !ok {
 		return c.JSON(http.StatusBadRequest, dto.Response{
-			StatusCode: http.StatusBadRequest,
-			Message:    errs,
-			Data:       nil,
+			Success: false,
+			Message: errs,
+			Data:    nil,
 		})
 	}
 
@@ -105,9 +105,9 @@ func Register(c echo.Context) error {
 		log.Fatal("Error hashing the password: ", err)
 
 		return c.JSON(http.StatusInternalServerError, dto.Response{
-			StatusCode: http.StatusInternalServerError,
-			Message:    "Error hashing the password",
-			Data:       nil,
+			Success: false,
+			Message: "Error hashing the password",
+			Data:    nil,
 		})
 	}
 
@@ -122,8 +122,8 @@ func Register(c echo.Context) error {
 	mysql.Conn.Create(&newUser)
 
 	return c.JSON(http.StatusCreated, dto.Response{
-		StatusCode: http.StatusCreated,
-		Message:    "User created successfully",
+		Success: true,
+		Message: "User created successfully",
 		Data: dto.RegisterResponseData{
 			User: dto.CurrentUser{}.FromModel(newUser),
 		},
