@@ -38,7 +38,9 @@ func GetCurrentUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.Response{
 		StatusCode: http.StatusOK,
 		Message:    "User retrieved successfully",
-		Data:       user,
+		Data: dto.CurrentUserResponseData{
+			User: user,
+		},
 	})
 }
 

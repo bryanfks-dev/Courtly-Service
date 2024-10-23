@@ -124,8 +124,8 @@ func Register(c echo.Context) error {
 	return c.JSON(http.StatusCreated, dto.Response{
 		StatusCode: http.StatusCreated,
 		Message:    "User created successfully",
-		Data: map[string]any{
-			"user": newUser,
+		Data: dto.RegisterResponseData{
+			User: newUser,
 		},
 	})
 }

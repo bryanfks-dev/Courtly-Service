@@ -109,9 +109,9 @@ func Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.Response{
 		StatusCode: http.StatusOK,
 		Message:    "Login Success",
-		Data: map[string]any{
-			"user":  user,
-			"token": token,
+		Data: dto.LoginResponseData{
+			User:  user,
+			Token: token,
 		},
 	})
 }
