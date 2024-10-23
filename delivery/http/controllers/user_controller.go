@@ -80,7 +80,9 @@ func GetPublicUser(c echo.Context) error {
 
 	return c.JSON(200, dto.Response{
 		Success: true,
-		Message: "Success get user",
-		Data:    user,
+		Message: "User retrieved successfully",
+		Data: dto.PublicUserResponseData{
+			User: dto.PublicUser{}.FromModel(user),
+		},
 	})
 }

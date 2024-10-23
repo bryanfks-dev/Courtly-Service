@@ -32,6 +32,7 @@ func NewServer() (*echo.Echo, error) {
 	prefix.POST("/login", controllers.Login)
 	prefix.POST("/logout", controllers.Logout, middlewares.AuthMiddleware)
 	prefix.GET("/users/me", controllers.GetCurrentUser, middlewares.AuthMiddleware)
+	prefix.GET("/users/:id", controllers.GetPublicUser, middlewares.AuthMiddleware)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }
