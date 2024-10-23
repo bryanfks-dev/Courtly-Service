@@ -6,7 +6,6 @@ import (
 	"main/internal/middlewares"
 	"strconv"
 
-	"github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -21,10 +20,6 @@ func NewServer(serverConfig config.Server) (*echo.Echo, error) {
 	e := echo.New()
 
 	e.Use(middleware.CORS())
-
-	e.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(config.JWTConfig.Secret),
-	}))
 
 	// Register prefix endpoint
 	prefix := e.Group("/api/v1")
