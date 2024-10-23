@@ -2,7 +2,7 @@ package usecases
 
 import (
 	"main/data/models"
-	"main/internal/providers/database"
+	"main/internal/providers/mysql"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -22,7 +22,7 @@ func BlacklistToken(token *jwt.Token) error {
 	exp := int64(claims["exp"].(float64))
 
 	// Insert the token into the blacklisted_tokens table
-	res := database.Conn.Create(&models.BlacklistedToken{
+	res := mysql.Conn.Create(&models.BlacklistedToken{
 		Token:     token.Raw,
 		ExpiresAt: time.Unix(exp, 0),
 	})
