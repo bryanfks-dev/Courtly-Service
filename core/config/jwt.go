@@ -8,12 +8,12 @@ type JWT struct {
 	Secret string
 }
 
+// JWTConfig is the global variable that holds the JWT configuration.
+var JWTConfig = JWT{}
+
 // LoadData is a method that loads the data for the JWT configuration.
-func (j JWT) LoadData() JWT {
+func (j JWT) LoadData() {
 	j.Secret = utils.GetEnv("JWT_SECRET", "my_secret")
 
-	return j
+	JWTConfig = j
 }
-
-// JWTConfig is the global variable that holds the JWT configuration.
-var JWTConfig = JWT{}.LoadData()

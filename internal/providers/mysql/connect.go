@@ -19,14 +19,12 @@ var (
 
 // Connect is a helper function that connects to the database.
 //
-// dbConfig: The database configuration.
-//
 // Returns an error if there is an issue connecting to the database.
-func Connect(dbConfig config.Database) error {
+func Connect() error {
 	var err error
 
 	// Create a dsn string
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbConfig.Username, dbConfig.Password, dbConfig.Hostname, dbConfig.Port, dbConfig.DatabaseName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.DBConfig.Username, config.DBConfig.Password, config.DBConfig.Hostname, config.DBConfig.Port, config.DBConfig.DatabaseName)
 
 	// Open a connection to the databasea
 	Conn, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})

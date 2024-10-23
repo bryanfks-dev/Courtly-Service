@@ -15,8 +15,11 @@ type Server struct {
 	Port int
 }
 
+// ServerConfig is a global variable that holds the server configuration.
+var ServerConfig = Server{}
+
 // LoadData is a method that loads the server configuration from the environment variables.
-func (s Server) LoadData() Server {
+func (s Server) LoadData() {
 	// Get the host name from the environment variables
 	host := utils.GetEnv("SERVER_HOST", "localhost")
 
@@ -32,8 +35,5 @@ func (s Server) LoadData() Server {
 
 	s.Port = port
 
-	return s
+	ServerConfig = s
 }
-
-// ServerConfig is a global variable that holds the server configuration.
-var ServerConfig = Server{}.LoadData()

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"main/core/config"
 	"main/internal/server"
 )
 
@@ -10,7 +9,7 @@ import (
 // Returns void
 func initServer() {
 	// Create a new server
-	server, err := server.NewServer(config.ServerConfig)
+	server, err := server.NewServer()
 
 	server.Logger.Fatal(err)
 }

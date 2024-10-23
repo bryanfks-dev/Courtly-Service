@@ -1,7 +1,6 @@
 package api
 
 import (
-	"main/core/config"
 	"main/internal/providers/mysql"
 )
 
@@ -10,7 +9,7 @@ import (
 // Returns void
 func initDatabase() {
 	// Start the database connection
-	err := mysql.Connect(config.DBConfig)
+	err := mysql.Connect()
 
 	// Check if there is an error connecting to the database
 	if err != nil {

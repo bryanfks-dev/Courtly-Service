@@ -25,8 +25,10 @@ type Database struct {
 	DatabaseName string
 }
 
+var DBConfig = Database{}
+
 // LoadData is a method that loads the database configuration from the environment variables.
-func (d Database) LoadData() Database {
+func (d Database) LoadData() {
 	d.Hostname = utils.GetEnv("DB_HOSTNAME", "localhost")
 
 	port, err := strconv.Atoi(utils.GetEnv("DB_PORT", "3306"))
@@ -44,7 +46,5 @@ func (d Database) LoadData() Database {
 
 	d.DatabaseName = utils.GetEnv("DB_NAME", "courtly_db")
 
-	return d
+	DBConfig = d
 }
-
-var DBConfig = Database{}.LoadData()

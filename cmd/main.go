@@ -19,6 +19,8 @@ func main() {
 		panic("Error loading environment variables: " + err.Error())
 	}
 
+	api.LoadEnv()
+
 	// Start the routines
 	routines.Run()
 
