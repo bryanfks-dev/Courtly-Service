@@ -39,7 +39,7 @@ func GetCurrentUser(c echo.Context) error {
 		StatusCode: http.StatusOK,
 		Message:    "User retrieved successfully",
 		Data: dto.CurrentUserResponseData{
-			User: user,
+			User: dto.CurrentUser{}.FromModel(user),
 		},
 	})
 }

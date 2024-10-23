@@ -110,7 +110,7 @@ func Login(c echo.Context) error {
 		StatusCode: http.StatusOK,
 		Message:    "Login Success",
 		Data: dto.LoginResponseData{
-			User:  user,
+			User:  dto.CurrentUser{}.FromModel(user),
 			Token: token,
 		},
 	})

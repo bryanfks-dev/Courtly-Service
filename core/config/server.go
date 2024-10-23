@@ -8,12 +8,20 @@ import (
 
 // ServerConfig is a struct that holds the configuration for the server.
 type Server struct {
+	// Host is the host name the server will listen on.
+	Host string
+
 	// Port is the port number the server will listen on.
 	Port int
 }
 
 // LoadData is a method that loads the server configuration from the environment variables.
 func (s Server) LoadData() Server {
+	// Get the host name from the environment variables
+	host := utils.GetEnv("SERVER_HOST", "localhost")
+
+	s.Host = host
+
 	// Get the port number from the environment variables
 	port, err := strconv.Atoi(utils.GetEnv("SERVER_PORT", "8080"))
 

@@ -2,8 +2,10 @@ package server
 
 import (
 	"main/core/config"
+	"main/core/constants"
 	"main/delivery/http/controllers"
 	"main/delivery/http/middlewares"
+	"main/delivery/http/router"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -20,6 +22,9 @@ func NewServer(serverConfig config.Server) (*echo.Echo, error) {
 	e := echo.New()
 
 	e.Use(middleware.CORS())
+
+	// Register static files
+	e.Static(router.UserProfiles, constants.PATH_TO_USER_PROFILE_PICTURES)
 
 	// Register prefix endpoint
 	prefix := e.Group("/api/v1")

@@ -125,7 +125,7 @@ func Register(c echo.Context) error {
 		StatusCode: http.StatusCreated,
 		Message:    "User created successfully",
 		Data: dto.RegisterResponseData{
-			User: newUser,
+			User: dto.CurrentUser{}.FromModel(newUser),
 		},
 	})
 }
