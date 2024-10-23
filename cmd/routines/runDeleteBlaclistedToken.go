@@ -2,7 +2,7 @@ package routines
 
 import (
 	"log"
-	"main/internal/providers/database"
+	"main/internal/providers/mysql"
 	"main/internal/repository"
 )
 
@@ -12,7 +12,7 @@ import (
 // Returns void
 func runClearBlacklistedToken() {
 	// Check for database connection
-	err := database.Ping()
+	err := mysql.Ping()
 
 	// Check if there is an error with the database connection
 	if err != nil {

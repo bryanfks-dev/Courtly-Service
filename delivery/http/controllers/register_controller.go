@@ -1,4 +1,4 @@
-package handlers
+package controllers
 
 import (
 	"log"
@@ -7,7 +7,7 @@ import (
 	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
-	"main/internal/providers/database"
+	"main/internal/providers/mysql"
 	"main/pkg/utils"
 	"net/http"
 	"strings"
@@ -119,7 +119,7 @@ func Register(c echo.Context) error {
 	}
 
 	// Register the user into the database
-	database.Conn.Create(&newUser)
+	mysql.Conn.Create(&newUser)
 
 	return c.JSON(http.StatusCreated, dto.Response{
 		StatusCode: http.StatusCreated,

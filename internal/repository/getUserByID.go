@@ -2,7 +2,7 @@ package repository
 
 import (
 	"main/data/models"
-	"main/internal/providers/database"
+	"main/internal/providers/mysql"
 )
 
 // GetUserByID is a repository function that returns the user with the given ID.
@@ -15,7 +15,7 @@ func GetUserByID(id uint) (models.User, error) {
 	var user models.User
 
 	// Find the user with the given ID
-	err := database.Conn.Where("id = ?", id).First(&user).Error
+	err := mysql.Conn.Where("id = ?", id).First(&user).Error
 
 	// Return an error if any
 	if err != nil {

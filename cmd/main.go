@@ -4,7 +4,7 @@ import (
 	"log"
 	"main/cmd/api"
 	"main/cmd/routines"
-	"main/internal/providers/database"
+	"main/internal/providers/mysql"
 
 	"github.com/joho/godotenv"
 )
@@ -27,7 +27,7 @@ func main() {
 
 	// Close the database connection
 	defer func() {
-		err := database.CloseConnection()
+		err := mysql.CloseConnection()
 
 		// Check if there is an error closing the database connection
 		if err != nil {

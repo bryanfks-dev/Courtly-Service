@@ -1,4 +1,4 @@
-package database
+package mysql
 
 // Ping is a helper function that checks for database connection
 //

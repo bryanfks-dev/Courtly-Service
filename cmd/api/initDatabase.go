@@ -2,7 +2,7 @@ package api
 
 import (
 	"main/core/config"
-	"main/internal/providers/database"
+	"main/internal/providers/mysql"
 )
 
 // initDatabase is a helper function that initialize the database.
@@ -10,7 +10,7 @@ import (
 // Returns void
 func initDatabase() {
 	// Start the database connection
-	err := database.Connect(config.DBConfig)
+	err := mysql.Connect(config.DBConfig)
 
 	// Check if there is an error connecting to the database
 	if err != nil {
@@ -18,7 +18,7 @@ func initDatabase() {
 	}
 
 	// Run migrations
-	err = database.Migrate()
+	err = mysql.Migrate()
 
 	// Check if there is an error migrating the database
 	if err != nil {

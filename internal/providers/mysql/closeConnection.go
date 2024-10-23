@@ -1,4 +1,4 @@
-package database
+package mysql
 
 // CloseConnection is a function that closes the database connection
 //

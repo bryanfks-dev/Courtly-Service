@@ -1,4 +1,4 @@
-package handlers
+package controllers
 
 import (
 	"log"
@@ -6,22 +6,19 @@ import (
 	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
-	"main/internal/providers/database"
+	"main/internal/providers/mysql"
 	"main/pkg/utils"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-// user is a global variable that holds the user model.
-var user models.User
-
 // validateLoginForm is a helper function that validates the login input.
 //
 // data: The login form data.
 //
-// Returns a boolean indicates the form is valid or not and a map of errors.
-func validateLoginForm(data dto.LoginForm) (bool, types.ResponseMsg) {
+// Returns the user model and a map of errors.
+func validateLoginForm(data dto.LoginForm) (models.User, types.ResponseMsg) {
 	// Create an empty error map
 	errs := make(types.ResponseMsg)
 
@@ -35,14 +32,17 @@ func validateLoginForm(data dto.LoginForm) (bool, types.ResponseMsg) {
 		errs["password"] = append(errs["password"], "Password is required")
 	}
 
+	// Define a user model
+	var user models.User
+
 	// Fetch the user from the database
-	err := database.Conn.Model(models.User{}).Where("username = ?", data.Username).Find(&user).Error
+	err := mysql.Conn.Model(models.User{}).Where("username = ?", data.Username).Find(&user).Error
 
 	// Check if there is an error fetching the user
 	if err != nil {
 		log.Fatal("Error fetching user: ", err)
 
-		return false, nil
+		return user, nil
 	}
 
 	// Check if the user exists
@@ -57,10 +57,10 @@ func validateLoginForm(data dto.LoginForm) (bool, types.ResponseMsg) {
 
 	// Check if there are any errors
 	if (len(errs)) > 0 {
-		return false, errs
+		return user, errs
 	}
 
-	return true, nil
+	return user, nil
 }
 
 // Login is a function that handles the login request.
@@ -80,8 +80,11 @@ func Login(c echo.Context) error {
 		return err
 	}
 
-	// Validate the form
-	if ok, errs := validateLoginForm(*form); !ok {
+	// Validate the login form
+	user, errs := validateLoginForm(*form)
+
+	// Check if there are any errors
+	if errs != nil {
 		return c.JSON(http.StatusBadRequest, dto.Response{
 			StatusCode: http.StatusBadRequest,
 			Message:    errs,

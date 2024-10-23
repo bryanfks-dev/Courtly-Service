@@ -2,7 +2,7 @@ package repository
 
 import (
 	"main/data/models"
-	"main/internal/providers/database"
+	"main/internal/providers/mysql"
 	"time"
 )
 
@@ -11,7 +11,7 @@ import (
 //
 // Returns an error if the operation was not successful
 func ClearBlacklistToken() error {
-	res := database.Conn.Delete(models.BlacklistedToken{}, "expires_at > ?", time.Now())
+	res := mysql.Conn.Delete(models.BlacklistedToken{}, "expires_at > ?", time.Now())
 
 	return res.Error
 }

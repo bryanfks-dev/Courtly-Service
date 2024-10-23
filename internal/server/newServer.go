@@ -2,8 +2,8 @@ package server
 
 import (
 	"main/core/config"
-	"main/internal/handlers"
-	"main/internal/middlewares"
+	"main/delivery/http/controllers"
+	"main/delivery/http/middlewares"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -25,10 +25,10 @@ func NewServer(serverConfig config.Server) (*echo.Echo, error) {
 	prefix := e.Group("/api/v1")
 
 	// Endpoint list
-	prefix.POST("/register", handlers.Register)
-	prefix.POST("/login", handlers.Login)
-	prefix.POST("/logout", handlers.Logout, middlewares.AuthMiddleware)
-	prefix.GET("/users/me", handlers.GetCurrentUser, middlewares.AuthMiddleware)
+	prefix.POST("/register", controllers.Register)
+	prefix.POST("/login", controllers.Login)
+	prefix.POST("/logout", controllers.Logout, middlewares.AuthMiddleware)
+	prefix.GET("/users/me", controllers.GetCurrentUser, middlewares.AuthMiddleware)
 
 	return e, e.Start(":" + strconv.Itoa(serverConfig.Port))
 }
