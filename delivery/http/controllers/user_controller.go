@@ -24,7 +24,7 @@ func GetCurrentUser(c echo.Context) error {
 	claims := usecases.DecodeToken(cc.Token)
 
 	// Get the user from the database
-	user, err := repository.GetUserByID(claims["id"].(uint))
+	user, err := repository.GetUserByID(claims.Id)
 
 	// Return an error if any
 	if err != nil {
