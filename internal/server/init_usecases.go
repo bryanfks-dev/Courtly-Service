@@ -15,8 +15,8 @@ var (
 	// logoutUseCase is a variable that holds the logout use case.
 	logoutUseCase *usecases.LogoutUseCase
 
-	// userUseCases is a variable that holds the user use cases.
-	userUseCases *usecases.UserUseCase
+	// userUseCase is a variable that holds the user use cases.
+	userUseCase *usecases.UserUseCase
 
 	// changeUserUsernameUseCase is a variable that holds the change username use case.
 	changeUserUsernameUseCase *usecases.ChangeUserUsernameUseCase
@@ -34,7 +34,7 @@ var (
 func initUseCases() {
 	authUseCase = usecases.NewAuthUseCase()
 
-	userUseCases = usecases.NewUserUseCase(userRepository)
+	userUseCase = usecases.NewUserUseCase(userRepository)
 
 	changeUserUsernameUseCase = usecases.NewChangeUserUsernameUseCase(userRepository)
 

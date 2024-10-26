@@ -14,6 +14,9 @@ var (
 	// logoutController is a variable that holds the logout controller.
 	logoutController controllers.LogoutController
 
+	// verifyPasswordController is a variable that holds the verify password controller.
+	verifyPasswordController controllers.VerifyPasswordController
+
 	// userController is a variable that holds the user controller.
 	userController controllers.UserController
 )
@@ -35,8 +38,13 @@ func initControllers() {
 		logoutUseCase,
 	)
 
+	verifyPasswordController = controllers.NewVerifyPasswordController(
+		authUseCase,
+		userUseCase,
+	)
+
 	userController = controllers.NewUserController(
-		userUseCases,
+		userUseCase,
 		changeUserPasswordUseCase,
 		changeUserUsernameUseCase,
 		authUseCase,

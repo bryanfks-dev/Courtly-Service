@@ -38,19 +38,25 @@ func NewServer() (*echo.Echo, error) {
 	prefix := e.Group("/api/v1")
 
 	// Endpoint list
-	prefix.POST("/register", registerController.Register)
+	// Auth endpoints
+	authPrefix := prefix.Group("/auth")
 
-	prefix.POST("/login", loginController.Login)
+	authPrefix.POST("/register", registerController.Register)
+	authPrefix.POST("/login", loginController.Login)
+	authPrefix.POST("/logout", logoutController.Logout, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	authPrefix.POST("/verify-password", verifyPasswordController.VerifyPassword, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
 
-	prefix.POST("/logout", logoutController.Logout, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	// User endpoints
+	userPrefix := prefix.Group("/users")
 
-	prefix.GET("/users/me", userController.GetCurrentUser, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	// Current user endpoints
+	currentUserPrefix := userPrefix.Group("/me")
 
-	prefix.GET("/users/:id", userController.GetPublicUser, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	currentUserPrefix.GET("/", userController.GetCurrentUser, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	currentUserPrefix.PATCH("/username", userController.UpdateUserUsername, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	currentUserPrefix.PATCH("/password", userController.UpdateUserPassword, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
 
-	prefix.PATCH("/users/me/password", userController.UpdateUserPassword, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
-
-	prefix.PATCH("/users/me/username", userController.UpdateUserUsername, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	prefix.GET("/:id", userController.GetPublicUser, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

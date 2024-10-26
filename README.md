@@ -6,9 +6,10 @@ Courtly-Service is a backend service of Courtly: Easily Order Court Application.
 
 There are several available endpoints, such as:
 
-- **POST** `/api/v1/login` - Sign user with an existing account
-- **POST** `/api/v1/register` - Register a new user account
-- **POST** `/api/v1/logout` - Remove user from authenticated user status
+- **POST** `/api/v1/auth/login` - Sign user with an existing account
+- **POST** `/api/v1/auth/register` - Register a new user account
+- **POST** `/api/v1/auth/logout` - Remove user from authenticated user status
+- **POST** `/api/v1/auth/verify-password` - Verify current user password
 - **GET** `/api/v1/users/me` - Get current user information from the database
 - **GET** `/api/v1/users/:id` - Get user information from the database using user id
 - **PATCH** `/api/v1/users/me/password` - Update user password with a new password
