@@ -8,7 +8,7 @@ type BlacklistedToken struct {
 	ID uint `gorm:"primaryKey;autoIncrement"`
 
 	// Token is the token that is blacklisted.
-	Token string `gorm:"not null;unique;type:varchar(500)"`
+	Token string `gorm:"not null;unique;type:varchar(500);index"`
 
 	// ExpiresAt is the time when the token expires.
 	ExpiresAt time.Time `gorm:"not null"`

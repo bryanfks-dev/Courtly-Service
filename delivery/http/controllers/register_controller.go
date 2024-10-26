@@ -2,70 +2,25 @@ package controllers
 
 import (
 	"log"
-	"main/core/constants"
-	"main/core/types"
-	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
-	"main/internal/providers/mysql"
-	"main/pkg/utils"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 )
 
-// sanitizeRegisterForm is a helper function that sanitizes the register input.
-//
-// data: The register form data.
-//
-// Returns void
-func sanitizeRegisterForm(data *dto.RegisterForm) {
-	data.Username = strings.TrimSpace(data.Username)
-	data.PhoneNumber = strings.TrimSpace(data.PhoneNumber)
+// RegisterController is a struct that defines the register controller.
+type RegisterController struct {
+	registerUseCase *usecases.RegisterUseCase
 }
 
-// validateRegisterForm is a helper function that validates the register input.
-func validateRegisterForm(data dto.RegisterForm) (bool, types.ResponseMsg) {
-	// Create an empty error map
-	errs := make(types.ResponseMsg)
-
-	// Check if the username is blank
-	if utils.IsBlank(data.Username) {
-		errs["username"] = append(errs["username"], "Username is required")
-	}
-
-	// Check if the username is too short
-	if len(data.Username) < constants.MINIMUM_USERNAME_LENGTH {
-		errs["username"] = append(errs["username"], "Username is too short")
-	}
-
-	// Check if the phone number is blank
-	if utils.IsBlank(data.PhoneNumber) {
-		errs["phone_number"] = append(errs["phone_number"], "Phone number is required")
-	}
-
-	// Check if the password is blank
-	if utils.IsBlank(data.Password) {
-		errs["password"] = append(errs["password"], "Password is required")
-	}
-
-	// Check if the password is too short
-	if len(data.Password) < constants.MINIMUM_PASSWORD_LENGTH {
-		errs["password"] = append(errs["password"], "Password is too short")
-	}
-
-	// Check if the password and confirm password are the same
-	if data.Password != data.ConfirmPassword {
-		errs["confirm_password"] = append(errs["confirm_password"], "Password and confirm password do not match")
-	}
-
-	// Check if there are any errors
-	if len(errs) > 0 {
-		return false, errs
-	}
-
-	return true, nil
+// NewRegisterController is a factory function that returns a new instance of the RegisterController.
+//
+// r: The register use case.
+//
+// Returns a new instance of the RegisterController.
+func NewRegisterController(r *usecases.RegisterUseCase) RegisterController {
+	return RegisterController{registerUseCase: r}
 }
 
 // Register is a function that handles the register request.
@@ -74,22 +29,22 @@ func validateRegisterForm(data dto.RegisterForm) (bool, types.ResponseMsg) {
 // c: The echo context.
 //
 // Returns an error response if there is an error, otherwise a success response.
-func Register(c echo.Context) error {
+func (r RegisterController) Register(c echo.Context) error {
 	// Create a new RegisterForm object
 	form := new(dto.RegisterForm)
 
 	// Bind the request body to the RegisterForm object
 	if err := c.Bind(form); err != nil {
-		log.Default().Println("Error binding the request body: ", err)
+		log.Println("Error binding the request body: ", err)
 
 		return err
 	}
 
 	// Sanitize the form
-	sanitizeRegisterForm(form)
+	r.registerUseCase.SanitizeForm(form)
 
 	// Validate the form
-	if ok, errs := validateRegisterForm(*form); !ok {
+	if errs := r.registerUseCase.ValidateForm(form); errs != nil {
 		return c.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: errs,
@@ -97,35 +52,39 @@ func Register(c echo.Context) error {
 		})
 	}
 
-	// Hash the password
-	hashedPwd, err := usecases.HashPassword(form.Password)
-
-	// Check if there is an error hashing the password
-	if err != nil {
-		log.Fatal("Error hashing the password: ", err)
+	// Check if there is an error processing the form
+	if err := r.registerUseCase.Process(form); err != nil {
+		// Check if the error is a client error
+		if err.ClientError {
+			return c.JSON(http.StatusForbidden, dto.Response{
+				Success: false,
+				Message: err.Message,
+				Data:    nil,
+			})
+		}
 
 		return c.JSON(http.StatusInternalServerError, dto.Response{
 			Success: false,
-			Message: "Error hashing the password",
+			Message: err.Message,
 			Data:    nil,
 		})
 	}
 
-	// Create a new user
-	newUser := models.User{
-		Username:    form.Username,
-		Password:    hashedPwd,
-		PhoneNumber: form.PhoneNumber,
+	// Register the user
+	user, err := r.registerUseCase.CreateNewUser(form)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.Response{
+			Success: false,
+			Message: "An error occurred while registering the user",
+			Data:    nil,
+		})
 	}
 
-	// Register the user into the database
-	mysql.Conn.Create(&newUser)
-
-	return c.JSON(http.StatusCreated, dto.Response{
+	return c.JSON(http.StatusOK, dto.Response{
 		Success: true,
-		Message: "User created successfully",
-		Data: dto.RegisterResponseData{
-			User: dto.CurrentUser{}.FromModel(newUser),
-		},
+		Message: "User registered successfully",
+		Data:    dto.CurrentUser{}.FromModel(user),
 	})
 }

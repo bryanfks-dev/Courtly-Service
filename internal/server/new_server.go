@@ -3,8 +3,6 @@ package server
 import (
 	"main/core/config"
 	"main/core/constants"
-	"main/delivery/http/controllers"
-	"main/delivery/http/middlewares"
 	"main/delivery/http/router"
 	"strconv"
 
@@ -19,6 +17,18 @@ import (
 func NewServer() (*echo.Echo, error) {
 	e := echo.New()
 
+	// Initialize repositories
+	initRepositories()
+
+	// Initialize use cases
+	initUseCases()
+
+	// Initialize controllers
+	initControllers()
+
+	// Initialize middlewares
+	initMiddleware()
+
 	e.Use(middleware.CORS())
 
 	// Register static files
@@ -28,11 +38,19 @@ func NewServer() (*echo.Echo, error) {
 	prefix := e.Group("/api/v1")
 
 	// Endpoint list
-	prefix.POST("/register", controllers.Register)
-	prefix.POST("/login", controllers.Login)
-	prefix.POST("/logout", controllers.Logout, middlewares.AuthMiddleware)
-	prefix.GET("/users/me", controllers.GetCurrentUser, middlewares.AuthMiddleware)
-	prefix.GET("/users/:id", controllers.GetPublicUser, middlewares.AuthMiddleware)
+	prefix.POST("/register", registerController.Register)
+
+	prefix.POST("/login", loginController.Login)
+
+	prefix.POST("/logout", logoutController.Logout, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+
+	prefix.GET("/users/me", userController.GetCurrentUser, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+
+	prefix.GET("/users/:id", userController.GetPublicUser, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+
+	prefix.PATCH("/users/me/password", userController.UpdateUserPassword, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+
+	prefix.PATCH("/users/me/username", userController.UpdateUserUsername, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

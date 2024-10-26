@@ -24,7 +24,7 @@ type CurrentUser struct {
 }
 
 // FromModel creates a CurrentUser DTO from a User model.
-func (c CurrentUser) FromModel(m models.User) CurrentUser {
+func (c CurrentUser) FromModel(m *models.User) CurrentUser {
 	// If the profile picture is blank, return the CurrentUser DTO without the profile picture.
 	if utils.IsBlank(m.ProfilePicture) {
 		return CurrentUser{

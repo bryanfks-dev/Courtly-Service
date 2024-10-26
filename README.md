@@ -11,6 +11,8 @@ There are several available endpoints, such as:
 - **POST** `/api/v1/logout` - Remove user from authenticated user status
 - **GET** `/api/v1/users/me` - Get current user information from the database
 - **GET** `/api/v1/users/:id` - Get user information from the database using user id
+- **PATCH** `/api/v1/users/me/password` - Update user password with a new password
+- **PATCH** `/api/v1/users/me/username` - Update user username with a new available username
 
 ## Response
 

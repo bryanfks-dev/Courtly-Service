@@ -1,13 +1,26 @@
 package controllers
 
 import (
-	"log"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
+
+// LogoutController is a struct that defines the logout controller.
+type LogoutController struct {
+	logoutUseCase *usecases.LogoutUseCase
+}
+
+// NewLogoutController is a factory function that returns a new instance of the LogoutController.
+//
+// l: The logout use case.
+//
+// Returns a new instance of the LogoutController.
+func NewLogoutController(l *usecases.LogoutUseCase) LogoutController {
+	return LogoutController{logoutUseCase: l}
+}
 
 // Logout is a handler that logs out a user
 // by blacklisting the token used to authenticate the user.
@@ -16,16 +29,14 @@ import (
 // c: echo.Context
 //
 // Returns an error response if there is an error, otherwise a success response.
-func Logout(c echo.Context) error {
+func (l *LogoutController) Logout(c echo.Context) error {
 	cc := c.(*dto.CustomContext)
 
 	// Blacklist token
-	err := usecases.BlacklistToken(cc.Token)
+	err := l.logoutUseCase.BlacklistToken(cc.Token)
 
 	// Check if there was an error blacklisting the token
 	if err != nil {
-		log.Fatal("Error blacklisting token: ", err)
-
 		return c.JSON(http.StatusInternalServerError, dto.Response{
 			Success: false,
 			Message: "Could not blacklist token",

@@ -19,8 +19,11 @@ func runClearBlacklistedToken() {
 		log.Fatal("Error connecting to the database: " + err.Error())
 	}
 
+	// Get the blacklisted token repository
+	blacklistedTokenRepository := repository.NewBlacklistedTokenRepository()
+
 	// Delete the blacklist token
-	err = repository.ClearBlacklistToken()
+	err = blacklistedTokenRepository.Clear()
 
 	// Check if there is an error deleting the blacklist token
 	if err != nil {

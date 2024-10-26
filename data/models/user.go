@@ -10,10 +10,10 @@ type User struct {
 	ID uint `gorm:"primaryKey;autoIncrement"`
 
 	// Username is the username of the user.
-	Username string `gorm:"not null;unique;type:varchar(255)"`
+	Username string `gorm:"not null;unique;type:varchar(255);index"`
 
 	// PhoneNumber is the phone number of the user.
-	PhoneNumber string `gorm:"not null;unique;type:varchar(20)"`
+	PhoneNumber string `gorm:"not null;unique;type:varchar(20);index"`
 
 	// ProfilePicture is the profile picture of the user.
 	ProfilePicture string `gorm:"type:varchar(255)"`
