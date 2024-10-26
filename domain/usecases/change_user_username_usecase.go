@@ -36,12 +36,12 @@ func (c *ChangeUserUsernameUseCase) ValidateForm(form *dto.ChangeUsernameForm) t
 	errs := make(types.FormErrorResponseMsg)
 
 	// Check if the username is empty
-	if utils.IsBlank(form.Username) {
+	if utils.IsBlank(form.NewUsername) {
 		errs["username"] = append(errs["username"], "Username is required")
 	}
 
 	// Check if the username is too short
-	if len(form.Username) < constants.MINIMUM_USERNAME_LENGTH {
+	if len(form.NewUsername) < constants.MINIMUM_USERNAME_LENGTH {
 		errs["username"] = append(errs["username"], fmt.Sprintf("Username must be at least %d characters", constants.MINIMUM_USERNAME_LENGTH))
 	}
 
@@ -60,7 +60,7 @@ func (c *ChangeUserUsernameUseCase) ValidateForm(form *dto.ChangeUsernameForm) t
 // Returns an error if any.
 func (c *ChangeUserUsernameUseCase) Process(userID uint, form *dto.ChangeUsernameForm) (*models.User, *entities.ProcessError) {
 	// Get the user by ID
-	taken, err := c.userRepository.IsUsernameTaken(form.Username)
+	taken, err := c.userRepository.IsUsernameTaken(form.NewUsername)
 
 	// Return an error if any
 	if err != nil {
@@ -83,7 +83,7 @@ func (c *ChangeUserUsernameUseCase) Process(userID uint, form *dto.ChangeUsernam
 	}
 
 	// Update the username
-	user, err := c.userRepository.UpdateUsername(userID, form.Username)
+	user, err := c.userRepository.UpdateUsername(userID, form.NewUsername)
 
 	// Return an error if any
 	if err != nil {
