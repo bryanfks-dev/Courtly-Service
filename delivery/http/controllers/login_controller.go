@@ -21,8 +21,8 @@ type LoginController struct {
 // a: The auth use case.
 //
 // Returns a new instance of the LoginController.
-func NewLoginController(l *usecases.LoginUseCase, a *usecases.AuthUseCase) LoginController {
-	return LoginController{loginUseCase: l, authUseCase: a}
+func NewLoginController(l *usecases.LoginUseCase, a *usecases.AuthUseCase) *LoginController {
+	return &LoginController{loginUseCase: l, authUseCase: a}
 
 }
 

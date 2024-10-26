@@ -21,8 +21,8 @@ type VerifyPasswordController struct {
 // u: Instance of usecases.UserUseCase
 //
 // Returns a new instance of VerifyPasswordController
-func NewVerifyPasswordController(a *usecases.AuthUseCase, u *usecases.UserUseCase) VerifyPasswordController {
-	return VerifyPasswordController{authUseCase: a, userUseCase: u}
+func NewVerifyPasswordController(a *usecases.AuthUseCase, u *usecases.UserUseCase) *VerifyPasswordController {
+	return &VerifyPasswordController{authUseCase: a, userUseCase: u}
 }
 
 // VerifyPassword is a controller to handle the request to verify the password of the user

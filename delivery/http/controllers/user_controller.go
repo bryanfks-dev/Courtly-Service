@@ -25,8 +25,8 @@ type UserController struct {
 // cu: The change username use case.
 //
 // Returns a new instance of the UserController.
-func NewUserController(u *usecases.UserUseCase, cp *usecases.ChangeUserPasswordUseCase, cu *usecases.ChangeUserUsernameUseCase, a *usecases.AuthUseCase) UserController {
-	return UserController{
+func NewUserController(u *usecases.UserUseCase, cp *usecases.ChangeUserPasswordUseCase, cu *usecases.ChangeUserUsernameUseCase, a *usecases.AuthUseCase) *UserController {
+	return &UserController{
 		userUseCase:           u,
 		changePasswordUseCase: cp,
 		changeUsernameUseCase: cu,

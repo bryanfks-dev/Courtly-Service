@@ -4,6 +4,7 @@ import (
 	"main/core/config"
 	"main/core/constants"
 	"main/delivery/http/router"
+	"main/internal/initializer"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -17,18 +18,20 @@ import (
 func NewServer() (*echo.Echo, error) {
 	e := echo.New()
 
-	// Initialize repositories
-	initRepositories()
+	// Repository initialization
+	r := initializer.InitRepositories()
 
-	// Initialize use cases
-	initUseCases()
+	// Usecase initialization
+	u := initializer.InitUseCases(r)
 
-	// Initialize controllers
-	initControllers()
+	// Controller initialization
+	c := initializer.InitControllers(u)
 
-	// Initialize middlewares
-	initMiddleware()
+	// Middleware initialization
+	m := initializer.InitMiddlewares(u)
 
+	// Register middlewares
+	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
 
 	// Register static files
@@ -37,26 +40,28 @@ func NewServer() (*echo.Echo, error) {
 	// Register prefix endpoint
 	prefix := e.Group("/api/v1")
 
-	// Endpoint list
+	// Register routes
 	// Auth endpoints
 	authPrefix := prefix.Group("/auth")
 
-	authPrefix.POST("/register", registerController.Register)
-	authPrefix.POST("/login", loginController.Login)
-	authPrefix.POST("/logout", logoutController.Logout, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
-	authPrefix.POST("/verify-password", verifyPasswordController.VerifyPassword, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	authPrefix.POST("/register", c.RegisterController.Register)
+	authPrefix.POST("/login", c.LoginController.Login)
+	authPrefix.POST("/logout", c.LogoutController.Logout, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+	authPrefix.POST("/verify-password", c.VerifyPasswordController.VerifyPassword, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 
 	// User endpoints
 	userPrefix := prefix.Group("/users")
 
+	prefix.GET("/:id", c.UserController.GetPublicUser, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+
 	// Current user endpoints
 	currentUserPrefix := userPrefix.Group("/me")
 
-	currentUserPrefix.GET("/", userController.GetCurrentUser, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
-	currentUserPrefix.PATCH("/username", userController.UpdateUserUsername, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
-	currentUserPrefix.PATCH("/password", userController.UpdateUserPassword, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	currentUserPrefix.GET("", c.UserController.GetCurrentUser, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+	currentUserPrefix.PATCH("/username", c.UserController.UpdateUserUsername, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+	currentUserPrefix.PATCH("/password", c.UserController.UpdateUserPassword, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 
-	prefix.GET("/:id", userController.GetPublicUser, authMiddleware.Shield, blacklistedTokenMiddleware.Shield)
+	// User endpoints
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

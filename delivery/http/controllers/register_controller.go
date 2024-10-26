@@ -19,8 +19,8 @@ type RegisterController struct {
 // r: The register use case.
 //
 // Returns a new instance of the RegisterController.
-func NewRegisterController(r *usecases.RegisterUseCase) RegisterController {
-	return RegisterController{registerUseCase: r}
+func NewRegisterController(r *usecases.RegisterUseCase) *RegisterController {
+	return &RegisterController{registerUseCase: r}
 }
 
 // Register is a function that handles the register request.

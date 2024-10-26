@@ -18,8 +18,8 @@ type LogoutController struct {
 // l: The logout use case.
 //
 // Returns a new instance of the LogoutController.
-func NewLogoutController(l *usecases.LogoutUseCase) LogoutController {
-	return LogoutController{logoutUseCase: l}
+func NewLogoutController(l *usecases.LogoutUseCase) *LogoutController {
+	return &LogoutController{logoutUseCase: l}
 }
 
 // Logout is a handler that logs out a user
