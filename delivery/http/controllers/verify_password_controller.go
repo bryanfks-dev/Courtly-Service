@@ -67,7 +67,7 @@ func (v *VerifyPasswordController) VerifyPassword(c echo.Context) error {
 	valid := v.authUseCase.VerifyPassword(data.Password, user.Password)
 
 	// Return an error if the password is invalid
-	if valid {
+	if !valid {
 		return c.JSON(http.StatusForbidden, dto.Response{
 			Success: false,
 			Message: "Invalid password",
