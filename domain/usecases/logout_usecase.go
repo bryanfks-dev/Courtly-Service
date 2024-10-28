@@ -11,17 +11,21 @@ import (
 
 // LogoutUseCase is a struct that defines the logout use case.
 type LogoutUseCase struct {
-	blacklistedTokenRepository *repository.BlacklistedTokenRepository
-	authUseCase                *AuthUseCase
+	AuthUseCase                *AuthUseCase
+	BlacklistedTokenRepository *repository.BlacklistedTokenRepository
 }
 
 // NewLogoutUseCase is a factory function that returns a new instance of the LogoutUseCase.
 //
+// a: The auth use case.
 // b: The blacklisted token repository.
 //
 // Returns a new instance of the LogoutUseCase.
-func NewLogoutUseCase(b *repository.BlacklistedTokenRepository, a *AuthUseCase) *LogoutUseCase {
-	return &LogoutUseCase{blacklistedTokenRepository: b, authUseCase: a}
+func NewLogoutUseCase(a *AuthUseCase, b *repository.BlacklistedTokenRepository) *LogoutUseCase {
+	return &LogoutUseCase{
+		AuthUseCase:                a,
+		BlacklistedTokenRepository: b,
+	}
 }
 
 // BlacklistToken is a usecase that invalidates a token
@@ -32,7 +36,7 @@ func NewLogoutUseCase(b *repository.BlacklistedTokenRepository, a *AuthUseCase) 
 // Returns an error if the token could not be invalidated
 func (l *LogoutUseCase) BlacklistToken(token *jwt.Token) error {
 	// Get the token claims
-	claims := l.authUseCase.DecodeToken(token)
+	claims := l.AuthUseCase.DecodeToken(token)
 
 	// Insert the token into the blacklisted_tokens table
 	err := mysql.Conn.Create(&models.BlacklistedToken{

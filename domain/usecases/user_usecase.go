@@ -4,37 +4,52 @@ import (
 	"log"
 	"main/data/models"
 	"main/internal/repository"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // UserUseCase is a struct that defines the use case for the user entity.
 type UserUseCase struct {
-	userRepository *repository.UserRepository
+	AuthUseCase    *AuthUseCase
+	UserRepository *repository.UserRepository
 }
 
 // NewUserUseCase is a factory function that returns a new instance of the UserUseCase struct.
 //
+// a: The auth use case.
 // u: The user repository.
 //
 // Returns a new instance of the UserUseCase.
-func NewUserUseCase(u *repository.UserRepository) *UserUseCase {
-	return &UserUseCase{userRepository: u}
+func NewUserUseCase(a *AuthUseCase, u *repository.UserRepository) *UserUseCase {
+	return &UserUseCase{
+		AuthUseCase:    a,
+		UserRepository: u,
+	}
 }
 
-// GetUserByID is a method that returns a user entity by its ID.
+// GetUserByID is a method that returns a user by ID.
 //
-// id: The ID of the user.
+// userID: The ID of the user.
 //
-// Returns the user entity and an error if any.
-func (u *UserUseCase) GetUserByID(id uint) (*models.User, error) {
-	// Get the user entity by its ID
-	user, err := u.userRepository.GetUsingID(id)
+// Returns the user and an error if any.
+func (u *UserUseCase) GetUserByID(userID uint) (*models.User, error) {
+	// Get the user from the database
+	user, err := u.UserRepository.GetUsingID(userID)
 
-	// Check if there is an error
+	// Return an error if any
 	if err != nil {
-		log.Println("Failed retrieve user by ID: ", err)
+		log.Println("Failed to get current user: ", err)
 
 		return nil, err
 	}
 
 	return user, nil
+}
+
+// GetCurrentUser is a method that returns the current user.
+func (u *UserUseCase) GetCurrentUser(token *jwt.Token) (*models.User, error) {
+	// Get the token claims
+	claims := u.AuthUseCase.DecodeToken(token)
+
+	return u.GetUserByID(claims.Id)
 }

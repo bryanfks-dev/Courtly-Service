@@ -12,10 +12,10 @@ import (
 
 // UserController is a struct that defines the user controller.
 type UserController struct {
-	userUseCase           *usecases.UserUseCase
-	changePasswordUseCase *usecases.ChangeUserPasswordUseCase
-	changeUsernameUseCase *usecases.ChangeUserUsernameUseCase
-	authUseCase           *usecases.AuthUseCase
+	UserUseCase           *usecases.UserUseCase
+	ChangePasswordUseCase *usecases.ChangeUserPasswordUseCase
+	ChangeUsernameUseCase *usecases.ChangeUserUsernameUseCase
+	AuthUseCase           *usecases.AuthUseCase
 }
 
 // NewUserController is a factory function that returns a new instance of the UserController.
@@ -27,10 +27,10 @@ type UserController struct {
 // Returns a new instance of the UserController.
 func NewUserController(u *usecases.UserUseCase, cp *usecases.ChangeUserPasswordUseCase, cu *usecases.ChangeUserUsernameUseCase, a *usecases.AuthUseCase) *UserController {
 	return &UserController{
-		userUseCase:           u,
-		changePasswordUseCase: cp,
-		changeUsernameUseCase: cu,
-		authUseCase:           a,
+		UserUseCase:           u,
+		ChangePasswordUseCase: cp,
+		ChangeUsernameUseCase: cu,
+		AuthUseCase:           a,
 	}
 }
 
@@ -44,17 +44,13 @@ func (u *UserController) GetCurrentUser(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
-	// Decode the token
-	claims := u.authUseCase.DecodeToken(cc.Token)
-
-	// Get the user from the database
-	user, err := u.userUseCase.GetUserByID(claims.Id)
+	user, err := u.UserUseCase.GetCurrentUser(cc.Token)
 
 	// Return an error if any
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.Response{
 			Success: false,
-			Message: "An error occurred while getting the user",
+			Message: "Failed to get current user",
 			Data:    nil,
 		})
 	}
@@ -91,7 +87,7 @@ func (u *UserController) GetPublicUser(c echo.Context) error {
 	}
 
 	// Get the user with the given ID
-	user, err := u.userUseCase.GetUserByID(uint(userID))
+	user, err := u.UserUseCase.GetUserByID(uint(userID))
 
 	// Return an error if the user does not exist
 	if err != nil {
@@ -121,9 +117,6 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
-	// Decode the token
-	claims := u.authUseCase.DecodeToken(cc.Token)
-
 	// Bind the form data
 	form := new(dto.ChangePasswordForm)
 
@@ -139,7 +132,7 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	}
 
 	// Validate the form data
-	if err := u.changePasswordUseCase.ValidateForm(form); err != nil {
+	if err := u.ChangePasswordUseCase.ValidateForm(form); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: err,
@@ -148,7 +141,7 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	}
 
 	// Update the password
-	user, err := u.changePasswordUseCase.Process(claims.Id, form)
+	user, err := u.ChangePasswordUseCase.Process(cc.Token, form)
 
 	// Return an error if any
 	if err != nil {
@@ -186,9 +179,6 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
-	// Decode the token
-	claims := u.authUseCase.DecodeToken(cc.Token)
-
 	// Bind the form data
 	form := new(dto.ChangeUsernameForm)
 
@@ -204,7 +194,7 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 	}
 
 	// Validate the form data
-	if err := u.changeUsernameUseCase.ValidateForm(form); err != nil {
+	if err := u.ChangeUsernameUseCase.ValidateForm(form); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: err,
@@ -213,7 +203,7 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 	}
 
 	// Update the username
-	user, err := u.changeUsernameUseCase.Process(claims.Id, form)
+	user, err := u.ChangeUsernameUseCase.Process(cc.Token, form)
 
 	// Return an error if any
 	if err != nil {

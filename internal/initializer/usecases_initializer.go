@@ -27,17 +27,17 @@ func InitUseCases(repos *Repositories) *UseCases {
 
 	u.VerifyPasswordUseCase = usecases.NewVerifyPasswordUseCase(u.AuthUseCase, repos.UserRepository)
 
-	u.RegisterUseCase = usecases.NewRegisterUseCase(repos.UserRepository)
+	u.RegisterUseCase = usecases.NewRegisterUseCase(u.AuthUseCase, repos.UserRepository)
 
-	u.LoginUseCase = usecases.NewLoginUseCase(repos.UserRepository, u.AuthUseCase)
+	u.LoginUseCase = usecases.NewLoginUseCase(u.AuthUseCase, repos.UserRepository)
 
-	u.LogoutUseCase = usecases.NewLogoutUseCase(repos.BlacklistedTokenRepository, u.AuthUseCase)
+	u.LogoutUseCase = usecases.NewLogoutUseCase(u.AuthUseCase,repos.BlacklistedTokenRepository)
 
-	u.ChangeUserPasswordUseCase = usecases.NewChangeUserPasswordUseCase(repos.UserRepository)
+	u.ChangeUserPasswordUseCase = usecases.NewChangeUserPasswordUseCase(u.AuthUseCase,repos.UserRepository)
 
-	u.ChangeUserUsernameUseCase = usecases.NewChangeUserUsernameUseCase(repos.UserRepository)
+	u.ChangeUserUsernameUseCase = usecases.NewChangeUserUsernameUseCase(u.AuthUseCase,repos.UserRepository)
 
-	u.UserUseCase = usecases.NewUserUseCase(repos.UserRepository)
+	u.UserUseCase = usecases.NewUserUseCase(u.AuthUseCase, repos.UserRepository)
 
 	u.BlacklistedTokenUseCase = usecases.NewBlacklistedTokenUseCase(repos.BlacklistedTokenRepository)
 

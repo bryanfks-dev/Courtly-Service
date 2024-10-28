@@ -12,17 +12,18 @@ import (
 
 // LoginUseCase is a struct that defines the login use case.
 type LoginUseCase struct {
-	userRepository *repository.UserRepository
-	authUseCase    *AuthUseCase
+	AuthUseCase    *AuthUseCase
+	UserRepository *repository.UserRepository
 }
 
 // NewLoginUseCase is a factory function that returns a new instance of the LoginUseCase.
 //
+// a: The auth use case.
 // u: The user repository.
 //
 // Returns a new instance of the LoginUseCase.
-func NewLoginUseCase(u *repository.UserRepository, a *AuthUseCase) *LoginUseCase {
-	return &LoginUseCase{userRepository: u, authUseCase: a}
+func NewLoginUseCase(a *AuthUseCase, u *repository.UserRepository) *LoginUseCase {
+	return &LoginUseCase{AuthUseCase: a, UserRepository: u}
 }
 
 // ValidateForm is a function that validates the login form.
@@ -59,7 +60,7 @@ func (l LoginUseCase) ValidateForm(form *dto.LoginForm) types.FormErrorResponseM
 // Returns the user object and an error if any.
 func (l LoginUseCase) Process(form *dto.LoginForm) (*models.User, *entities.ProcessError) {
 	// Check if the username is taken
-	user, err := l.userRepository.GetUsingUsername(form.Username)
+	user, err := l.UserRepository.GetUsingUsername(form.Username)
 
 	// Return an error if any
 	if err != nil {
@@ -84,7 +85,7 @@ func (l LoginUseCase) Process(form *dto.LoginForm) (*models.User, *entities.Proc
 	}
 
 	// Check if the password is correct
-	if !l.authUseCase.VerifyPassword(form.Password, user.Password) {
+	if !l.AuthUseCase.VerifyPassword(form.Password, user.Password) {
 		return nil, &entities.ProcessError{
 			Message: types.FormErrorResponseMsg{
 				"password": []string{"Password is incorrect"},

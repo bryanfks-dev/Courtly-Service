@@ -15,17 +15,21 @@ import (
 
 // RegisterUseCase is a struct that defines the register use case.
 type RegisterUseCase struct {
-	userRepository *repository.UserRepository
-	authUseCase    *AuthUseCase
+	AuthUseCase    *AuthUseCase
+	UserRepository *repository.UserRepository
 }
 
 // NewRegisterUseCase is a factory function that returns a new instance of the RegisterUseCase.
 //
+// a: The auth use case.
 // u: The user repository.
 //
 // Returns a new instance of the RegisterUseCase.
-func NewRegisterUseCase(u *repository.UserRepository) *RegisterUseCase {
-	return &RegisterUseCase{userRepository: u}
+func NewRegisterUseCase(a *AuthUseCase, u *repository.UserRepository) *RegisterUseCase {
+	return &RegisterUseCase{
+		AuthUseCase:    a,
+		UserRepository: u,
+	}
 }
 
 // SanitizeRegisterForm is a helper function that sanitizes the register input.
@@ -92,7 +96,7 @@ func (r RegisterUseCase) ValidateForm(form *dto.RegisterForm) types.FormErrorRes
 // Returns the user and an error message.
 func (r RegisterUseCase) Process(form *dto.RegisterForm) *entities.ProcessError {
 	// Check if the username is taken
-	taken, err := r.userRepository.IsUsernameTaken(form.Username)
+	taken, err := r.UserRepository.IsUsernameTaken(form.Username)
 
 	// Check if there is an error
 	if err != nil {
@@ -117,7 +121,7 @@ func (r RegisterUseCase) Process(form *dto.RegisterForm) *entities.ProcessError 
 	}
 
 	// Check if the phone number is taken
-	taken, err = r.userRepository.IsPhoneNumberTaken(form.PhoneNumber)
+	taken, err = r.UserRepository.IsPhoneNumberTaken(form.PhoneNumber)
 
 	// Check if there is an error
 	if err != nil {
@@ -151,7 +155,7 @@ func (r RegisterUseCase) Process(form *dto.RegisterForm) *entities.ProcessError 
 // Returns the user and an error message.
 func (r *RegisterUseCase) CreateNewUser(form *dto.RegisterForm) (*models.User, error) {
 	// Hash the password
-	hashedPwd, err := r.authUseCase.HashPassword(form.Password)
+	hashedPwd, err := r.AuthUseCase.HashPassword(form.Password)
 
 	// Check if there is an error hashing the password
 	if err != nil {
@@ -168,7 +172,7 @@ func (r *RegisterUseCase) CreateNewUser(form *dto.RegisterForm) (*models.User, e
 	}
 
 	// Register the user into the database
-	err = r.userRepository.Create(&newUser)
+	err = r.UserRepository.Create(&newUser)
 
 	// Check if there is an error creating the user
 	if err != nil {

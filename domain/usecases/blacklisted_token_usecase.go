@@ -8,7 +8,7 @@ import (
 
 // BlacklistedTokenUseCase is a struct that defines the blacklisted token use case.
 type BlacklistedTokenUseCase struct {
-	blacklistedTokenRepository *repository.BlacklistedTokenRepository
+	BlacklistedTokenRepository *repository.BlacklistedTokenRepository
 }
 
 // NewBlacklistedTokenUseCase is a factory function that returns a new instance of the BlacklistedTokenUseCase.
@@ -17,7 +17,7 @@ type BlacklistedTokenUseCase struct {
 //
 // Returns a new instance of the BlacklistedTokenUseCase.
 func NewBlacklistedTokenUseCase(b *repository.BlacklistedTokenRepository) *BlacklistedTokenUseCase {
-	return &BlacklistedTokenUseCase{blacklistedTokenRepository: b}
+	return &BlacklistedTokenUseCase{BlacklistedTokenRepository: b}
 }
 
 // AddBlacklistToken is a function that adds a token to the blacklist.
@@ -27,7 +27,7 @@ func NewBlacklistedTokenUseCase(b *repository.BlacklistedTokenRepository) *Black
 // Returns an error if the operation was not successful.
 func (b *BlacklistedTokenUseCase) AddBlacklistToken(token *models.BlacklistedToken) error {
 	// Add the token to the blacklist
-	err := b.blacklistedTokenRepository.Create(token)
+	err := b.BlacklistedTokenRepository.Create(token)
 
 	// If there was an error adding the token to the blacklist, log the error and return the error
 	if err != nil {
@@ -46,7 +46,7 @@ func (b *BlacklistedTokenUseCase) AddBlacklistToken(token *models.BlacklistedTok
 // Returns a boolean value.
 func (b *BlacklistedTokenUseCase) IsBlacklistedToken(token string) bool {
 	// Check if the token is blacklisted
-	blacklisted, err := b.blacklistedTokenRepository.IsBlacklisted(token)
+	blacklisted, err := b.BlacklistedTokenRepository.IsBlacklisted(token)
 
 	// If there was an error checking if the token is blacklisted, log the error and return false
 	if err != nil {
@@ -63,7 +63,7 @@ func (b *BlacklistedTokenUseCase) IsBlacklistedToken(token string) bool {
 // Returns an error if the operation was not successful.
 func (b *BlacklistedTokenUseCase) ClearBlacklistToken() error {
 	// Clear the blacklist token
-	err := b.blacklistedTokenRepository.Clear()
+	err := b.BlacklistedTokenRepository.Clear()
 
 	// If there was an error clearing the blacklist token, log the error and return the error
 	if err != nil {
@@ -82,7 +82,7 @@ func (b *BlacklistedTokenUseCase) ClearBlacklistToken() error {
 // Returns an error if the operation was not successful.
 func (b *BlacklistedTokenUseCase) RemoveBlacklistToken(tokenString string) error {
 	// Remove the token from the blacklist
-	err := b.blacklistedTokenRepository.Remove(tokenString)
+	err := b.BlacklistedTokenRepository.Remove(tokenString)
 
 	// If there was an error removing the token from the blacklist, log the error and return the error
 	if err != nil {

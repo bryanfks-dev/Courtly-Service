@@ -10,11 +10,14 @@ import (
 	"main/internal/dto"
 	"main/internal/repository"
 	"main/pkg/utils"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // ChangeUserUsernameUseCase is a struct that defines the use case for changing the user's username.
 type ChangeUserUsernameUseCase struct {
-	userRepository *repository.UserRepository
+	AuthUseCase    *AuthUseCase
+	UserRepository *repository.UserRepository
 }
 
 // NewChangeUserUsernameUseCase is a factory function that returns a new instance of the ChangeUserUsernameUseCase struct.
@@ -22,8 +25,11 @@ type ChangeUserUsernameUseCase struct {
 // u: The user repository.
 //
 // Returns a new instance of the ChangeUserUsernameUseCase.
-func NewChangeUserUsernameUseCase(u *repository.UserRepository) *ChangeUserUsernameUseCase {
-	return &ChangeUserUsernameUseCase{userRepository: u}
+func NewChangeUserUsernameUseCase(a *AuthUseCase, u *repository.UserRepository) *ChangeUserUsernameUseCase {
+	return &ChangeUserUsernameUseCase{
+		AuthUseCase:    a,
+		UserRepository: u,
+	}
 }
 
 // ValidateForm is a function that validates the change username form.
@@ -58,9 +64,9 @@ func (c *ChangeUserUsernameUseCase) ValidateForm(form *dto.ChangeUsernameForm) t
 // form: The change username form.
 //
 // Returns an error if any.
-func (c *ChangeUserUsernameUseCase) Process(userID uint, form *dto.ChangeUsernameForm) (*models.User, *entities.ProcessError) {
+func (c *ChangeUserUsernameUseCase) Process(token *jwt.Token, form *dto.ChangeUsernameForm) (*models.User, *entities.ProcessError) {
 	// Get the user by ID
-	taken, err := c.userRepository.IsUsernameTaken(form.NewUsername)
+	taken, err := c.UserRepository.IsUsernameTaken(form.NewUsername)
 
 	// Return an error if any
 	if err != nil {
@@ -82,8 +88,11 @@ func (c *ChangeUserUsernameUseCase) Process(userID uint, form *dto.ChangeUsernam
 		}
 	}
 
+	// Get the user ID from the token
+	claims := c.AuthUseCase.DecodeToken(token)
+
 	// Update the username
-	user, err := c.userRepository.UpdateUsername(userID, form.NewUsername)
+	user, err := c.UserRepository.UpdateUsername(claims.Id, form.NewUsername)
 
 	// Return an error if any
 	if err != nil {

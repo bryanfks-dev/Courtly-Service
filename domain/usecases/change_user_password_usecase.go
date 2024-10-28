@@ -10,21 +10,27 @@ import (
 	"main/internal/dto"
 	"main/internal/repository"
 	"main/pkg/utils"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // ChangeUserPasswordUseCase is a struct that defines the change password use case.
 type ChangeUserPasswordUseCase struct {
-	userRepository *repository.UserRepository
-	authUseCase    *AuthUseCase
+	AuthUseCase    *AuthUseCase
+	UserRepository *repository.UserRepository
 }
 
 // NewChangePasswordUseCase is a factory function that returns a new instance of the ChangePasswordUseCase.
 //
+// a: The auth use case.
 // u: The user repository.
 //
 // Returns a new instance of the ChangePasswordUseCase.
-func NewChangeUserPasswordUseCase(u *repository.UserRepository) *ChangeUserPasswordUseCase {
-	return &ChangeUserPasswordUseCase{userRepository: u}
+func NewChangeUserPasswordUseCase(a *AuthUseCase, u *repository.UserRepository) *ChangeUserPasswordUseCase {
+	return &ChangeUserPasswordUseCase{
+		AuthUseCase:    a,
+		UserRepository: u,
+	}
 }
 
 // ValidateForm is a function that validates the change password form.
@@ -74,9 +80,12 @@ func (c *ChangeUserPasswordUseCase) ValidateForm(form *dto.ChangePasswordForm) t
 // form: The change password form.
 //
 // Returns the user object and an error if any.
-func (c *ChangeUserPasswordUseCase) Process(userID uint, form *dto.ChangePasswordForm) (*models.User, *entities.ProcessError) {
+func (c *ChangeUserPasswordUseCase) Process(token *jwt.Token, form *dto.ChangePasswordForm) (*models.User, *entities.ProcessError) {
+	// Get the user ID from the token
+	claims := c.AuthUseCase.DecodeToken(token)
+
 	// Get the user by ID
-	user, err := c.userRepository.GetUsingID(userID)
+	user, err := c.UserRepository.GetUsingID(claims.Id)
 
 	// Check if there is an error
 	if err != nil {
@@ -89,7 +98,7 @@ func (c *ChangeUserPasswordUseCase) Process(userID uint, form *dto.ChangePasswor
 	}
 
 	// Check if the old password is correct
-	if !c.authUseCase.VerifyPassword(form.OldPassword, user.Password) {
+	if !c.AuthUseCase.VerifyPassword(form.OldPassword, user.Password) {
 		return nil, &entities.ProcessError{
 			ClientError: true,
 			Message: types.FormErrorResponseMsg{
@@ -99,7 +108,7 @@ func (c *ChangeUserPasswordUseCase) Process(userID uint, form *dto.ChangePasswor
 	}
 
 	// Hash the new password
-	hashedNewPassword, err := c.authUseCase.HashPassword(form.NewPassword)
+	hashedNewPassword, err := c.AuthUseCase.HashPassword(form.NewPassword)
 
 	// Check if there is an error
 	if err != nil {
@@ -112,7 +121,7 @@ func (c *ChangeUserPasswordUseCase) Process(userID uint, form *dto.ChangePasswor
 	}
 
 	// Update the user's password
-	user, err = c.userRepository.UpdatePassword(userID, hashedNewPassword)
+	user, err = c.UserRepository.UpdatePassword(claims.Id, hashedNewPassword)
 
 	// Check if there is an error
 	if err != nil {
