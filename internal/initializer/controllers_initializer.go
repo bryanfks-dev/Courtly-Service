@@ -21,7 +21,7 @@ func InitControllers(usecase *UseCases) *Controllers {
 		LoginController:          controllers.NewLoginController(usecase.LoginUseCase, usecase.AuthUseCase),
 		RegisterController:       controllers.NewRegisterController(usecase.RegisterUseCase),
 		LogoutController:         controllers.NewLogoutController(usecase.LogoutUseCase),
-		VerifyPasswordController: controllers.NewVerifyPasswordController(usecase.AuthUseCase, usecase.UserUseCase),
+		VerifyPasswordController: controllers.NewVerifyPasswordController(usecase.VerifyPasswordUseCase),
 		UserController:           controllers.NewUserController(usecase.UserUseCase, usecase.ChangeUserPasswordUseCase, usecase.ChangeUserUsernameUseCase, usecase.AuthUseCase),
 	}
 }

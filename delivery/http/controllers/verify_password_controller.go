@@ -11,18 +11,18 @@ import (
 
 // VerifyPasswordController is a struct to hold the VerifyPassword function
 type VerifyPasswordController struct {
-	authUseCase *usecases.AuthUseCase
-	userUseCase *usecases.UserUseCase
+	VerifyPasswordUseCase *usecases.VerifyPasswordUseCase
 }
 
 // NewVerifyPasswordController is a factory function that returns a new instance of VerifyPasswordController
 //
-// a: Instance of usecases.AuthUseCase
-// u: Instance of usecases.UserUseCase
+// v: The VerifyPasswordUseCase
 //
 // Returns a new instance of VerifyPasswordController
-func NewVerifyPasswordController(a *usecases.AuthUseCase, u *usecases.UserUseCase) *VerifyPasswordController {
-	return &VerifyPasswordController{authUseCase: a, userUseCase: u}
+func NewVerifyPasswordController(v *usecases.VerifyPasswordUseCase) *VerifyPasswordController {
+	return &VerifyPasswordController{
+		VerifyPasswordUseCase: v,
+	}
 }
 
 // VerifyPassword is a controller to handle the request to verify the password of the user
@@ -34,14 +34,11 @@ func (v *VerifyPasswordController) VerifyPassword(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
-	// Decode the token
-	claims := v.authUseCase.DecodeToken(cc.Token)
-
-	// Bind the data
-	data := new(dto.VerifyPasswordData)
+	// Bind the form
+	form := new(dto.VerifyPasswordForm)
 
 	// Return an error if the form data is invalid
-	if err := c.Bind(data); err != nil {
+	if err := c.Bind(form); err != nil {
 		log.Println("Error binding form data: ", err)
 
 		return c.JSON(http.StatusBadRequest, dto.Response{
@@ -51,26 +48,23 @@ func (v *VerifyPasswordController) VerifyPassword(c echo.Context) error {
 		})
 	}
 
-	// Get the user from the database
-	user, err := v.userUseCase.GetUserByID(claims.Id)
-
-	// Return an error if any
-	if err != nil {
+	// Validate the form
+	if err := v.VerifyPasswordUseCase.ValidateForm(form); err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.Response{
 			Success: false,
-			Message: "An error occurred while getting the user",
+			Message: err,
 			Data:    nil,
 		})
 	}
 
-	// Verify the password
-	valid := v.authUseCase.VerifyPassword(data.Password, user.Password)
+	// Process the form
+	user, err := v.VerifyPasswordUseCase.Process(form, cc.Token)
 
-	// Return an error if the password is invalid
-	if !valid {
+	// Check if there is an error
+	if err != nil {
 		return c.JSON(http.StatusForbidden, dto.Response{
 			Success: false,
-			Message: "Invalid password",
+			Message: err,
 			Data:    nil,
 		})
 	}
@@ -78,6 +72,8 @@ func (v *VerifyPasswordController) VerifyPassword(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.Response{
 		Success: true,
 		Message: "Password verified successfully",
-		Data:    nil,
+		Data: dto.CurrentUserResponseData{
+			User: dto.CurrentUser{}.FromModel(user),
+		},
 	})
 }

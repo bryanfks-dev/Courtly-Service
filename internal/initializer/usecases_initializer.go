@@ -5,6 +5,7 @@ import "main/domain/usecases"
 // UseCases is a struct that holds all the use cases.
 type UseCases struct {
 	AuthUseCase               *usecases.AuthUseCase
+	VerifyPasswordUseCase     *usecases.VerifyPasswordUseCase
 	RegisterUseCase           *usecases.RegisterUseCase
 	LoginUseCase              *usecases.LoginUseCase
 	LogoutUseCase             *usecases.LogoutUseCase
@@ -23,6 +24,8 @@ func InitUseCases(repos *Repositories) *UseCases {
 	u := &UseCases{}
 
 	u.AuthUseCase = usecases.NewAuthUseCase()
+
+	u.VerifyPasswordUseCase = usecases.NewVerifyPasswordUseCase(u.AuthUseCase, repos.UserRepository)
 
 	u.RegisterUseCase = usecases.NewRegisterUseCase(repos.UserRepository)
 
