@@ -19,8 +19,8 @@ type CurrentUser struct {
 	// PhoneNumber is the phone number of the user.
 	PhoneNumber string `json:"phone_number"`
 
-	// ProfilePicture is the profile picture of the user.
-	ProfilePicture string `json:"profile_picture"`
+	// ProfilePictureUrl is the profile picture of the user.
+	ProfilePictureUrl string `json:"profile_picture_url"`
 }
 
 // FromModel creates a CurrentUser DTO from a User model.
@@ -28,10 +28,10 @@ func (c CurrentUser) FromModel(m *models.User) CurrentUser {
 	// If the profile picture is blank, return the CurrentUser DTO without the profile picture.
 	if utils.IsBlank(m.ProfilePicture) {
 		return CurrentUser{
-			ID:             m.ID,
-			Username:       m.Username,
-			PhoneNumber:    m.PhoneNumber,
-			ProfilePicture: m.ProfilePicture,
+			ID:                m.ID,
+			Username:          m.Username,
+			PhoneNumber:       m.PhoneNumber,
+			ProfilePictureUrl: m.ProfilePicture,
 		}
 	}
 
@@ -39,9 +39,9 @@ func (c CurrentUser) FromModel(m *models.User) CurrentUser {
 	profilePicturePath := fmt.Sprintf("%s:%d%s/%s", config.ServerConfig.Host, config.ServerConfig.Port, router.UserProfiles, m.ProfilePicture)
 
 	return CurrentUser{
-		ID:             m.ID,
-		Username:       m.Username,
-		PhoneNumber:    m.PhoneNumber,
-		ProfilePicture: profilePicturePath,
+		ID:                m.ID,
+		Username:          m.Username,
+		PhoneNumber:       m.PhoneNumber,
+		ProfilePictureUrl: profilePicturePath,
 	}
 }
