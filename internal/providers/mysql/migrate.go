@@ -8,5 +8,13 @@ import "main/data/models"
 // Returns an error if any
 func Migrate() error {
 	// Migrate the database
-	return Conn.AutoMigrate(&models.User{}, &models.BlacklistedToken{})
+	return Conn.AutoMigrate(
+		&models.User{},
+		&models.BlacklistedToken{},
+		&models.Vendor{},
+		&models.CourtType{},
+		&models.PaymentMethod{},
+		&models.Review{},
+		&models.Book{},
+		&models.Order{})
 }

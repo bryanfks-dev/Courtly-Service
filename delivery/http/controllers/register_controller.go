@@ -23,13 +23,13 @@ func NewRegisterController(r *usecases.RegisterUseCase) *RegisterController {
 	return &RegisterController{registerUseCase: r}
 }
 
-// Register is a function that handles the register request.
+// UserRegister is a function that handles the user register request.
 // Endpoint: POST /register
 //
 // c: The echo context.
 //
 // Returns an error response if there is an error, otherwise a success response.
-func (r RegisterController) Register(c echo.Context) error {
+func (r RegisterController) UserRegister(c echo.Context) error {
 	// Create a new RegisterForm object
 	form := new(dto.RegisterForm)
 

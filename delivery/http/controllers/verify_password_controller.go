@@ -25,12 +25,12 @@ func NewVerifyPasswordController(v *usecases.VerifyPasswordUseCase) *VerifyPassw
 	}
 }
 
-// VerifyPassword is a controller to handle the request to verify the password of the user
+// UserVerifyPassword is a controller to handle the request to verify the password of the user
 //
 // c: Context of the HTTP request
 //
 // Returns an error if any
-func (v *VerifyPasswordController) VerifyPassword(c echo.Context) error {
+func (v *VerifyPasswordController) UserVerifyPassword(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 

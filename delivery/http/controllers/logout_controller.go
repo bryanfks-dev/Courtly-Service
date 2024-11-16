@@ -22,14 +22,14 @@ func NewLogoutController(l *usecases.LogoutUseCase) *LogoutController {
 	return &LogoutController{logoutUseCase: l}
 }
 
-// Logout is a handler that logs out a user
+// UserLogout is a handler that logs out a user
 // by blacklisting the token used to authenticate the user.
 // Endpoint: POST /logout
 //
 // c: echo.Context
 //
 // Returns an error response if there is an error, otherwise a success response.
-func (l *LogoutController) Logout(c echo.Context) error {
+func (l *LogoutController) UserLogout(c echo.Context) error {
 	cc := c.(*dto.CustomContext)
 
 	// Blacklist token

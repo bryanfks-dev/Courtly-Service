@@ -26,13 +26,13 @@ func NewLoginController(l *usecases.LoginUseCase, a *usecases.AuthUseCase) *Logi
 
 }
 
-// Login is a function that handles the login request.
+// UserLogin is a function that handles the user login request.
 // Endpoint: POST /api/v1/login
 //
 // c: The echo context.
 //
 // Returns an error response if there is an error, otherwise a success response.
-func (l *LoginController) Login(c echo.Context) error {
+func (l *LoginController) UserLogin(c echo.Context) error {
 	// Create a new LoginForm object
 	form := new(dto.LoginForm)
 
