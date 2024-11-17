@@ -24,7 +24,7 @@ type CurrentUser struct {
 }
 
 // FromModel creates a CurrentUser DTO from a User model.
-//
+// 
 // m: The user model.
 //
 // Returns a CurrentUser DTO.
