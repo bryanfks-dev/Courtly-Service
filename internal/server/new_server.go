@@ -49,34 +49,34 @@ func NewServer() (*echo.Echo, error) {
 
 	userAuthPrefix.POST("/register", c.RegisterController.UserRegister)
 	userAuthPrefix.POST("/login", c.LoginController.UserLogin)
-	userAuthPrefix.POST("/logout", c.LogoutController.UserLogout, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 	userAuthPrefix.POST("/verify-password", c.VerifyPasswordController.UserVerifyPassword, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+	userAuthPrefix.POST("/logout", c.LogoutController.UserLogout, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.VendorMiddleware.Shield)
 
 	// Vendor Auth endpoints
 	vendorAuthPrefix := authPrefix.Group("/vendor")
 
 	vendorAuthPrefix.POST("/login", c.LoginController.VendorLogin)
-	vendorAuthPrefix.POST("/logout", c.LogoutController.VendorLogout, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+	vendorAuthPrefix.POST("/logout", c.LogoutController.VendorLogout, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.VendorMiddleware.Shield)
 
 	// Users endpoints
 	userPrefix := prefix.Group("/users")
 
-	prefix.GET("/:id", c.UserController.GetPublicUser, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+	userPrefix.GET("/:id", c.UserController.GetPublicUser, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 
 	// Current user endpoints
-	currentUserPrefix := userPrefix.Group("/me")
+	currentUserPrefix := userPrefix.Group("/me", m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.UserMiddleware.Shield)
 
-	currentUserPrefix.GET("/", c.UserController.GetCurrentUser, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
-	currentUserPrefix.PATCH("/username", c.UserController.UpdateUserUsername, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
-	currentUserPrefix.PATCH("/password", c.UserController.UpdateUserPassword, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+	currentUserPrefix.GET("", c.UserController.GetCurrentUser)
+	currentUserPrefix.PATCH("/username", c.UserController.UpdateUserUsername)
+	currentUserPrefix.PATCH("/password", c.UserController.UpdateUserPassword)
 
 	// Vendors endpoints
 	vendorPrefix := prefix.Group("/vendors")
 
 	// Current vendor endpoints
-	currentVendorPrefix := vendorPrefix.Group("/me")
+	currentVendorPrefix := vendorPrefix.Group("/me", m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.VendorMiddleware.Shield)
 
-	currentVendorPrefix.GET("/", c.VendorController.GetCurrentVendor, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+	currentVendorPrefix.GET("", c.VendorController.GetCurrentVendor)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

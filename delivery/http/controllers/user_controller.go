@@ -23,6 +23,7 @@ type UserController struct {
 // u: The user use case.
 // cp: The change password use case.
 // cu: The change username use case.
+// a: The auth use case.
 //
 // Returns a new instance of the UserController.
 func NewUserController(u *usecases.UserUseCase, cp *usecases.ChangeUserPasswordUseCase, cu *usecases.ChangeUserUsernameUseCase, a *usecases.AuthUseCase) *UserController {
@@ -48,6 +49,15 @@ func (u *UserController) GetCurrentUser(c echo.Context) error {
 
 	// Return an error if any
 	if err != nil {
+		// Check if the error is a client error
+		if err.ClientError {
+			return c.JSON(http.StatusBadRequest, dto.Response{
+				Success: false,
+				Message: err.Message,
+				Data:    nil,
+			})
+		}
+
 		return c.JSON(http.StatusInternalServerError, dto.Response{
 			Success: false,
 			Message: "Failed to get current user",
@@ -87,13 +97,22 @@ func (u *UserController) GetPublicUser(c echo.Context) error {
 	}
 
 	// Get the user with the given ID
-	user, err := u.UserUseCase.GetUserUsingID(uint(userID))
+	user, processErr := u.UserUseCase.GetUserUsingID(uint(userID))
 
 	// Return an error if the user does not exist
-	if err != nil {
-		return c.JSON(http.StatusNotFound, dto.Response{
+	if processErr != nil {
+		// Check if the error is a client error
+		if processErr.ClientError {
+			return c.JSON(http.StatusBadRequest, dto.Response{
+				Success: false,
+				Message: processErr.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.Response{
 			Success: false,
-			Message: "User not found",
+			Message: processErr.Message,
 			Data:    nil,
 		})
 	}

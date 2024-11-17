@@ -37,7 +37,7 @@ func (u *UserMiddleware) Shield(next echo.HandlerFunc) echo.HandlerFunc {
 		if u.authUseCase.DecodeToken(cc.Token).ClientType != enums.User {
 			return c.JSON(http.StatusUnauthorized, dto.Response{
 				Success: false,
-				Message: "Unauthorized",
+				Message: "Invalid client type for this endpoint",
 				Data:    nil,
 			})
 		}

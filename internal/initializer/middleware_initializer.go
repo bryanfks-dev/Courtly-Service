@@ -6,6 +6,8 @@ import "main/delivery/http/middlewares"
 type Middlewares struct {
 	AuthMiddleware             *middlewares.AuthMiddleware
 	BlacklistedTokenMiddleware *middlewares.BlacklistTokenMiddleware
+	UserMiddleware             *middlewares.UserMiddleware
+	VendorMiddleware           *middlewares.VendorMiddleware
 }
 
 // InitMiddlewares is a function that initializes all the middlewares.
@@ -17,5 +19,7 @@ func InitMiddlewares(usecase *UseCases) *Middlewares {
 	return &Middlewares{
 		AuthMiddleware:             middlewares.NewAuthMiddleware(usecase.AuthUseCase),
 		BlacklistedTokenMiddleware: middlewares.NewBlacklistTokenMiddleware(usecase.BlacklistedTokenUseCase),
+		UserMiddleware:             middlewares.NewUserMiddleware(usecase.AuthUseCase),
+		VendorMiddleware:           middlewares.NewVendorMiddleware(usecase.AuthUseCase),
 	}
 }
