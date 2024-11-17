@@ -27,12 +27,12 @@ func NewUserUseCase(a *AuthUseCase, u *repository.UserRepository) *UserUseCase {
 	}
 }
 
-// GetUserByID is a method that returns a user by ID.
+// GetUserUsingID is a method that returns the user using the given ID.
 //
 // userID: The ID of the user.
 //
 // Returns the user and an error if any.
-func (u *UserUseCase) GetUserByID(userID uint) (*models.User, error) {
+func (u *UserUseCase) GetUserUsingID(userID uint) (*models.User, error) {
 	// Get the user from the database
 	user, err := u.UserRepository.GetUsingID(userID)
 
@@ -51,5 +51,5 @@ func (u *UserUseCase) GetCurrentUser(token *jwt.Token) (*models.User, error) {
 	// Get the token claims
 	claims := u.AuthUseCase.DecodeToken(token)
 
-	return u.GetUserByID(claims.Id)
+	return u.GetUserUsingID(claims.Id)
 }

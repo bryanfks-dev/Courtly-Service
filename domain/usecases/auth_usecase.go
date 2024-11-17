@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"main/core/config"
+	"main/core/enums"
 	"main/domain/entities"
 	"main/pkg/utils"
 	"strings"
@@ -26,13 +27,15 @@ func NewAuthUseCase() *AuthUseCase {
 
 // GenerateToken is a function that generates a JWT token.
 //
-// id: the id of the user
+// id: the id of the client
+// clientType: the client type
 //
 // Returns a string containing the token and an error if there is any
-func (a *AuthUseCase) GenerateToken(id uint) (string, error) {
+func (a *AuthUseCase) GenerateToken(id uint, clientType enums.ClientType) (string, error) {
 	// Create a new token with the claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &entities.JWTClaims{
-		Id: id,
+		Id:         id,
+		ClientType: clientType,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 30)),
 		},

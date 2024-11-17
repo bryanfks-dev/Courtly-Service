@@ -58,7 +58,7 @@ func NewServer() (*echo.Echo, error) {
 	vendorAuthPrefix.POST("/login", c.LoginController.VendorLogin)
 	vendorAuthPrefix.POST("/logout", c.LogoutController.VendorLogout, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 
-	// User endpoints
+	// Users endpoints
 	userPrefix := prefix.Group("/users")
 
 	prefix.GET("/:id", c.UserController.GetPublicUser, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
@@ -70,7 +70,13 @@ func NewServer() (*echo.Echo, error) {
 	currentUserPrefix.PATCH("/username", c.UserController.UpdateUserUsername, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 	currentUserPrefix.PATCH("/password", c.UserController.UpdateUserPassword, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 
-	// User endpoints
+	// Vendors endpoints
+	vendorPrefix := prefix.Group("/vendors")
+
+	// Current vendor endpoints
+	currentVendorPrefix := vendorPrefix.Group("/me")
+
+	currentVendorPrefix.GET("/", c.VendorController.GetCurrentVendor, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

@@ -19,6 +19,9 @@ There are several available endpoints, such as:
 - **PATCH** `/api/v1/users/me/password` - Update user password with a new password
 - **PATCH** `/api/v1/users/me/username` - Update user username with a new available username
 
+##### Vendors endpoints
+- **GET** `/api/v1/vendors/me` - Get current vendor information from database
+
 ## Response
 
 Since this service relies on REST API, so json is pretty much needed here. All endpoints have the same json response structure, which shown as an example below.

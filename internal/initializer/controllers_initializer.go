@@ -9,6 +9,7 @@ type Controllers struct {
 	LogoutController         *controllers.LogoutController
 	VerifyPasswordController *controllers.VerifyPasswordController
 	UserController           *controllers.UserController
+	VendorController         *controllers.VendorController
 }
 
 // InitControllers is a function that initializes all the controllers.
@@ -22,6 +23,7 @@ func InitControllers(usecase *UseCases) *Controllers {
 		RegisterController:       controllers.NewRegisterController(usecase.RegisterUseCase),
 		LogoutController:         controllers.NewLogoutController(usecase.LogoutUseCase),
 		VerifyPasswordController: controllers.NewVerifyPasswordController(usecase.VerifyPasswordUseCase),
-		UserController:               controllers.NewUserController(usecase.UserUseCase, usecase.ChangeUserPasswordUseCase, usecase.ChangeUserUsernameUseCase, usecase.AuthUseCase),
+		UserController:           controllers.NewUserController(usecase.UserUseCase, usecase.ChangeUserPasswordUseCase, usecase.ChangeUserUsernameUseCase, usecase.AuthUseCase),
+		VendorController:         controllers.NewVendorController(usecase.VendorUseCase),
 	}
 }

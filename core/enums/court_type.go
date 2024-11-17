@@ -16,11 +16,11 @@ const (
 //
 // Returns the label of the court type.
 func (c CourtType) Label() string {
-	return map[CourtType]string{
-		Football:   "Football",
-		Basketball: "Basketball",
-		Tennis:     "Tennis",
-		Volleyball: "Volleyball",
-		Badminton:  "Badminton",
+	return [...]string{
+		"Football",
+		"Basketball",
+		"Tennis",
+		"Volleyball",
+		"Badminton",
 	}[c]
 }

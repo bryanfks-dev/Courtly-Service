@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"main/core/enums"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"net/http"
@@ -77,7 +78,7 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 	}
 
 	// Generate a token
-	token, err := l.authUseCase.GenerateToken(user.ID)
+	token, err := l.authUseCase.GenerateToken(user.ID, enums.User)
 
 	// Check if there is an error generating the token
 	if err != nil {
@@ -148,7 +149,7 @@ func (l *LoginController) VendorLogin(c echo.Context) error {
 	}
 
 	// Generate a token
-	token, err := l.authUseCase.GenerateToken(vendor.ID)
+	token, err := l.authUseCase.GenerateToken(vendor.ID, enums.Vendor)
 
 	// Check if there is an error generating the token
 	if err != nil {

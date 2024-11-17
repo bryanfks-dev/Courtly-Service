@@ -79,7 +79,7 @@ func (u *UserController) GetPublicUser(c echo.Context) error {
 
 	// Return an error if the ID is not a valid integer
 	if err != nil {
-		return c.JSON(400, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: "Invalid user ID",
 			Data:    nil,
@@ -87,18 +87,18 @@ func (u *UserController) GetPublicUser(c echo.Context) error {
 	}
 
 	// Get the user with the given ID
-	user, err := u.UserUseCase.GetUserByID(uint(userID))
+	user, err := u.UserUseCase.GetUserUsingID(uint(userID))
 
 	// Return an error if the user does not exist
 	if err != nil {
-		return c.JSON(404, dto.Response{
+		return c.JSON(http.StatusNotFound, dto.Response{
 			Success: false,
 			Message: "User not found",
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(200, dto.Response{
+	return c.JSON(http.StatusOK, dto.Response{
 		Success: true,
 		Message: "User retrieved successfully",
 		Data: dto.PublicUserResponseData{
