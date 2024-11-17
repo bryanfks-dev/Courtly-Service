@@ -27,7 +27,7 @@ func NewLoginController(l *usecases.LoginUseCase, a *usecases.AuthUseCase) *Logi
 }
 
 // UserLogin is a function that handles the user login request.
-// Endpoint: POST /api/v1/login
+// Endpoint: POST /api/v1/auth/user/login
 //
 // c: The echo context.
 //
@@ -99,6 +99,11 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 }
 
 // VendorLogin is a function that handles the vendor login request.
+// Endpoint: POST /api/v1/auth/vendor/login
+//
+// c: The echo context.
+//
+// Returns an error response if there is an error, otherwise a success response.
 func (l *LoginController) VendorLogin(c echo.Context) error {
 	// Create a new VendorLoginForm object
 	form := new(dto.VendorLoginForm)

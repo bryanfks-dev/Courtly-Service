@@ -56,6 +56,7 @@ func NewServer() (*echo.Echo, error) {
 	vendorAuthPrefix := authPrefix.Group("/vendor")
 
 	vendorAuthPrefix.POST("/login", c.LoginController.VendorLogin)
+	vendorAuthPrefix.POST("/logout", c.LogoutController.VendorLogout, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 
 	// User endpoints
 	userPrefix := prefix.Group("/users")

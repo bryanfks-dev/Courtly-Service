@@ -24,7 +24,7 @@ func NewRegisterController(r *usecases.RegisterUseCase) *RegisterController {
 }
 
 // UserRegister is a function that handles the user register request.
-// Endpoint: POST /register
+// Endpoint: POST /api/v1/auth/user/register
 //
 // c: The echo context.
 //
