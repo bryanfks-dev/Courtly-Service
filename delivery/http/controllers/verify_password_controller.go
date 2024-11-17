@@ -26,6 +26,7 @@ func NewVerifyPasswordController(v *usecases.VerifyPasswordUseCase) *VerifyPassw
 }
 
 // UserVerifyPassword is a controller to handle the request to verify the password of the user
+// Endpoint: POST /auth/user/verify-password
 //
 // c: Context of the HTTP request
 //

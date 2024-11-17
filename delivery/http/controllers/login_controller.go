@@ -28,7 +28,7 @@ func NewLoginController(l *usecases.LoginUseCase, a *usecases.AuthUseCase) *Logi
 }
 
 // UserLogin is a function that handles the user login request.
-// Endpoint: POST /api/v1/auth/user/login
+// Endpoint: POST /auth/user/login
 //
 // c: The echo context.
 //
@@ -100,7 +100,7 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 }
 
 // VendorLogin is a function that handles the vendor login request.
-// Endpoint: POST /api/v1/auth/vendor/login
+// Endpoint: POST /auth/vendor/login
 //
 // c: The echo context.
 //

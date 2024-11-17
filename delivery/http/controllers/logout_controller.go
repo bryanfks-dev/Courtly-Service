@@ -24,7 +24,7 @@ func NewLogoutController(l *usecases.LogoutUseCase) *LogoutController {
 
 // UserLogout is a handler that logs out a user
 // by blacklisting the token used to authenticate the user.
-// Endpoint: POST /api/v1/user/logout
+// Endpoint: POST /auth/user/logout
 //
 // c: echo.Context
 //
@@ -53,7 +53,7 @@ func (l *LogoutController) UserLogout(c echo.Context) error {
 
 // VendorLogout is a handler that logs out a vendor
 // by blacklisting the token used to authenticate the vendor.
-// Endpoint: POST /api/v1/vendor/logout
+// Endpoint: POST /auth/vendor/logout
 //
 // c: echo.Context
 //

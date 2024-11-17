@@ -26,7 +26,7 @@ func NewVendorController(v *usecases.VendorUseCase) *VendorController {
 }
 
 // GetCurrentVendor is a handler function that returns the current vendor.
-// Endpoint: GET api/v1/vendors/me
+// Endpoint: GET /vendors/me
 //
 // c: The echo context.
 //
