@@ -77,6 +77,7 @@ func NewServer() (*echo.Echo, error) {
 	currentVendorPrefix := vendorPrefix.Group("/me", m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.VendorMiddleware.Shield)
 
 	currentVendorPrefix.GET("", c.VendorController.GetCurrentVendor)
+	currentVendorPrefix.PATCH("/password", c.VendorController.UpdateVendorPassword)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

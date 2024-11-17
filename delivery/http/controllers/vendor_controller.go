@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"net/http"
@@ -59,6 +60,68 @@ func (v *VendorController) GetCurrentVendor(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.Response{
 		Success: true,
 		Message: "Vendor retrieved successfully",
+		Data: dto.CurrentVendorResponseData{
+			Vendor: dto.CurrentVendor{}.FromModel(vendor),
+		},
+	})
+}
+
+// UpdateVendorPassword is a handler function that updates the password of the current vendor.
+// Endpoint: PACTH /vendors/me/password
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (v *VendorController) UpdateVendorPassword(c echo.Context) error {
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Bind the form data
+	form := new(dto.ChangePasswordForm)
+
+	// Return an error if the form data is invalid
+	if err := c.Bind(form); err != nil {
+		log.Println("Error binding form data: ", err)
+
+		return c.JSON(http.StatusBadRequest, dto.Response{
+			Success: false,
+			Message: "Invalid form data",
+			Data:    nil,
+		})
+	}
+
+	// Validate the form data
+	if err := v.VendorUseCase.ValidateChangePasswordForm(form); err != nil {
+		return c.JSON(http.StatusBadRequest, dto.Response{
+			Success: false,
+			Message: err,
+			Data:    nil,
+		})
+	}
+
+	// Update the password
+	vendor, err := v.VendorUseCase.ProcessChangePassword(cc.Token, form)
+
+	// Return an error if any
+	if err != nil {
+		if err.ClientError {
+			return c.JSON(http.StatusBadRequest, dto.Response{
+				Success: false,
+				Message: err.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.Response{
+			Success: false,
+			Message: err.Message,
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.Response{
+		Success: true,
+		Message: "Password updated successfully",
 		Data: dto.CurrentVendorResponseData{
 			Vendor: dto.CurrentVendor{}.FromModel(vendor),
 		},

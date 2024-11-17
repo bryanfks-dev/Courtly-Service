@@ -53,3 +53,31 @@ func (*VendorRepository) GetUsingEmail(email string) (*models.Vendor, error) {
 
 	return &vendor, err
 }
+
+// UpdatePassword is a function that updates a vendor's password.
+//
+// vendorID: The vendor ID.
+// hashedNewPassword: The hashed new password.
+//
+// Returns an error if any.
+func (*VendorRepository) UpdatePassword(vendorID uint, hashedNewPassword string) (*models.Vendor, error) {
+	var vendor models.Vendor
+
+	// Get the vendor by ID
+	err := mysql.Conn.First(&vendor, "id = ?", vendorID).Error
+
+	// Check if there is an error
+	if err != nil {
+		return nil, err
+	}
+
+	// Update the vendor's password
+	err = mysql.Conn.Model(&vendor).Update("password", hashedNewPassword).Error
+
+	// Check if there is an error
+	if err != nil {
+		return nil, err
+	}
+
+	return &vendor, err
+}

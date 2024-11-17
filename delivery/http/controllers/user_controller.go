@@ -12,26 +12,20 @@ import (
 
 // UserController is a struct that defines the user controller.
 type UserController struct {
-	UserUseCase           *usecases.UserUseCase
-	ChangePasswordUseCase *usecases.ChangeUserPasswordUseCase
-	ChangeUsernameUseCase *usecases.ChangeUserUsernameUseCase
-	AuthUseCase           *usecases.AuthUseCase
+	UserUseCase *usecases.UserUseCase
+	AuthUseCase *usecases.AuthUseCase
 }
 
 // NewUserController is a factory function that returns a new instance of the UserController.
 //
 // u: The user use case.
-// cp: The change password use case.
-// cu: The change username use case.
 // a: The auth use case.
 //
 // Returns a new instance of the UserController.
-func NewUserController(u *usecases.UserUseCase, cp *usecases.ChangeUserPasswordUseCase, cu *usecases.ChangeUserUsernameUseCase, a *usecases.AuthUseCase) *UserController {
+func NewUserController(u *usecases.UserUseCase, a *usecases.AuthUseCase) *UserController {
 	return &UserController{
-		UserUseCase:           u,
-		ChangePasswordUseCase: cp,
-		ChangeUsernameUseCase: cu,
-		AuthUseCase:           a,
+		UserUseCase: u,
+		AuthUseCase: a,
 	}
 }
 
@@ -151,7 +145,7 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	}
 
 	// Validate the form data
-	if err := u.ChangePasswordUseCase.ValidateForm(form); err != nil {
+	if err := u.UserUseCase.ValidateChangePasswordForm(form); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: err,
@@ -160,7 +154,7 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	}
 
 	// Update the password
-	user, err := u.ChangePasswordUseCase.Process(cc.Token, form)
+	user, err := u.UserUseCase.ProcessChangePassword(cc.Token, form)
 
 	// Return an error if any
 	if err != nil {
@@ -213,7 +207,7 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 	}
 
 	// Validate the form data
-	if err := u.ChangeUsernameUseCase.ValidateForm(form); err != nil {
+	if err := u.UserUseCase.ValidateChangeUsernameForm(form); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: err,
@@ -222,7 +216,7 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 	}
 
 	// Update the username
-	user, err := u.ChangeUsernameUseCase.Process(cc.Token, form)
+	user, err := u.UserUseCase.ProcessChangeUsername(cc.Token, form)
 
 	// Return an error if any
 	if err != nil {

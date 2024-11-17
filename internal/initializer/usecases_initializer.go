@@ -9,8 +9,6 @@ type UseCases struct {
 	RegisterUseCase           *usecases.RegisterUseCase
 	LoginUseCase              *usecases.LoginUseCase
 	LogoutUseCase             *usecases.LogoutUseCase
-	ChangeUserPasswordUseCase *usecases.ChangeUserPasswordUseCase
-	ChangeUserUsernameUseCase *usecases.ChangeUserUsernameUseCase
 	UserUseCase               *usecases.UserUseCase
 	BlacklistedTokenUseCase   *usecases.BlacklistedTokenUseCase
 	VendorUseCase             *usecases.VendorUseCase
@@ -33,10 +31,6 @@ func InitUseCases(repos *Repositories) *UseCases {
 	u.LoginUseCase = usecases.NewLoginUseCase(u.AuthUseCase, repos.UserRepository, repos.VendorRepository)
 
 	u.LogoutUseCase = usecases.NewLogoutUseCase(u.AuthUseCase, repos.BlacklistedTokenRepository)
-
-	u.ChangeUserPasswordUseCase = usecases.NewChangeUserPasswordUseCase(u.AuthUseCase, repos.UserRepository)
-
-	u.ChangeUserUsernameUseCase = usecases.NewChangeUserUsernameUseCase(u.AuthUseCase, repos.UserRepository)
 
 	u.UserUseCase = usecases.NewUserUseCase(u.AuthUseCase, repos.UserRepository)
 
