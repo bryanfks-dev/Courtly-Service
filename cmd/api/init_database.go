@@ -23,4 +23,12 @@ func initDatabase() {
 	if err != nil {
 		panic("Error migrating the database: " + err.Error())
 	}
+
+	// Seed the database
+	err = mysql.Seed()
+
+	// Check if there is an error seeding the database
+	if err != nil {
+		panic("Error seeding the database: " + err.Error())
+	}
 }

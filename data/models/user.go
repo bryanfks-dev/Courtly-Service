@@ -13,7 +13,7 @@ type User struct {
 	Username string `gorm:"not null;unique;type:varchar(255);index"`
 
 	// PhoneNumber is the phone number of the user.
-	PhoneNumber string `gorm:"not null;unique;type:varchar(20);index"`
+	PhoneNumber string `gorm:"not null;unique;type:varchar(20)"`
 
 	// ProfilePicture is the profile picture of the user.
 	ProfilePicture string `gorm:"type:varchar(255)"`

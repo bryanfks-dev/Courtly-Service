@@ -5,7 +5,6 @@ package api
 // Returns void
 func Run() {
 	// Initialize the database and server
-
 	initDatabase()
 
 	initServer()

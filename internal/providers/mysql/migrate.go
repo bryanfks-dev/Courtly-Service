@@ -13,6 +13,7 @@ func Migrate() error {
 		&models.BlacklistedToken{},
 		&models.Vendor{},
 		&models.CourtType{},
+		&models.Court{},
 		&models.PaymentMethod{},
 		&models.Review{},
 		&models.Book{},
