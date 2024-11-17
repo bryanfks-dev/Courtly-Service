@@ -7,6 +7,7 @@ type Repositories struct {
 	UserRepository             *repository.UserRepository
 	BlacklistedTokenRepository *repository.BlacklistedTokenRepository
 	VendorRepository           *repository.VendorRepository
+	CourtRepository            *repository.CourtRepository
 }
 
 // InitRepositories is a function that initializes all the repositories.
@@ -17,5 +18,6 @@ func InitRepositories() *Repositories {
 		UserRepository:             repository.NewUserRepository(),
 		BlacklistedTokenRepository: repository.NewBlacklistedTokenRepository(),
 		VendorRepository:           repository.NewVendorRepository(),
+		CourtRepository:            repository.NewCourtRepository(),
 	}
 }

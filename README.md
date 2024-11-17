@@ -5,7 +5,9 @@ Courtly-Service is a backend service of Courtly: Easily Order Court Application.
 ## Endpoint List
 
 There are several available endpoints, such as:
+
 ##### Auth endpoints
+
 - **POST** `/api/v1/auth/user/login` - Sign user with an existing account
 - **POST** `/api/v1/auth/user/register` - Register a new user account
 - **POST** `/api/v1/auth/user/logout` - Remove user from authenticated status
@@ -14,13 +16,19 @@ There are several available endpoints, such as:
 - **POST** `/api/auth/vendor/logout` - Remove vendor from authenticated status
 
 ##### Users endpoints
+
 - **GET** `/api/v1/users/me` - Get current user information from the database
 - **GET** `/api/v1/users/:id` - Get user information from the database using user id
 - **PATCH** `/api/v1/users/me/password` - Update user password with a new password
 - **PATCH** `/api/v1/users/me/username` - Update user username with a new available username
 
 ##### Vendors endpoints
+
 - **GET** `/api/v1/vendors/me` - Get current vendor information from database
+
+##### Courts endpoints
+
+- **GET** `/api/v1/vendors/courts/:type` - Get current vendor courts using type from database
 
 ## Response
 

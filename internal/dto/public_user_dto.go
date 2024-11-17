@@ -21,6 +21,10 @@ type PublicUser struct {
 }
 
 // FromModel creates a PublicUser DTO from a User model.
+//
+// m: The User model.
+//
+// Returns a PublicUser DTO.
 func (p PublicUser) FromModel(m models.User) PublicUser {
 	// If the profile picture is blank, return the PublicUser DTO without the profile picture.
 	if utils.IsBlank(m.ProfilePicture) {

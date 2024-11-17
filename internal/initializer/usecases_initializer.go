@@ -4,14 +4,15 @@ import "main/domain/usecases"
 
 // UseCases is a struct that holds all the use cases.
 type UseCases struct {
-	AuthUseCase               *usecases.AuthUseCase
-	VerifyPasswordUseCase     *usecases.VerifyPasswordUseCase
-	RegisterUseCase           *usecases.RegisterUseCase
-	LoginUseCase              *usecases.LoginUseCase
-	LogoutUseCase             *usecases.LogoutUseCase
-	UserUseCase               *usecases.UserUseCase
-	BlacklistedTokenUseCase   *usecases.BlacklistedTokenUseCase
-	VendorUseCase             *usecases.VendorUseCase
+	AuthUseCase             *usecases.AuthUseCase
+	VerifyPasswordUseCase   *usecases.VerifyPasswordUseCase
+	RegisterUseCase         *usecases.RegisterUseCase
+	LoginUseCase            *usecases.LoginUseCase
+	LogoutUseCase           *usecases.LogoutUseCase
+	UserUseCase             *usecases.UserUseCase
+	BlacklistedTokenUseCase *usecases.BlacklistedTokenUseCase
+	VendorUseCase           *usecases.VendorUseCase
+	CourtUseCase            *usecases.CourtUseCase
 }
 
 // InitUseCases is a function that initializes all the use cases.
@@ -37,6 +38,8 @@ func InitUseCases(repos *Repositories) *UseCases {
 	u.BlacklistedTokenUseCase = usecases.NewBlacklistedTokenUseCase(repos.BlacklistedTokenRepository)
 
 	u.VendorUseCase = usecases.NewVendorUseCase(u.AuthUseCase, repos.VendorRepository)
+
+	u.CourtUseCase = usecases.NewCourtUseCase(u.AuthUseCase, repos.CourtRepository)
 
 	return u
 }

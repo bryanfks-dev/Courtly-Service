@@ -79,5 +79,10 @@ func NewServer() (*echo.Echo, error) {
 	currentVendorPrefix.GET("", c.VendorController.GetCurrentVendor)
 	currentVendorPrefix.PATCH("/password", c.VendorController.UpdateVendorPassword)
 
+	// Courts endpoints
+	currentVendorCourtsPrefix := currentVendorPrefix.Group("/courts")
+
+	currentVendorCourtsPrefix.GET("/:type", c.CourtController.GetCurrentVendorCourtType)
+
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }
