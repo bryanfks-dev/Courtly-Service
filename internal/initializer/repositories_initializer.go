@@ -6,6 +6,7 @@ import "main/internal/repository"
 type Repositories struct {
 	UserRepository             *repository.UserRepository
 	BlacklistedTokenRepository *repository.BlacklistedTokenRepository
+	VendorRepository           *repository.VendorRepository
 }
 
 // InitRepositories is a function that initializes all the repositories.
@@ -15,5 +16,6 @@ func InitRepositories() *Repositories {
 	return &Repositories{
 		UserRepository:             repository.NewUserRepository(),
 		BlacklistedTokenRepository: repository.NewBlacklistedTokenRepository(),
+		VendorRepository:           repository.NewVendorRepository(),
 	}
 }

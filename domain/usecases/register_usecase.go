@@ -37,7 +37,7 @@ func NewRegisterUseCase(a *AuthUseCase, u *repository.UserRepository) *RegisterU
 // form: The register form form.
 //
 // Returns void
-func (r RegisterUseCase) SanitizeForm(form *dto.RegisterForm) {
+func (r RegisterUseCase) SanitizeForm(form *dto.UserRegisterForm) {
 	form.Username = strings.TrimSpace(form.Username)
 	form.PhoneNumber = strings.TrimSpace(form.PhoneNumber)
 }
@@ -47,7 +47,7 @@ func (r RegisterUseCase) SanitizeForm(form *dto.RegisterForm) {
 // form: The register form.
 //
 // Returns a map of errors.
-func (r RegisterUseCase) ValidateForm(form *dto.RegisterForm) types.FormErrorResponseMsg {
+func (r RegisterUseCase) ValidateForm(form *dto.UserRegisterForm) types.FormErrorResponseMsg {
 	// Create an empty error map
 	errs := make(types.FormErrorResponseMsg)
 
@@ -94,7 +94,7 @@ func (r RegisterUseCase) ValidateForm(form *dto.RegisterForm) types.FormErrorRes
 // form: The register form.
 //
 // Returns the user and an error message.
-func (r RegisterUseCase) Process(form *dto.RegisterForm) *entities.ProcessError {
+func (r RegisterUseCase) Process(form *dto.UserRegisterForm) *entities.ProcessError {
 	// Check if the username is taken
 	taken, err := r.UserRepository.IsUsernameTaken(form.Username)
 
@@ -153,7 +153,7 @@ func (r RegisterUseCase) Process(form *dto.RegisterForm) *entities.ProcessError 
 // form: The register form.
 //
 // Returns the user and an error message.
-func (r *RegisterUseCase) CreateNewUser(form *dto.RegisterForm) (*models.User, error) {
+func (r *RegisterUseCase) CreateNewUser(form *dto.UserRegisterForm) (*models.User, error) {
 	// Hash the password
 	hashedPwd, err := r.AuthUseCase.HashPassword(form.Password)
 

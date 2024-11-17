@@ -1,8 +1,8 @@
 package dto
 
-// RegisterForm is a struct that represents the register form
-// that is sent by the client.
-type RegisterForm struct {
+// UserRegisterForm is a struct that represents the register form
+// that is sent by the user.
+type UserRegisterForm struct {
 	// Username is the username of the user.
 	Username string `json:"username"`
 

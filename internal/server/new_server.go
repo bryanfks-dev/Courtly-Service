@@ -53,7 +53,9 @@ func NewServer() (*echo.Echo, error) {
 	userAuthPrefix.POST("/verify-password", c.VerifyPasswordController.UserVerifyPassword, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 
 	// Vendor Auth endpoints
-	// vendorAuthPrefix := authPrefix.Group("/vendor")
+	vendorAuthPrefix := authPrefix.Group("/vendor")
+
+	vendorAuthPrefix.POST("/login", c.LoginController.VendorLogin)
 
 	// User endpoints
 	userPrefix := prefix.Group("/users")
@@ -63,7 +65,7 @@ func NewServer() (*echo.Echo, error) {
 	// Current user endpoints
 	currentUserPrefix := userPrefix.Group("/me")
 
-	currentUserPrefix.GET("", c.UserController.GetCurrentUser, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+	currentUserPrefix.GET("/", c.UserController.GetCurrentUser, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 	currentUserPrefix.PATCH("/username", c.UserController.UpdateUserUsername, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 	currentUserPrefix.PATCH("/password", c.UserController.UpdateUserPassword, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 

@@ -29,13 +29,13 @@ func InitUseCases(repos *Repositories) *UseCases {
 
 	u.RegisterUseCase = usecases.NewRegisterUseCase(u.AuthUseCase, repos.UserRepository)
 
-	u.LoginUseCase = usecases.NewLoginUseCase(u.AuthUseCase, repos.UserRepository)
+	u.LoginUseCase = usecases.NewLoginUseCase(u.AuthUseCase, repos.UserRepository, repos.VendorRepository)
 
-	u.LogoutUseCase = usecases.NewLogoutUseCase(u.AuthUseCase,repos.BlacklistedTokenRepository)
+	u.LogoutUseCase = usecases.NewLogoutUseCase(u.AuthUseCase, repos.BlacklistedTokenRepository)
 
-	u.ChangeUserPasswordUseCase = usecases.NewChangeUserPasswordUseCase(u.AuthUseCase,repos.UserRepository)
+	u.ChangeUserPasswordUseCase = usecases.NewChangeUserPasswordUseCase(u.AuthUseCase, repos.UserRepository)
 
-	u.ChangeUserUsernameUseCase = usecases.NewChangeUserUsernameUseCase(u.AuthUseCase,repos.UserRepository)
+	u.ChangeUserUsernameUseCase = usecases.NewChangeUserUsernameUseCase(u.AuthUseCase, repos.UserRepository)
 
 	u.UserUseCase = usecases.NewUserUseCase(u.AuthUseCase, repos.UserRepository)
 

@@ -8,12 +8,15 @@ import (
 	"main/internal/dto"
 	"main/internal/repository"
 	"main/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
 // LoginUseCase is a struct that defines the login use case.
 type LoginUseCase struct {
-	AuthUseCase    *AuthUseCase
-	UserRepository *repository.UserRepository
+	AuthUseCase     *AuthUseCase
+	UserRepository  *repository.UserRepository
+	VendorRepositoy *repository.VendorRepository
 }
 
 // NewLoginUseCase is a factory function that returns a new instance of the LoginUseCase.
@@ -22,16 +25,20 @@ type LoginUseCase struct {
 // u: The user repository.
 //
 // Returns a new instance of the LoginUseCase.
-func NewLoginUseCase(a *AuthUseCase, u *repository.UserRepository) *LoginUseCase {
-	return &LoginUseCase{AuthUseCase: a, UserRepository: u}
+func NewLoginUseCase(a *AuthUseCase, u *repository.UserRepository, v *repository.VendorRepository) *LoginUseCase {
+	return &LoginUseCase{
+		AuthUseCase:     a,
+		UserRepository:  u,
+		VendorRepositoy: v,
+	}
 }
 
-// ValidateForm is a function that validates the login form.
+// ValidateUserForm is a function that validates the user login form.
 //
 // form: The login form data.
 //
 // Returns a map of errors.
-func (l LoginUseCase) ValidateForm(form *dto.LoginForm) types.FormErrorResponseMsg {
+func (l LoginUseCase) ValidateUserForm(form *dto.UserLoginForm) types.FormErrorResponseMsg {
 	// Create an empty error map
 	errs := make(types.FormErrorResponseMsg)
 
@@ -53,14 +60,51 @@ func (l LoginUseCase) ValidateForm(form *dto.LoginForm) types.FormErrorResponseM
 	return nil
 }
 
-// Process is a function that processes the login form.
+// ValidateVendorForm is a function that validates the vendor login form.
+//
+// form: The login form data.
+//
+// Returns a map of errors.
+func (l LoginUseCase) ValidateVendorForm(form *dto.VendorLoginForm) types.FormErrorResponseMsg {
+	// Create an empty error map
+	errs := make(types.FormErrorResponseMsg)
+
+	// Check if the email is blank
+	if utils.IsBlank(form.Email) {
+		errs["email"] = append(errs["email"], "Email is required")
+	}
+
+	// Check if the password is blank
+	if utils.IsBlank(form.Password) {
+		errs["password"] = append(errs["password"], "Password is required")
+	}
+
+	// Return the errors if any
+	if len(errs) > 0 {
+		return errs
+	}
+
+	return nil
+}
+
+// Process is a function that processes the user login form.
 //
 // form: The login form data.
 //
 // Returns the user object and an error if any.
-func (l LoginUseCase) Process(form *dto.LoginForm) (*models.User, *entities.ProcessError) {
+func (l LoginUseCase) ProcessUser(form *dto.UserLoginForm) (*models.User, *entities.ProcessError) {
 	// Check if the username is taken
 	user, err := l.UserRepository.GetUsingUsername(form.Username)
+
+	// Check if the user does not exist
+	if err == gorm.ErrRecordNotFound {
+		return nil, &entities.ProcessError{
+			Message: types.FormErrorResponseMsg{
+				"username": []string{"Username does not exist"},
+			},
+			ClientError: true,
+		}
+	}
 
 	// Return an error if any
 	if err != nil {
@@ -70,17 +114,7 @@ func (l LoginUseCase) Process(form *dto.LoginForm) (*models.User, *entities.Proc
 			Message: types.FormErrorResponseMsg{
 				"username": []string{"An error occurred while getting the user"},
 			},
-			ClientError: true,
-		}
-	}
-
-	// Return an error if the user does not exist
-	if user == nil {
-		return nil, &entities.ProcessError{
-			Message: types.FormErrorResponseMsg{
-				"username": []string{"Username does not exist"},
-			},
-			ClientError: true,
+			ClientError: false,
 		}
 	}
 
@@ -95,4 +129,48 @@ func (l LoginUseCase) Process(form *dto.LoginForm) (*models.User, *entities.Proc
 	}
 
 	return user, nil
+}
+
+// ProcessVendor is a function that processes the vendor login form.
+//
+// form: The login form data.
+//
+// Returns the vendor object and an error if any.
+func (l LoginUseCase) ProcessVendor(form *dto.VendorLoginForm) (*models.Vendor, *entities.ProcessError) {
+	// Check if the email is available
+	vendor, err := l.VendorRepositoy.GetUsingEmail(form.Email)
+
+	// Check if the vendor does not exist
+	if err == gorm.ErrRecordNotFound {
+		return nil, &entities.ProcessError{
+			Message: types.FormErrorResponseMsg{
+				"email": []string{"Email does not exist"},
+			},
+			ClientError: true,
+		}
+	}
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting the vendor: ", err)
+
+		return nil, &entities.ProcessError{
+			Message: types.FormErrorResponseMsg{
+				"email": []string{"An error occurred while getting the vendor"},
+			},
+			ClientError: false,
+		}
+	}
+
+	// Check if the password is correct
+	if !l.AuthUseCase.VerifyPassword(form.Password, vendor.Password) {
+		return nil, &entities.ProcessError{
+			Message: types.FormErrorResponseMsg{
+				"password": []string{"Password is incorrect"},
+			},
+			ClientError: true,
+		}
+	}
+
+	return vendor, nil
 }

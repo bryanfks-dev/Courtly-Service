@@ -33,10 +33,10 @@ func NewLoginController(l *usecases.LoginUseCase, a *usecases.AuthUseCase) *Logi
 //
 // Returns an error response if there is an error, otherwise a success response.
 func (l *LoginController) UserLogin(c echo.Context) error {
-	// Create a new LoginForm object
-	form := new(dto.LoginForm)
+	// Create a new UserLoginForm object
+	form := new(dto.UserLoginForm)
 
-	// Bind the request body to the LoginForm object
+	// Bind the request body to the UserLoginForm object
 	if err := c.Bind(form); err != nil {
 		log.Println("Error binding request body: ", err)
 
@@ -44,7 +44,7 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 	}
 
 	// Validate the login form
-	errs := l.loginUseCase.ValidateForm(form)
+	errs := l.loginUseCase.ValidateUserForm(form)
 
 	// Check if there are any errors
 	if errs != nil {
@@ -56,8 +56,9 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 	}
 
 	// Process the login form
-	user, processErr := l.loginUseCase.Process(form)
+	user, processErr := l.loginUseCase.ProcessUser(form)
 
+	// Check if there is an error processing the form
 	if processErr != nil {
 		// Check if the error is a client error
 		if processErr.ClientError {
@@ -89,10 +90,76 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, dto.Response{
 		Success: true,
-		Message: "Login Success",
-		Data: dto.LoginResponseData{
+		Message: "User Login Success",
+		Data: dto.UserLoginResponseData{
 			User:  dto.CurrentUser{}.FromModel(user),
 			Token: token,
+		},
+	})
+}
+
+// VendorLogin is a function that handles the vendor login request.
+func (l *LoginController) VendorLogin(c echo.Context) error {
+	// Create a new VendorLoginForm object
+	form := new(dto.VendorLoginForm)
+
+	// Bind the request body to the VendorLoginForm object
+	if err := c.Bind(form); err != nil {
+		log.Println("Error binding request body: ", err)
+
+		return err
+	}
+
+	// Validate the login form
+	errs := l.loginUseCase.ValidateVendorForm(form)
+
+	// Check if there are any errors
+	if errs != nil {
+		return c.JSON(http.StatusBadRequest, dto.Response{
+			Success: false,
+			Message: errs,
+			Data:    nil,
+		})
+	}
+
+	// Process the login form
+	vendor, processErr := l.loginUseCase.ProcessVendor(form)
+
+	if processErr != nil {
+		// Check if the error is a client error
+		if processErr.ClientError {
+			return c.JSON(http.StatusUnauthorized, dto.Response{
+				Success: false,
+				Message: processErr.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.Response{
+			Success: false,
+			Message: processErr.Message,
+			Data:    nil,
+		})
+	}
+
+	// Generate a token
+	token, err := l.authUseCase.GenerateToken(vendor.ID)
+
+	// Check if there is an error generating the token
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.Response{
+			Success: false,
+			Message: "Error generating token",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.Response{
+		Success: true,
+		Message: "Vendor Login Success",
+		Data: dto.VendorLoginResponseData{
+			Vendor: dto.CurrentVendor{}.FromModel(vendor),
+			Token:  token,
 		},
 	})
 }
