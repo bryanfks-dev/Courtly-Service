@@ -41,10 +41,10 @@ func (r RegisterController) UserRegister(c echo.Context) error {
 	}
 
 	// Sanitize the form
-	r.registerUseCase.SanitizeForm(form)
+	r.registerUseCase.SanitizeUserRegisterForm(form)
 
 	// Validate the form
-	if errs := r.registerUseCase.ValidateForm(form); errs != nil {
+	if errs := r.registerUseCase.ValidateUserRegisterForm(form); errs != nil {
 		return c.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: errs,
@@ -53,7 +53,7 @@ func (r RegisterController) UserRegister(c echo.Context) error {
 	}
 
 	// Check if there is an error processing the form
-	if err := r.registerUseCase.Process(form); err != nil {
+	if err := r.registerUseCase.ProcessUserRegister(form); err != nil {
 		// Check if the error is a client error
 		if err.ClientError {
 			return c.JSON(http.StatusForbidden, dto.Response{

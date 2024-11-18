@@ -32,22 +32,22 @@ func NewRegisterUseCase(a *AuthUseCase, u *repository.UserRepository) *RegisterU
 	}
 }
 
-// SanitizeRegisterForm is a helper function that sanitizes the register input.
+// SanitizeUserRegisterForm is a helper function that sanitizes the register input.
 //
 // form: The register form form.
 //
 // Returns void
-func (r RegisterUseCase) SanitizeForm(form *dto.UserRegisterForm) {
+func (r RegisterUseCase) SanitizeUserRegisterForm(form *dto.UserRegisterForm) {
 	form.Username = strings.TrimSpace(form.Username)
 	form.PhoneNumber = strings.TrimSpace(form.PhoneNumber)
 }
 
-// ValidateForm is a function that validates the register form.
+// ValidateUserRegisterForm is a function that validates the register form.
 //
 // form: The register form.
 //
 // Returns a map of errors.
-func (r RegisterUseCase) ValidateForm(form *dto.UserRegisterForm) types.FormErrorResponseMsg {
+func (r RegisterUseCase) ValidateUserRegisterForm(form *dto.UserRegisterForm) types.FormErrorResponseMsg {
 	// Create an empty error map
 	errs := make(types.FormErrorResponseMsg)
 
@@ -89,12 +89,12 @@ func (r RegisterUseCase) ValidateForm(form *dto.UserRegisterForm) types.FormErro
 	return nil
 }
 
-// Process is a function that processes the register form.
+// ProcessUserRegister is a function that processes the register form.
 //
 // form: The register form.
 //
 // Returns the user and an error message.
-func (r RegisterUseCase) Process(form *dto.UserRegisterForm) *entities.ProcessError {
+func (r RegisterUseCase) ProcessUserRegister(form *dto.UserRegisterForm) *entities.ProcessError {
 	// Check if the username is taken
 	taken, err := r.UserRepository.IsUsernameTaken(form.Username)
 
