@@ -25,7 +25,7 @@ func (*CourtRepository) GetVendorCourtTypes(vendorID uint) (*[]models.CourtType,
 	var courtTypes []models.CourtType
 
 	// Get the court types by vendor ID
-	err := mysql.Conn.Distinct().Where("courts.vendor_id = ?", vendorID).Find(&courtTypes).Error
+	err := mysql.Conn.Model(&models.Court{}).Distinct("court_types.type").Joins("JOIN court_types").Where("vendor_id = ?", vendorID).Find(&courtTypes).Error
 
 	// Return an error if any
 	if err != nil {

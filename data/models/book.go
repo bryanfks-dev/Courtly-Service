@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"main/core/types"
+)
 
 // Book is the model for the book table.
 type Book struct {
@@ -9,22 +11,22 @@ type Book struct {
 
 	// UserID is the foreign key of the user.
 	UserID uint
-	User   User
+	User   User `gorm:"foreignKey:UserID"`
 
 	// VendorID is the foreign key of the vendor.
 	VendorID uint
-	Vendor   Vendor
+	Vendor   Vendor `gorm:"foreignKey:VendorID"`
 
 	// CourtTypeID is the foreign key of the court type.
 	CourtTypeID uint
-	CourtType   CourtType
+	CourtType   CourtType `gorm:"foreignKey:CourtTypeID"`
 
 	// Date is the date of the book was created.
-	Date time.Time `gorm:"autoCreateTime"`
+	Date types.DateOnly `gorm:"autoCreateTime;type:DATE"`
 
 	//	BookStartTime is the start time of the book.
-	BookStartTime time.Time `gorm:"not null"`
+	BookStartTime types.TimeOnly `gorm:"not null"`
 
 	// BookEndTime is the end time of the book.
-	BookEndTime   time.Time `gorm:"not null"`
+	BookEndTime types.TimeOnly `gorm:"not null"`
 }

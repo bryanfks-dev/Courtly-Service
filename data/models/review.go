@@ -11,15 +11,15 @@ type Review struct {
 
 	// UserID is the foreign key of the user.
 	UserID uint
-	User   User
+	User   User `gorm:"foreignKey:UserID"`
 
 	// VendorID is the foreign key of the vendor.
 	VendorID uint
-	Vendor   Vendor
+	Vendor   Vendor `gorm:"foreignKey:VendorID"`
 
 	// CourtTypeID is the foreign key of the court type.
 	CourtTypeID uint
-	CourtType   CourtType
+	CourtType   CourtType `gorm:"foreignKey:CourtTypeID"`
 
 	// Rating is the rating of the review.
 	Rating int8 `gorm:"not null"`

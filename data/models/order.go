@@ -7,11 +7,11 @@ type Order struct {
 
 	// BookID is the foreign key of the book.
 	BookID uint
-	Book   Book
+	Book   Book `gorm:"foreignKey:BookID"`
 
 	// PaymentMethodID is the foreign key of the payment method.
 	PaymentMethodID uint
-	PaymentMethod   PaymentMethod
+	PaymentMethod   PaymentMethod `gorm:"foreignKey:PaymentMethodID"`
 
 	// Price is the price of the order.
 	Price float64 `gorm:"not null"`

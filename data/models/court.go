@@ -7,11 +7,11 @@ type Court struct {
 
 	// VendorID is the foreign key of the vendor.
 	VendorID uint
-	Vendor   Vendor
+	Vendor   Vendor `gorm:"foreignKey:VendorID"`
 
 	// CourtTypeID is the foreign key of the court type.
 	CourtTypeID uint
-	CourtType   CourtType
+	CourtType   CourtType `gorm:"foreignKey:CourtTypeID"`
 
 	// Name is the name of the court.
 	Name string `gorm:"not null;type:varchar(255)"`
