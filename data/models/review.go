@@ -28,5 +28,5 @@ type Review struct {
 	Review string `gorm:"not null;type:text"`
 
 	// Date is the date of the review was created.
-	Date types.DateOnly `gorm:"autoCreateTime"`
+	Date types.DateOnly `gorm:"type:DATEautoCreateTime"`
 }

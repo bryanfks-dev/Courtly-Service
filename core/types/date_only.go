@@ -33,11 +33,18 @@ func (DateOnly) GormDBDataType(db *gorm.DB, field *schema.Field) string {
 // Value is a method that returns the value of the date only type.
 //
 // Returns The value of the date only type.
-func (dateOnly DateOnly) Value() driver.Value {
+func (dateOnly DateOnly) Value() (driver.Value, error) {
 	// If the date is zero, return nil
 	if dateOnly.IsZero() {
-		return nil
+		return nil, nil
 	}
 
-	return dateOnly.Time.Format("Jan 02, 2006")
+	return dateOnly.GetTime().Format("Jan 02, 2006"), nil
+}
+
+// GetTime is a method that returns the time of the date only type.
+//
+// Returns The time of the date only type.
+func (dateOnly DateOnly) GetTime() time.Time {
+	return dateOnly.Time
 }

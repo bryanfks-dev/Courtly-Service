@@ -23,10 +23,10 @@ type Vendor struct {
 	Password string `gorm:"not null;type:varchar(255)"`
 
 	// OpenTime is the opening time of the vendor.
-	OpenTime types.TimeOnly `gorm:"not null"`
+	OpenTime *types.TimeOnly `gorm:"not null"`
 
 	// CloseTime is the closing time of the vendor.
-	CloseTime types.TimeOnly `gorm:"not null"`
+	CloseTime *types.TimeOnly `gorm:"not null"`
 
 	// CreatedAt is the time when the user was created.
 	CreatedAt time.Time `gorm:"autoCreateTime"`

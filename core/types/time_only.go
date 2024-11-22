@@ -32,12 +32,19 @@ func (TimeOnly) GormDBDataType(db *gorm.DB, field *schema.Field) string {
 
 // Value is a method that returns the value of the time only type.
 //
-// Returns The value of the time only type.
-func (timeOnly TimeOnly) Value() driver.Value {
+// Returns The value of the time only type and an error if any.
+func (timeOnly TimeOnly) Value() (driver.Value, error) {
 	// If the time is zero, return nil
 	if timeOnly.IsZero() {
-		return nil
+		return nil, nil
 	}
-	
-	return timeOnly.Time.Format("15:04")
+
+	return timeOnly.GetTime().Format("15:04"), nil
+}
+
+// GetTime is a method that returns the time of the time only type.
+//
+// Returns The time of the time only type.
+func (timeOnly TimeOnly) GetTime() time.Time {
+	return timeOnly.Time
 }
