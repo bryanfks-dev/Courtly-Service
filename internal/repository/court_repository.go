@@ -15,6 +15,24 @@ func NewCourtRepository() *CourtRepository {
 	return &CourtRepository{}
 }
 
+// GetCourts is a function that returns the courts.
+//
+// Returns the courts and an error if any.
+func (*CourtRepository) GetCourts() (*[]models.Court, error) {
+	// Create a new court object
+	var courts []models.Court
+
+	// Get the courts
+	err := mysql.Conn.Find(&courts).Error
+
+	// Return an error if any
+	if err != nil {
+		return nil, err
+	}
+
+	return &courts, nil
+}
+
 // GetVendorCourtTypes is a function that returns the vendor court types.
 //
 // vendorID: The vendor ID.

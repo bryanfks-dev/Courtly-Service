@@ -29,6 +29,23 @@ func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository) *CourtUseCas
 	}
 }
 
+// GetCourts is a function that returns the courts.
+//
+// Returns the courts and an error if any.
+func (c *CourtUseCase) GetCourts() (*[]models.Court, error) {
+	// Get the courts
+	courts, err := c.CourtRepository.GetCourts()
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to get courts: ", err)
+
+		return nil, err
+	}
+
+	return courts, nil
+}
+
 // GetVendorCourtTypes is a function that returns the vendor court types.
 //
 // vendorID: The vendor ID.
