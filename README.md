@@ -12,6 +12,7 @@ There are several available endpoints, such as:
 - **POST** `/api/v1/auth/user/register` - Register a new user account
 - **POST** `/api/v1/auth/user/logout` - Remove user from authenticated status
 - **POST** `/api/v1/auth/user/verify-password` - Verify current user password
+- **POST** `/api/v1/auth/vendor/verify-password` - Verify current vendor password
 - **POST** `/api/auth/vendor/login` - Sign vendor with an existing account
 - **POST** `/api/auth/vendor/logout` - Remove vendor from authenticated status
 

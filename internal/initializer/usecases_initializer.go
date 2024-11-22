@@ -25,7 +25,7 @@ func InitUseCases(repos *Repositories) *UseCases {
 
 	u.AuthUseCase = usecases.NewAuthUseCase()
 
-	u.VerifyPasswordUseCase = usecases.NewVerifyPasswordUseCase(u.AuthUseCase, repos.UserRepository)
+	u.VerifyPasswordUseCase = usecases.NewVerifyPasswordUseCase(u.AuthUseCase, repos.UserRepository, repos.VendorRepository)
 
 	u.RegisterUseCase = usecases.NewRegisterUseCase(u.AuthUseCase, repos.UserRepository)
 

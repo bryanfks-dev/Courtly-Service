@@ -14,20 +14,23 @@ import (
 
 // VerifyPasswordUseCase is a use case that provides the business logic for verifying a user's password.
 type VerifyPasswordUseCase struct {
-	AuthUseCase    *AuthUseCase
-	UserRepository *repository.UserRepository
+	AuthUseCase      *AuthUseCase
+	UserRepository   *repository.UserRepository
+	VendorRepository *repository.VendorRepository
 }
 
 // VerifyPassword is a method of the VerifyPasswordUseCase that verifies a user's password.
 //
 // a: The AuthUseCase instance.
 // u: The UserRepository instance.
+// v: The VendorRepository instance.
 //
 // Retuns instance of the VerifyPasswordUseCase.
-func NewVerifyPasswordUseCase(a *AuthUseCase, u *repository.UserRepository) *VerifyPasswordUseCase {
+func NewVerifyPasswordUseCase(a *AuthUseCase, u *repository.UserRepository, v *repository.VendorRepository) *VerifyPasswordUseCase {
 	return &VerifyPasswordUseCase{
-		AuthUseCase:    a,
-		UserRepository: u,
+		AuthUseCase:      a,
+		UserRepository:   u,
+		VendorRepository: v,
 	}
 }
 
@@ -53,13 +56,13 @@ func (*VerifyPasswordUseCase) ValidateForm(form *dto.VerifyPasswordFormDTO) type
 	return nil
 }
 
-// Process is a function that processes the verify password form.
+// ProcessUser is a function that processes the user verify password form.
 //
 // form: The verify password form dto.
 // userID: The user ID.
 //
 // Returns the user object and an error if any.
-func (v *VerifyPasswordUseCase) Process(form *dto.VerifyPasswordFormDTO, token *jwt.Token) (*models.User, *entities.ProcessError) {
+func (v *VerifyPasswordUseCase) ProcessUser(form *dto.VerifyPasswordFormDTO, token *jwt.Token) (*models.User, *entities.ProcessError) {
 	// Decode the token
 	claims := v.AuthUseCase.DecodeToken(token)
 
@@ -87,4 +90,40 @@ func (v *VerifyPasswordUseCase) Process(form *dto.VerifyPasswordFormDTO, token *
 	}
 
 	return user, nil
+}
+
+// ProcessVendor is a function that processes the vendor verify password form.
+//
+// form: The verify password form dto.
+// vendorID: The vendor ID.
+//
+// Returns the user object and an error if any.
+func (v *VerifyPasswordUseCase) ProcessVendor(form *dto.VerifyPasswordFormDTO, token *jwt.Token) (*models.Vendor, *entities.ProcessError) {
+	// Decode the token
+	claims := v.AuthUseCase.DecodeToken(token)
+
+	// Get the vendor by the vendor ID
+	vendor, err := v.VendorRepository.GetUsingID(claims.Id)
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Error getting vendor using ID: ", err)
+
+		return nil, &entities.ProcessError{
+			Message:     "An error occurred while getting the vendor",
+			ClientError: false,
+		}
+	}
+
+	// Check if the password is correct
+	if !v.AuthUseCase.VerifyPassword(form.Password, vendor.Password) {
+		return nil, &entities.ProcessError{
+			Message: types.FormErrorResponseMsg{
+				"password": []string{"Incorrect password"},
+			},
+			ClientError: true,
+		}
+	}
+
+	return vendor, nil
 }

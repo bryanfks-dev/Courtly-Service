@@ -59,7 +59,7 @@ func (v *VerifyPasswordController) UserVerifyPassword(c echo.Context) error {
 	}
 
 	// Process the form
-	user, err := v.VerifyPasswordUseCase.Process(form, cc.Token)
+	user, err := v.VerifyPasswordUseCase.ProcessUser(form, cc.Token)
 
 	// Check if there is an error
 	if err != nil {
@@ -75,6 +75,60 @@ func (v *VerifyPasswordController) UserVerifyPassword(c echo.Context) error {
 		Message: "Password verified successfully",
 		Data: dto.CurrentUserResponseDTO{
 			User: dto.CurrentUserDTO{}.FromModel(user),
+		},
+	})
+}
+
+// VendorVerifyPassword is a controller to handle the request to verify the password of the vendor
+// Endpoint: POST /auth/vendor/verify-password
+//
+// c: Context of the HTTP request
+//
+// Returns an error if any
+func (v *VerifyPasswordController) VendorVerifyPassword(c echo.Context) error {
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Bind the form dto
+	form := new(dto.VerifyPasswordFormDTO)
+
+	// Return an error if the form data is invalid
+	if err := c.Bind(form); err != nil {
+		log.Println("Error binding form data: ", err)
+
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid form data",
+			Data:    nil,
+		})
+	}
+
+	// Validate the form
+	if err := v.VerifyPasswordUseCase.ValidateForm(form); err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: err,
+			Data:    nil,
+		})
+	}
+
+	// Process the form
+	vendor, err := v.VerifyPasswordUseCase.ProcessVendor(form, cc.Token)
+
+	// Check if there is an error
+	if err != nil {
+		return c.JSON(http.StatusForbidden, dto.ResponseDTO{
+			Success: false,
+			Message: err,
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Password verified successfully",
+		Data: dto.CurrentVendorResponseDTO{
+			Vendor: dto.CurrentVendorDTO{}.FromModel(vendor),
 		},
 	})
 }
