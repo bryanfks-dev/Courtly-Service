@@ -36,7 +36,7 @@ func (c CurrentVendor) FromModel(m *models.Vendor) *CurrentVendor {
 		Name:      m.Name,
 		Email:     m.Email,
 		Address:   m.Address,
-		OpenTime:  m.OpenTime.Format("15:04"),
-		CloseTime: m.CloseTime.Format("15:04"),
+		OpenTime:  m.OpenTime.Value().(string),
+		CloseTime: m.CloseTime.Value().(string),
 	}
 }

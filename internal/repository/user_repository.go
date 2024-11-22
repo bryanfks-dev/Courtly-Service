@@ -15,7 +15,7 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{}
 }
 
-// CreateUser is a function that creates a new user.
+// Create is a function that creates a new user.
 //
 // user: The user object.
 //

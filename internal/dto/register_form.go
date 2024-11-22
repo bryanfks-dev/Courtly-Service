@@ -15,3 +15,18 @@ type UserRegisterForm struct {
 	// ConfirmPassword is the confirmation password of the user.
 	ConfirmPassword string `json:"confirm_password"`
 }
+
+// VendorRegisterForm is a struct that represents the register form
+type VendorRegisterForm struct {
+	// Name is the name of the vendor.
+	Name string
+
+	// Address is the address of the vendor.
+	Address string
+
+	// Email is the email of the vendor.
+	Email string
+
+	// Password is the password of the vendor.
+	Password string
+}
