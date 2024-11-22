@@ -4,8 +4,8 @@ import (
 	"main/data/models"
 )
 
-// CurrentVendor is a struct that represents the current vendor dto.
-type CurrentVendor struct {
+// CurrentVendorDTO is a struct that represents the current vendor dto.
+type CurrentVendorDTO struct {
 	// ID is the primary key of the vendor.
 	ID uint `json:"id"`
 
@@ -30,12 +30,12 @@ type CurrentVendor struct {
 // m: The vendor model.
 //
 // Returns a CurrentVendor DTO.
-func (c CurrentVendor) FromModel(m *models.Vendor) *CurrentVendor {
+func (c CurrentVendorDTO) FromModel(m *models.Vendor) *CurrentVendorDTO {
 	// Get the open and close time
 	openTime, _ := m.OpenTime.Value()
 	closeTime, _ := m.CloseTime.Value()
 
-	return &CurrentVendor{
+	return &CurrentVendorDTO{
 		ID:        m.ID,
 		Name:      m.Name,
 		Email:     m.Email,

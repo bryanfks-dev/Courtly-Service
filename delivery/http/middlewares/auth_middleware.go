@@ -32,7 +32,7 @@ func (a *AuthMiddleware) Shield(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// If there was an error extracting the token, return the error
 		if err != nil {
-			return c.JSON(http.StatusUnauthorized, dto.Response{
+			return c.JSON(http.StatusUnauthorized, dto.ResponseDTO{
 				Success: false,
 				Message: utils.ToUpperFirst(err.Error()),
 				Data:    nil,
@@ -44,7 +44,7 @@ func (a *AuthMiddleware) Shield(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// If the token is not valid, return a 401 status code
 		if !valid {
-			return c.JSON(http.StatusUnauthorized, dto.Response{
+			return c.JSON(http.StatusUnauthorized, dto.ResponseDTO{
 				Success: false,
 				Message: "Invalid token",
 				Data:    nil,

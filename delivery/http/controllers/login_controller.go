@@ -49,7 +49,7 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 
 	// Check if there are any errors
 	if errs != nil {
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: errs,
 			Data:    nil,
@@ -63,14 +63,14 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 	if processErr != nil {
 		// Check if the error is a client error
 		if processErr.ClientError {
-			return c.JSON(http.StatusUnauthorized, dto.Response{
+			return c.JSON(http.StatusUnauthorized, dto.ResponseDTO{
 				Success: false,
 				Message: processErr.Message,
 				Data:    nil,
 			})
 		}
 
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: processErr.Message,
 			Data:    nil,
@@ -82,18 +82,18 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 
 	// Check if there is an error generating the token
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Error generating token",
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "User Login Success",
-		Data: dto.UserLoginResponseData{
-			User:  dto.CurrentUser{}.FromModel(user),
+		Data: dto.UserLoginResponseDTO{
+			User:  dto.CurrentUserDTO{}.FromModel(user),
 			Token: token,
 		},
 	})
@@ -121,7 +121,7 @@ func (l *LoginController) VendorLogin(c echo.Context) error {
 
 	// Check if there are any errors
 	if errs != nil {
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: errs,
 			Data:    nil,
@@ -134,14 +134,14 @@ func (l *LoginController) VendorLogin(c echo.Context) error {
 	if processErr != nil {
 		// Check if the error is a client error
 		if processErr.ClientError {
-			return c.JSON(http.StatusUnauthorized, dto.Response{
+			return c.JSON(http.StatusUnauthorized, dto.ResponseDTO{
 				Success: false,
 				Message: processErr.Message,
 				Data:    nil,
 			})
 		}
 
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: processErr.Message,
 			Data:    nil,
@@ -153,18 +153,18 @@ func (l *LoginController) VendorLogin(c echo.Context) error {
 
 	// Check if there is an error generating the token
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Error generating token",
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Vendor Login Success",
-		Data: dto.VendorLoginResponseData{
-			Vendor: dto.CurrentVendor{}.FromModel(vendor),
+		Data: dto.VendorLoginResponseDTO{
+			Vendor: dto.CurrentVendorDTO{}.FromModel(vendor),
 			Token:  token,
 		},
 	})

@@ -8,8 +8,8 @@ import (
 	"main/pkg/utils"
 )
 
-// CurrentUser is a struct that represents the current user dto.
-type CurrentUser struct {
+// CurrentUserDTO is a struct that represents the current user dto.
+type CurrentUserDTO struct {
 	// ID is the primary key of the user.
 	ID uint `json:"id"`
 
@@ -28,10 +28,10 @@ type CurrentUser struct {
 // m: The user model.
 //
 // Returns a CurrentUser DTO.
-func (c CurrentUser) FromModel(m *models.User) *CurrentUser {
-	// If the profile picture is blank, return the CurrentUser DTO without the profile picture.
+func (c CurrentUserDTO) FromModel(m *models.User) *CurrentUserDTO {
+	// If the profile picture is blank, return the CurrentUserDTO DTO without the profile picture.
 	if utils.IsBlank(m.ProfilePicture) {
-		return &CurrentUser{
+		return &CurrentUserDTO{
 			ID:                m.ID,
 			Username:          m.Username,
 			PhoneNumber:       m.PhoneNumber,
@@ -42,7 +42,7 @@ func (c CurrentUser) FromModel(m *models.User) *CurrentUser {
 	// profilePicturePath is the path to the profile picture.
 	profilePicturePath := fmt.Sprintf("%s:%d%s/%s", config.ServerConfig.Host, config.ServerConfig.Port, router.UserProfiles, m.ProfilePicture)
 
-	return &CurrentUser{
+	return &CurrentUserDTO{
 		ID:                m.ID,
 		Username:          m.Username,
 		PhoneNumber:       m.PhoneNumber,

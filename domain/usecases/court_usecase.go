@@ -4,7 +4,6 @@ import (
 	"log"
 	"main/core/enums"
 	"main/data/models"
-	"main/internal/dto"
 	"main/internal/repository"
 	"main/pkg/utils"
 
@@ -139,21 +138,4 @@ func (c *CourtUseCase) GetCurrentVendorCourtsUsingType(token *jwt.Token, courtTy
 
 	// Get the vendor courts
 	return c.GetVendorCourtsUsingType(claims.Id, courtType)
-}
-
-// ConvertCourtModelsToDTOs is a function that converts a list of court models to a list of court DTOs.
-//
-// courts: The list of court models.
-//
-// Returns a list of court DTOs.
-func (c *CourtUseCase) ConvertCourtModelsToDTOs(courts *[]models.Court) *[]dto.VendorCourt {
-	// Create a new list of vendor courts
-	var vendorCourts []dto.VendorCourt
-
-	// Convert the court models to court DTOs
-	for _, court := range *courts {
-		vendorCourts = append(vendorCourts, *dto.VendorCourt{}.FromModel(court))
-	}
-
-	return &vendorCourts
 }

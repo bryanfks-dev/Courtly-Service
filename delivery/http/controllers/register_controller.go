@@ -45,7 +45,7 @@ func (r RegisterController) UserRegister(c echo.Context) error {
 
 	// Validate the form
 	if errs := r.registerUseCase.ValidateUserRegisterForm(form); errs != nil {
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: errs,
 			Data:    nil,
@@ -56,14 +56,14 @@ func (r RegisterController) UserRegister(c echo.Context) error {
 	if err := r.registerUseCase.ProcessUserRegister(form); err != nil {
 		// Check if the error is a client error
 		if err.ClientError {
-			return c.JSON(http.StatusForbidden, dto.Response{
+			return c.JSON(http.StatusForbidden, dto.ResponseDTO{
 				Success: false,
 				Message: err.Message,
 				Data:    nil,
 			})
 		}
 
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: err.Message,
 			Data:    nil,
@@ -75,16 +75,16 @@ func (r RegisterController) UserRegister(c echo.Context) error {
 
 	// Return an error if any
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "An error occurred while registering the user",
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "User registered successfully",
-		Data:    dto.CurrentUser{}.FromModel(user),
+		Data:    dto.CurrentUserDTO{}.FromModel(user),
 	})
 }

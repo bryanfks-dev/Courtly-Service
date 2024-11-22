@@ -37,20 +37,17 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 
 	// Return an error if any
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Failed to get courts",
 			Data:    nil,
 		})
 	}
 
-	// Convert the court models to court DTOs
-	courtsDTO := co.CourtUseCase.ConvertCourtModelsToDTOs(courts)
-
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve courts",
-		Data:    courtsDTO,
+		Data:    dto.VendorCourtResponseDTO{}.FromCourtModels(courts),
 	})
 }
 
@@ -65,7 +62,7 @@ func (co *CourtController) GetCourtsUsingType(c echo.Context) error {
 
 	// Return an error if the court type is invalid
 	if !co.CourtUseCase.ValidateCourtType(courtType) {
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid court type",
 			Data:    nil,
@@ -77,20 +74,17 @@ func (co *CourtController) GetCourtsUsingType(c echo.Context) error {
 
 	// Return an error if any
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Failed to get courts",
 			Data:    nil,
 		})
 	}
 
-	// Convert the court models to court DTOs
-	courtsDTO := co.CourtUseCase.ConvertCourtModelsToDTOs(courts)
-
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve courts",
-		Data:    courtsDTO,
+		Data:    dto.VendorCourtResponseDTO{}.FromCourtModels(courts),
 	})
 }
 
@@ -109,17 +103,17 @@ func (co *CourtController) GetCurrentVendorCourtTypes(c echo.Context) error {
 
 	// Return an error if any
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Failed to get current vendor court types",
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve current vendor court types",
-		Data:    dto.CourtTypeResponseDTO{}.FromModels(*courtTypes),
+		Data:    dto.CourtTypeResponseDTO{}.FromModels(courtTypes),
 	})
 }
 
@@ -135,7 +129,7 @@ func (co *CourtController) GetCurrentVendorCourtType(c echo.Context) error {
 
 	// Return an error if the court type is invalid
 	if !enums.InCourtType(courtType) {
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid court type",
 			Data:    nil,
@@ -145,27 +139,20 @@ func (co *CourtController) GetCurrentVendorCourtType(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
-	// Get the current vendor courts
 	courts, err := co.CourtUseCase.GetCurrentVendorCourtsUsingType(cc.Token, courtType)
 
 	// Return an error if any
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Failed to get current vendor courts",
 			Data:    nil,
 		})
 	}
 
-	// Convert the court models to court DTOs
-	courtsDTO := co.CourtUseCase.ConvertCourtModelsToDTOs(courts)
-
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve current vendor courts",
-		Data: dto.VendorCourtTypeResponse{
-			CourtType: courtType,
-			Courts:    courtsDTO,
-		},
+		Data:    dto.VendorCourtResponseDTO{}.FromCourtModels(courts),
 	})
 }

@@ -42,7 +42,7 @@ func (v *VerifyPasswordController) UserVerifyPassword(c echo.Context) error {
 	if err := c.Bind(form); err != nil {
 		log.Println("Error binding form data: ", err)
 
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid form data",
 			Data:    nil,
@@ -51,7 +51,7 @@ func (v *VerifyPasswordController) UserVerifyPassword(c echo.Context) error {
 
 	// Validate the form
 	if err := v.VerifyPasswordUseCase.ValidateForm(form); err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: err,
 			Data:    nil,
@@ -63,18 +63,18 @@ func (v *VerifyPasswordController) UserVerifyPassword(c echo.Context) error {
 
 	// Check if there is an error
 	if err != nil {
-		return c.JSON(http.StatusForbidden, dto.Response{
+		return c.JSON(http.StatusForbidden, dto.ResponseDTO{
 			Success: false,
 			Message: err,
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Password verified successfully",
-		Data: dto.CurrentUserResponseData{
-			User: dto.CurrentUser{}.FromModel(user),
+		Data: dto.CurrentUserResponseDTO{
+			User: dto.CurrentUserDTO{}.FromModel(user),
 		},
 	})
 }

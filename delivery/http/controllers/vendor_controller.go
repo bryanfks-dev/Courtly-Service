@@ -43,25 +43,25 @@ func (v *VendorController) GetCurrentVendor(c echo.Context) error {
 	if err != nil {
 		// Check if the error is a client error
 		if err.ClientError {
-			return c.JSON(http.StatusBadRequest, dto.Response{
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 				Success: false,
 				Message: err.Message,
 				Data:    nil,
 			})
 		}
 
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: err.Message,
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Vendor retrieved successfully",
-		Data: dto.CurrentVendorResponseData{
-			Vendor: dto.CurrentVendor{}.FromModel(vendor),
+		Data: dto.CurrentVendorResponseDTO{
+			Vendor: dto.CurrentVendorDTO{}.FromModel(vendor),
 		},
 	})
 }
@@ -83,7 +83,7 @@ func (v *VendorController) UpdateVendorPassword(c echo.Context) error {
 	if err := c.Bind(form); err != nil {
 		log.Println("Error binding form data: ", err)
 
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid form data",
 			Data:    nil,
@@ -92,7 +92,7 @@ func (v *VendorController) UpdateVendorPassword(c echo.Context) error {
 
 	// Validate the form data
 	if err := v.VendorUseCase.ValidateChangePasswordForm(form); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: err,
 			Data:    nil,
@@ -105,25 +105,25 @@ func (v *VendorController) UpdateVendorPassword(c echo.Context) error {
 	// Return an error if any
 	if err != nil {
 		if err.ClientError {
-			return c.JSON(http.StatusBadRequest, dto.Response{
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 				Success: false,
 				Message: err.Message,
 				Data:    nil,
 			})
 		}
 
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: err.Message,
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Password updated successfully",
-		Data: dto.CurrentVendorResponseData{
-			Vendor: dto.CurrentVendor{}.FromModel(vendor),
+		Data: dto.CurrentVendorResponseDTO{
+			Vendor: dto.CurrentVendorDTO{}.FromModel(vendor),
 		},
 	})
 }

@@ -45,25 +45,25 @@ func (u *UserController) GetCurrentUser(c echo.Context) error {
 	if err != nil {
 		// Check if the error is a client error
 		if err.ClientError {
-			return c.JSON(http.StatusBadRequest, dto.Response{
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 				Success: false,
 				Message: err.Message,
 				Data:    nil,
 			})
 		}
 
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Failed to get current user",
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "User retrieved successfully",
-		Data: dto.CurrentUserResponseData{
-			User: dto.CurrentUser{}.FromModel(user),
+		Data: dto.CurrentUserResponseDTO{
+			User: dto.CurrentUserDTO{}.FromModel(user),
 		},
 	})
 }
@@ -83,7 +83,7 @@ func (u *UserController) GetPublicUser(c echo.Context) error {
 
 	// Return an error if the ID is not a valid integer
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid user ID",
 			Data:    nil,
@@ -97,25 +97,25 @@ func (u *UserController) GetPublicUser(c echo.Context) error {
 	if processErr != nil {
 		// Check if the error is a client error
 		if processErr.ClientError {
-			return c.JSON(http.StatusBadRequest, dto.Response{
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 				Success: false,
 				Message: processErr.Message,
 				Data:    nil,
 			})
 		}
 
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: processErr.Message,
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "User retrieved successfully",
-		Data: dto.PublicUserResponseData{
-			User: dto.PublicUser{}.FromModel(*user),
+		Data: dto.PublicUserResponseDTO{
+			User: dto.PublicUserDTO{}.FromModel(user),
 		},
 	})
 }
@@ -137,7 +137,7 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	if err := c.Bind(form); err != nil {
 		log.Println("Error binding form data: ", err)
 
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid form data",
 			Data:    nil,
@@ -146,7 +146,7 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 
 	// Validate the form data
 	if err := u.UserUseCase.ValidateChangePasswordForm(form); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: err,
 			Data:    nil,
@@ -159,25 +159,25 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	// Return an error if any
 	if err != nil {
 		if err.ClientError {
-			return c.JSON(http.StatusBadRequest, dto.Response{
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 				Success: false,
 				Message: err.Message,
 				Data:    nil,
 			})
 		}
 
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: err.Message,
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Password updated successfully",
-		Data: dto.CurrentUserResponseData{
-			User: dto.CurrentUser{}.FromModel(user),
+		Data: dto.CurrentUserResponseDTO{
+			User: dto.CurrentUserDTO{}.FromModel(user),
 		},
 	})
 }
@@ -199,7 +199,7 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 	if err := c.Bind(form); err != nil {
 		log.Println("Error binding form data: ", err)
 
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid form data",
 			Data:    nil,
@@ -208,7 +208,7 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 
 	// Validate the form data
 	if err := u.UserUseCase.ValidateChangeUsernameForm(form); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.Response{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: err,
 			Data:    nil,
@@ -221,25 +221,25 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 	// Return an error if any
 	if err != nil {
 		if err.ClientError {
-			return c.JSON(http.StatusForbidden, dto.Response{
+			return c.JSON(http.StatusForbidden, dto.ResponseDTO{
 				Success: false,
 				Message: err.Message,
 				Data:    nil,
 			})
 		}
 
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: err.Message,
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Username updated successfully",
-		Data: dto.CurrentUserResponseData{
-			User: dto.CurrentUser{}.FromModel(user),
+		Data: dto.CurrentUserResponseDTO{
+			User: dto.CurrentUserDTO{}.FromModel(user),
 		},
 	})
 }

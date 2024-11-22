@@ -8,8 +8,8 @@ import (
 	"main/pkg/utils"
 )
 
-// PublicUser is a struct that represents the public user dto.
-type PublicUser struct {
+// PublicUserDTO is a struct that represents the public user dto.
+type PublicUserDTO struct {
 	// ID is the primary key of the user.
 	ID uint `json:"id"`
 
@@ -25,10 +25,10 @@ type PublicUser struct {
 // m: The User model.
 //
 // Returns a PublicUser DTO.
-func (p PublicUser) FromModel(m models.User) PublicUser {
-	// If the profile picture is blank, return the PublicUser DTO without the profile picture.
+func (p PublicUserDTO) FromModel(m *models.User) *PublicUserDTO {
+	// If the profile picture is blank, return the PublicUserDTO DTO without the profile picture.
 	if utils.IsBlank(m.ProfilePicture) {
-		return PublicUser{
+		return &PublicUserDTO{
 			ID:                m.ID,
 			Username:          m.Username,
 			ProfilePictureUrl: m.ProfilePicture,
@@ -38,7 +38,7 @@ func (p PublicUser) FromModel(m models.User) PublicUser {
 	// profilePicturePath is the path to the profile picture.
 	profilePicturePath := fmt.Sprintf("%s:%d%s/%s", config.ServerConfig.Host, config.ServerConfig.Port, router.UserProfiles, m.ProfilePicture)
 
-	return PublicUser{
+	return &PublicUserDTO{
 		ID:                m.ID,
 		Username:          m.Username,
 		ProfilePictureUrl: profilePicturePath,

@@ -37,14 +37,14 @@ func (l *LogoutController) UserLogout(c echo.Context) error {
 
 	// Check if there was an error blacklisting the token
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Could not blacklist token",
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Successfully logged out",
 		Data:    nil,
@@ -66,14 +66,14 @@ func (l *LogoutController) VendorLogout(c echo.Context) error {
 
 	// Check if there was an error blacklisting the token
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.Response{
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Could not blacklist token",
 			Data:    nil,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.Response{
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Successfully logged out",
 		Data:    nil,

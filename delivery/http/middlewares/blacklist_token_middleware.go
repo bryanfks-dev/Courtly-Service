@@ -34,7 +34,7 @@ func (b *BlacklistTokenMiddleware) Shield(next echo.HandlerFunc) echo.HandlerFun
 
 		// Check if the token is blacklisted
 		if b.blacklistTokenUseCase.IsBlacklistedToken(cc.Token.Raw) {
-			return c.JSON(http.StatusUnauthorized, dto.Response{
+			return c.JSON(http.StatusUnauthorized, dto.ResponseDTO{
 				Success: false,
 				Message: "Token is blacklisted",
 				Data:    nil,
