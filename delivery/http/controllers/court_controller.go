@@ -54,6 +54,46 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 	})
 }
 
+// GetCourtsUsingType is a controller that handles the get courts using type endpoint.
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) GetCourtsUsingType(c echo.Context) error {
+	// Get the court type from the URL
+	courtType := c.Param("type")
+
+	// Return an error if the court type is invalid
+	if !co.CourtUseCase.ValidateCourtType(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.Response{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
+	// Get the courts
+	courts, err := co.CourtUseCase.GetCourtsUsingType(courtType)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.Response{
+			Success: false,
+			Message: "Failed to get courts",
+			Data:    nil,
+		})
+	}
+
+	// Convert the court models to court DTOs
+	courtsDTO := co.CourtUseCase.ConvertCourtModelsToDTOs(courts)
+
+	return c.JSON(http.StatusOK, dto.Response{
+		Success: true,
+		Message: "Success retrieve courts",
+		Data:    courtsDTO,
+	})
+}
+
 // GetCurrentVendorCourtTypes is a controller that handles the get current vendor court types endpoint.
 // Endpoint: GET /vendors/me/courts/types
 //

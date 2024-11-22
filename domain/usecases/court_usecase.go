@@ -2,9 +2,11 @@ package usecases
 
 import (
 	"log"
+	"main/core/enums"
 	"main/data/models"
 	"main/internal/dto"
 	"main/internal/repository"
+	"main/pkg/utils"
 
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
@@ -39,6 +41,34 @@ func (c *CourtUseCase) GetCourts() (*[]models.Court, error) {
 	// Return an error if any
 	if err != nil {
 		log.Println("Failed to get courts: ", err)
+
+		return nil, err
+	}
+
+	return courts, nil
+}
+
+// ValidateCourtType is a function that validates the court type.
+//
+// courtType: The court type.
+//
+// Returns true if the court type is valid.
+func (c *CourtUseCase) ValidateCourtType(courtType string) bool {
+	return enums.InCourtType(utils.ToUpperFirst(courtType))
+}
+
+// GetCourtsUsingType is a function that returns the courts using the court type.
+//
+// courtType: The court type.
+//
+// Returns the courts and an error if any.
+func (c *CourtUseCase) GetCourtsUsingType(courtType string) (*[]models.Court, error) {
+	// Get the courts
+	courts, err := c.CourtRepository.GetCourtsUsingType(courtType)
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to get courts using type ", courtType, ": ", err)
 
 		return nil, err
 	}

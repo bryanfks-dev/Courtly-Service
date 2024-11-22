@@ -83,6 +83,7 @@ func NewServer() (*echo.Echo, error) {
 	courtPrefix := prefix.Group("/courts")
 
 	courtPrefix.GET("", c.CourtController.GetCourts)
+	courtPrefix.GET("/:type", c.CourtController.GetCourtsUsingType)
 
 	currentVendorCourtsPrefix := currentVendorPrefix.Group("/courts")
 	currentVendorCourtsPrefix.GET("/types", c.CourtController.GetCurrentVendorCourtTypes)

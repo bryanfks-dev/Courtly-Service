@@ -33,6 +33,26 @@ func (*CourtRepository) GetCourts() (*[]models.Court, error) {
 	return &courts, nil
 }
 
+// GetCourtsUsingType is a function that returns the courts using the court type.
+//
+// courtType: The court type.
+//
+// Returns the courts and an error if any.
+func (*CourtRepository) GetCourtsUsingType(courtType string) (*[]models.Court, error) {
+	// Create a new court object
+	var courts []models.Court
+
+	// Get the courts
+	err := mysql.Conn.Model(&models.Court{}).Joins("JOIN court_types").Where("type = ?", courtType).Find(&courts).Error
+
+	// Return an error if any
+	if err != nil {
+		return nil, err
+	}
+
+	return &courts, nil
+}
+
 // GetVendorCourtTypes is a function that returns the vendor court types.
 //
 // vendorID: The vendor ID.
