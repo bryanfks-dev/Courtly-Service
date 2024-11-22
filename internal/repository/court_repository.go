@@ -15,10 +15,10 @@ func NewCourtRepository() *CourtRepository {
 	return &CourtRepository{}
 }
 
-// GetCourts is a function that returns the courts.
+// GetAll is a function that returns all the courts.
 //
 // Returns the courts and an error if any.
-func (*CourtRepository) GetCourts() (*[]models.Court, error) {
+func (*CourtRepository) GetAll() (*[]models.Court, error) {
 	// Create a new court object
 	var courts []models.Court
 
@@ -33,12 +33,32 @@ func (*CourtRepository) GetCourts() (*[]models.Court, error) {
 	return &courts, nil
 }
 
-// GetCourtsUsingType is a function that returns the courts using the court type.
+// GetUsingID is a function that returns the courts by ID.
+//
+// courtID: The court ID.
+//
+// Returns the courts and an error if any.
+func (*CourtRepository) GetUsingID(courtID uint) (*models.Court, error) {
+	// Create a new court object
+	var courts models.Court
+
+	// Get the courts by ID
+	err := mysql.Conn.Where("id = ?", courtID).Find(&courts).Error
+
+	// Return an error if any
+	if err != nil {
+		return nil, err
+	}
+
+	return &courts, nil
+}
+
+// GetUsingType is a function that returns the courts using the court type.
 //
 // courtType: The court type.
 //
 // Returns the courts and an error if any.
-func (*CourtRepository) GetCourtsUsingType(courtType string) (*[]models.Court, error) {
+func (*CourtRepository) GetAllUsingType(courtType string) (*[]models.Court, error) {
 	// Create a new court object
 	var courts []models.Court
 

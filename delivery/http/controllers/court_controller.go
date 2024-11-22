@@ -5,6 +5,7 @@ import (
 	"main/domain/usecases"
 	"main/internal/dto"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -47,7 +48,49 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve courts",
-		Data:    dto.VendorCourtResponseDTO{}.FromCourtModels(courts),
+		Data:    dto.CourtsResponseDTO{}.FromCourtModels(courts),
+	})
+}
+
+// GetCourtUsingID is a controller that handles the get court using ID endpoint.
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) GetCourtUsingID(c echo.Context) error {
+	// Get the court ID from the URL
+	id := c.Param("id")
+
+	// Convert the ID to an integer
+	courtID, err := strconv.Atoi(id)
+
+	// Return an error if the ID is invalid
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court ID",
+			Data:    nil,
+		})
+	}
+
+	// Get the courts
+	court, err := co.CourtUseCase.GetCourtUsingID(uint(courtID))
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get court",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Success retrieve court",
+		Data: dto.CourtResponseDTO{
+			Court: dto.CourtDTO{}.FromModel(court), // Return the first court
+		},
 	})
 }
 
@@ -84,7 +127,7 @@ func (co *CourtController) GetCourtsUsingType(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve courts",
-		Data:    dto.VendorCourtResponseDTO{}.FromCourtModels(courts),
+		Data:    dto.CourtsResponseDTO{}.FromCourtModels(courts),
 	})
 }
 

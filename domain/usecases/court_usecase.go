@@ -35,7 +35,7 @@ func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository) *CourtUseCas
 // Returns the courts and an error if any.
 func (c *CourtUseCase) GetCourts() (*[]models.Court, error) {
 	// Get the courts
-	courts, err := c.CourtRepository.GetCourts()
+	courts, err := c.CourtRepository.GetAll()
 
 	// Return an error if any
 	if err != nil {
@@ -45,6 +45,25 @@ func (c *CourtUseCase) GetCourts() (*[]models.Court, error) {
 	}
 
 	return courts, nil
+}
+
+// GetCourtUsingID is a function that returns the court using the court ID.
+//
+// courtID: The court ID.
+//
+// Returns the court and an error if any.
+func (c *CourtUseCase) GetCourtUsingID(courtID uint) (*models.Court, error) {
+	// Get the courts
+	court, err := c.CourtRepository.GetUsingID(courtID)
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to get courts: ", err)
+
+		return nil, err
+	}
+
+	return court, nil
 }
 
 // ValidateCourtType is a function that validates the court type.
@@ -63,7 +82,7 @@ func (c *CourtUseCase) ValidateCourtType(courtType string) bool {
 // Returns the courts and an error if any.
 func (c *CourtUseCase) GetCourtsUsingType(courtType string) (*[]models.Court, error) {
 	// Get the courts
-	courts, err := c.CourtRepository.GetCourtsUsingType(courtType)
+	courts, err := c.CourtRepository.GetAllUsingType(courtType)
 
 	// Return an error if any
 	if err != nil {
