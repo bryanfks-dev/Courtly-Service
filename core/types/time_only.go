@@ -2,6 +2,8 @@ package types
 
 import (
 	"database/sql/driver"
+	"errors"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -47,4 +49,31 @@ func (timeOnly TimeOnly) Value() (driver.Value, error) {
 // Returns The time of the time only type.
 func (timeOnly TimeOnly) GetTime() time.Time {
 	return timeOnly.Time
+}
+
+// Scan is a method that scans the time only type.
+//
+// value: The value to scan.
+//
+// Returns An error if any.
+func (timeOnly *TimeOnly) Scan(value any) error {
+	scanned, ok := value.([]byte)
+
+	// If the value is not a byte slice, return an error
+	if !ok {
+		return errors.New(fmt.Sprintln("Failed to scan Time value: ", value))
+	}
+
+	// Parse the scanned string
+	scannedTime, err := time.Parse("15:04:05", string(scanned))
+
+	// If there is an error parsing the time, return the error
+	if err != nil {
+		return err
+	}
+
+	// Set the time
+	*timeOnly = TimeOnly{Time: scannedTime}
+
+	return nil
 }

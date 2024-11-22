@@ -2,6 +2,8 @@ package types
 
 import (
 	"database/sql/driver"
+	"errors"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -47,4 +49,31 @@ func (dateOnly DateOnly) Value() (driver.Value, error) {
 // Returns The time of the date only type.
 func (dateOnly DateOnly) GetTime() time.Time {
 	return dateOnly.Time
+}
+
+// Scan is a method that scans the date only type.
+//
+// value: The value to scan.
+//
+// Returns An error if any.
+func (dateOnly *DateOnly) Scan(value any) error {
+	scanned, ok := value.([]byte)
+
+	// If the value is not a byte slice, return an error
+	if !ok {
+		return errors.New(fmt.Sprintln("Failed to scan Date value: ", value))
+	}
+
+	// Parse the scanned string
+	scannedDate, err := time.Parse("2006-01-02", string(scanned))
+
+	// If there is an error parsing the date, return the error
+	if err != nil {
+		return err
+	}
+
+	// Set the date
+	*dateOnly = DateOnly{Time: scannedDate}
+
+	return nil
 }

@@ -32,10 +32,10 @@ type RegisterForm struct {
 	Password string
 
 	// OpenTime is the open time of the vendor.
-	OpenTime *types.TimeOnly
+	OpenTime types.TimeOnly
 
 	// CloseTime is the close time of the vendor.
-	CloseTime *types.TimeOnly
+	CloseTime types.TimeOnly
 }
 
 // sanitizeForm is a helper function that sanitizes the register input.
@@ -239,7 +239,7 @@ func main() {
 	}
 
 	// Set the open time
-	form.OpenTime = &types.TimeOnly{Time: openTime}
+	form.OpenTime = types.TimeOnly{Time: openTime}
 
 	// Get the vendor close time
 	fmt.Print("Enter vendor close time (HH:MM): ")
@@ -262,7 +262,7 @@ func main() {
 	}
 
 	// Set the close time
-	form.CloseTime = &types.TimeOnly{Time: closeTime}
+	form.CloseTime = types.TimeOnly{Time: closeTime}
 
 	// Sanitize the form
 	sanitizeForm(&form)
