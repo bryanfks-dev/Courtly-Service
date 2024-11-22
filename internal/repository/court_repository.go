@@ -15,6 +15,26 @@ func NewCourtRepository() *CourtRepository {
 	return &CourtRepository{}
 }
 
+// GetVendorCourtTypes is a function that returns the vendor court types.
+//
+// vendorID: The vendor ID.
+//
+// Returns the vendor court types and an error if any.
+func (*CourtRepository) GetVendorCourtTypes(vendorID uint) (*[]models.CourtType, error) {
+	// Create a new court type object
+	var courtTypes []models.CourtType
+
+	// Get the court types by vendor ID
+	err := mysql.Conn.Distinct().Where("courts.vendor_id = ?", vendorID).Find(&courtTypes).Error
+
+	// Return an error if any
+	if err != nil {
+		return nil, err
+	}
+
+	return &courtTypes, nil
+}
+
 // GetVendorCourtsUsingType is a function that returns the vendor courts using the court type.
 //
 // vendorID: The vendor ID.

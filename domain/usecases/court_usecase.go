@@ -29,6 +29,39 @@ func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository) *CourtUseCas
 	}
 }
 
+// GetVendorCourtTypes is a function that returns the vendor court types.
+//
+// vendorID: The vendor ID.
+//
+// Returns the vendor court types and an error if any.
+func (c *CourtUseCase) GetVendorCourtTypes(vendorID uint) (*[]models.CourtType, error) {
+	// Get the vendor court types
+	courtTypes, err := c.CourtRepository.GetVendorCourtTypes(vendorID)
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to get vendor court types: ", err)
+
+		return nil, err
+	}
+
+	return courtTypes, nil
+
+}
+
+// GetCurrentVendorCourtTypes is a function that returns the current vendor court types.
+//
+// token: The token.
+//
+// Returns the vendor court types and an error if any.
+func (c *CourtUseCase) GetCurrentVendorCourtTypes(token *jwt.Token) (*[]models.CourtType, error) {
+	// Get the token claims
+	claims := c.AuthUseCase.DecodeToken(token)
+
+	// Get the current vendor court types
+	return c.GetVendorCourtTypes(claims.Id)
+}
+
 // GetVendorCourtsUsingType is a function that returns the vendor courts using the court type.
 //
 // vendorID: The vendor ID.

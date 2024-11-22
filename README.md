@@ -28,7 +28,8 @@ There are several available endpoints, such as:
 
 ##### Courts endpoints
 
-- **GET** `/api/v1/vendors/courts/:type` - Get current vendor courts using type from database
+- **GET** `/api/v1/vendors/courts/types` - Get current vendor court types
+- **GET** `/api/v1/vendors/courts/types/:type` - Get current vendor courts using type from database
 
 ## Response
 

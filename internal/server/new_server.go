@@ -81,8 +81,8 @@ func NewServer() (*echo.Echo, error) {
 
 	// Courts endpoints
 	currentVendorCourtsPrefix := currentVendorPrefix.Group("/courts")
-
-	currentVendorCourtsPrefix.GET("/:type", c.CourtController.GetCurrentVendorCourtType)
+	currentVendorCourtsPrefix.GET("/types", c.CourtController.GetCurrentVendorCourtTypes)
+	currentVendorCourtsPrefix.GET("/types/:type", c.CourtController.GetCurrentVendorCourtType)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

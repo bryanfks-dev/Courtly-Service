@@ -25,6 +25,35 @@ func NewCourtController(c *usecases.CourtUseCase) *CourtController {
 	}
 }
 
+// GetCurrentVendorCourtTypes is a controller that handles the get current vendor court types endpoint.
+// Endpoint: GET /vendors/me/courts/types
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) GetCurrentVendorCourtTypes(c echo.Context) error {
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the current vendor court types
+	courtTypes, err := co.CourtUseCase.GetCurrentVendorCourtTypes(cc.Token)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.Response{
+			Success: false,
+			Message: "Failed to get current vendor court types",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.Response{
+		Success: true,
+		Message: "Success retrieve current vendor court types",
+		Data:    dto.CourtTypeResponseDTO{}.FromModels(*courtTypes),
+	})
+}
+
 // GetCurrentVendorCourtType is a controller that handles the get current vendor court type endpoint.
 // Endpoint: GET /vendors/me/courts/:type
 //
