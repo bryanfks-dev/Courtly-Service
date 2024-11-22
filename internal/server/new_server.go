@@ -83,11 +83,20 @@ func NewServer() (*echo.Echo, error) {
 	courtPrefix := prefix.Group("/courts")
 
 	courtPrefix.GET("", c.CourtController.GetCourts)
-	courtPrefix.GET("/:type", c.CourtController.GetCourtsUsingType)
 
+	// Courts types endpoints
+	courtTypesPrefix := courtPrefix.Group("/types")
+
+	courtTypesPrefix.GET("/:type", c.CourtController.GetCourtsUsingType)
+
+	// Current vendor courts endpoints
 	currentVendorCourtsPrefix := currentVendorPrefix.Group("/courts")
-	currentVendorCourtsPrefix.GET("/types", c.CourtController.GetCurrentVendorCourtTypes)
-	currentVendorCourtsPrefix.GET("/types/:type", c.CourtController.GetCurrentVendorCourtType)
+
+	// Current vendor courts types endpoints
+	currentVendorCourtsTypePrefix := currentVendorCourtsPrefix.Group("/types")
+
+	currentVendorCourtsTypePrefix.GET("", c.CourtController.GetCurrentVendorCourtTypes)
+	currentVendorCourtsTypePrefix.GET("/:type", c.CourtController.GetCurrentVendorCourtType)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }
