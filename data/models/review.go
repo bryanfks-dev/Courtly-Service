@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"main/core/types"
+)
 
 // Review is the model for the review table.
 type Review struct {
@@ -26,5 +28,5 @@ type Review struct {
 	Review string `gorm:"not null;type:text"`
 
 	// Date is the date of the review was created.
-	Date time.Time `gorm:"autoCreateTime"`
+	Date types.DateOnly `gorm:"autoCreateTime"`
 }
