@@ -139,6 +139,7 @@ func (co *CourtController) GetCurrentVendorCourtType(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
+	// Get the current vendor courts
 	courts, err := co.CourtUseCase.GetCurrentVendorCourtsUsingType(cc.Token, courtType)
 
 	// Return an error if any
