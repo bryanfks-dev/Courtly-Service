@@ -31,6 +31,7 @@ There are several available endpoints, such as:
 ##### Courts endpoints
 
 - **GET** `/api/v1/courts` - Get all available courts from database
+- **GET** `/api/v1/courts/:id` - Get court finromation from the database using court id
 - **GET** `/api/v1/courts/types/:type` - Get available courts using type from database
 - **GET** `/api/v1/vendors/me/courts/types` - Get current vendor court types
 - **GET** `/api/v1/vendors/me/courts/types/:type` - Get current vendor courts using type from database
