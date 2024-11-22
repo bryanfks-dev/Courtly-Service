@@ -15,7 +15,7 @@ type VendorCourtResponseDTO struct {
 // Returns a VendorCourtResponse DTO.
 func (v VendorCourtResponseDTO) FromCourtModels(m *[]models.Court) *VendorCourtResponseDTO {
 	// Create a new list of VendorCourtDTO
-	var courts []VendorCourtDTO
+	courts := []VendorCourtDTO{}
 
 	// Iterate through the courts
 	for _, court := range *m {

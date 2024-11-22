@@ -15,7 +15,7 @@ type CourtResponseDTO struct {
 // Returns a new instance of the CourtResponseDTO.
 func (c CourtResponseDTO) FromCourtModels(models *[]models.Court) *CourtResponseDTO {
 	// Create a new court response DTO
-	var courts []CourtDTO
+	courts := []CourtDTO{}
 
 	// Loop through the court models
 	for _, model := range *models {
