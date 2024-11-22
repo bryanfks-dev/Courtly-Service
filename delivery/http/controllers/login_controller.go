@@ -106,8 +106,8 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 //
 // Returns an error response if there is an error, otherwise a success response.
 func (l *LoginController) VendorLogin(c echo.Context) error {
-	// Create a new VendorLoginForm object
-	form := new(dto.VendorLoginForm)
+	// Create a new VendorLoginForm dto object
+	form := new(dto.VendorLoginFormDTO)
 
 	// Bind the request body to the VendorLoginForm object
 	if err := c.Bind(form); err != nil {

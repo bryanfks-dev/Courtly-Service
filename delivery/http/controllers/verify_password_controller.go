@@ -35,8 +35,8 @@ func (v *VerifyPasswordController) UserVerifyPassword(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
-	// Bind the form
-	form := new(dto.VerifyPasswordForm)
+	// Bind the form dto
+	form := new(dto.VerifyPasswordFormDTO)
 
 	// Return an error if the form data is invalid
 	if err := c.Bind(form); err != nil {

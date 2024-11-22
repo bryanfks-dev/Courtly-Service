@@ -76,8 +76,8 @@ func (v *VendorController) UpdateVendorPassword(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
-	// Bind the form data
-	form := new(dto.ChangePasswordForm)
+	// Bind the form dto
+	form := new(dto.ChangePasswordFormDTO)
 
 	// Return an error if the form data is invalid
 	if err := c.Bind(form); err != nil {

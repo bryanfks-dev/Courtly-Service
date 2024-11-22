@@ -65,7 +65,7 @@ func (l LoginUseCase) ValidateUserForm(form *dto.UserLoginForm) types.FormErrorR
 // form: The login form data.
 //
 // Returns a map of errors.
-func (l LoginUseCase) ValidateVendorForm(form *dto.VendorLoginForm) types.FormErrorResponseMsg {
+func (l LoginUseCase) ValidateVendorForm(form *dto.VendorLoginFormDTO) types.FormErrorResponseMsg {
 	// Create an empty error map
 	errs := make(types.FormErrorResponseMsg)
 
@@ -136,7 +136,7 @@ func (l LoginUseCase) ProcessUser(form *dto.UserLoginForm) (*models.User, *entit
 // form: The login form data.
 //
 // Returns the vendor object and an error if any.
-func (l LoginUseCase) ProcessVendor(form *dto.VendorLoginForm) (*models.Vendor, *entities.ProcessError) {
+func (l LoginUseCase) ProcessVendor(form *dto.VendorLoginFormDTO) (*models.Vendor, *entities.ProcessError) {
 	// Check if the email is available
 	vendor, err := l.VendorRepositoy.GetUsingEmail(form.Email)
 

@@ -73,10 +73,10 @@ func (u *UserUseCase) GetCurrentUser(token *jwt.Token) (*models.User, *entities.
 
 // ValidateChangePasswordForm is a function that validates the change password form.
 //
-// form: The change password form.
+// form: The change password form dto.
 //
 // Returns a map of errors.
-func (u *UserUseCase) ValidateChangePasswordForm(form *dto.ChangePasswordForm) types.FormErrorResponseMsg {
+func (u *UserUseCase) ValidateChangePasswordForm(form *dto.ChangePasswordFormDTO) types.FormErrorResponseMsg {
 	// Create an empty error map
 	errs := make(types.FormErrorResponseMsg)
 
@@ -115,10 +115,10 @@ func (u *UserUseCase) ValidateChangePasswordForm(form *dto.ChangePasswordForm) t
 // ProcessChangePassword is a function that processes the change password use case.
 //
 // token: The user token.
-// form: The change password form.
+// form: The change password form dto.
 //
 // Returns the user object and an error if any.
-func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePasswordForm) (*models.User, *entities.ProcessError) {
+func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePasswordFormDTO) (*models.User, *entities.ProcessError) {
 	// Get the user ID from the token
 	claims := u.AuthUseCase.DecodeToken(token)
 
@@ -176,10 +176,10 @@ func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePa
 
 // ValidateChangeUsernameForm is a function that validates the change username form.
 //
-// form: The change username form.
+// form: The change username form dto.
 //
 // Returns an error if any.
-func (u *UserUseCase) ValidateChangeUsernameForm(form *dto.ChangeUsernameForm) types.FormErrorResponseMsg {
+func (u *UserUseCase) ValidateChangeUsernameForm(form *dto.ChangeUsernameFormDTO) types.FormErrorResponseMsg {
 	// Create an empty error map
 	errs := make(types.FormErrorResponseMsg)
 
@@ -203,10 +203,10 @@ func (u *UserUseCase) ValidateChangeUsernameForm(form *dto.ChangeUsernameForm) t
 
 // ProcessUsername is a function that processes the change username use case.
 //
-// form: The change username form.
+// form: The change username form dto.
 //
 // Returns an error if any.
-func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUsernameForm) (*models.User, *entities.ProcessError) {
+func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUsernameFormDTO) (*models.User, *entities.ProcessError) {
 	// Get the user by ID
 	taken, err := u.UserRepository.IsUsernameTaken(form.NewUsername)
 

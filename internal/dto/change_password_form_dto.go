@@ -1,7 +1,7 @@
 package dto
 
-// ChangePasswordForm is a data transfer object that represents the form data for changing the password.
-type ChangePasswordForm struct {
+// ChangePasswordFormDTO is a data transfer object that represents the form data for changing the password.
+type ChangePasswordFormDTO struct {
 	// OldPassword is the current password of the user.
 	OldPassword string `json:"old_password"`
 

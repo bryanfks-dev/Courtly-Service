@@ -1,8 +1,8 @@
 package dto
 
-// VendorLoginForm is a struct that represents the login form
+// VendorLoginFormDTO is a struct that represents the login form
 // that is sent by the vendor.
-type VendorLoginForm struct {
+type VendorLoginFormDTO struct {
 	// Email is the email of the vendor.
 	Email string `json:"email"`
 

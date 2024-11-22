@@ -78,10 +78,10 @@ func (v *VendorUseCase) GetCurrentVendor(token *jwt.Token) (*models.Vendor, *ent
 
 // ValidateChangePasswordForm is a function that validates the change password form.
 //
-// form: The change password form.
+// form: The change password form dto.
 //
 // Returns a map of errors.
-func (v *VendorUseCase) ValidateChangePasswordForm(form *dto.ChangePasswordForm) types.FormErrorResponseMsg {
+func (v *VendorUseCase) ValidateChangePasswordForm(form *dto.ChangePasswordFormDTO) types.FormErrorResponseMsg {
 	// Create an empty error map
 	errs := make(types.FormErrorResponseMsg)
 
@@ -120,10 +120,10 @@ func (v *VendorUseCase) ValidateChangePasswordForm(form *dto.ChangePasswordForm)
 // ProcessChangePassword is a function that processes the change password use case.
 //
 // token: The vendor token.
-// form: The change password form.
+// form: The change password form dto.
 //
 // Returns the vendor object and an error if any.
-func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePasswordForm) (*models.Vendor, *entities.ProcessError) {
+func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePasswordFormDTO) (*models.Vendor, *entities.ProcessError) {
 	// Get the vendor ID from the token
 	claims := v.AuthUseCase.DecodeToken(token)
 

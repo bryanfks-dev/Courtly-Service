@@ -33,10 +33,10 @@ func NewVerifyPasswordUseCase(a *AuthUseCase, u *repository.UserRepository) *Ver
 
 // ValidateForm is a function that validates the verify password form.
 //
-// form: The verify password form data.
+// form: The verify password form dto.
 //
 // Returns a map of errors.
-func (*VerifyPasswordUseCase) ValidateForm(form *dto.VerifyPasswordForm) types.FormErrorResponseMsg {
+func (*VerifyPasswordUseCase) ValidateForm(form *dto.VerifyPasswordFormDTO) types.FormErrorResponseMsg {
 	// Create an empty error map
 	errs := make(types.FormErrorResponseMsg)
 
@@ -55,11 +55,11 @@ func (*VerifyPasswordUseCase) ValidateForm(form *dto.VerifyPasswordForm) types.F
 
 // Process is a function that processes the verify password form.
 //
-// form: The verify password form data.
+// form: The verify password form dto.
 // userID: The user ID.
 //
 // Returns the user object and an error if any.
-func (v *VerifyPasswordUseCase) Process(form *dto.VerifyPasswordForm, token *jwt.Token) (*models.User, *entities.ProcessError) {
+func (v *VerifyPasswordUseCase) Process(form *dto.VerifyPasswordFormDTO, token *jwt.Token) (*models.User, *entities.ProcessError) {
 	// Decode the token
 	claims := v.AuthUseCase.DecodeToken(token)
 

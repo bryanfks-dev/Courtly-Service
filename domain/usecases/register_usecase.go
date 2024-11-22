@@ -34,20 +34,20 @@ func NewRegisterUseCase(a *AuthUseCase, u *repository.UserRepository) *RegisterU
 
 // SanitizeUserRegisterForm is a helper function that sanitizes the register input.
 //
-// form: The register form form.
+// form: The register form form dto.
 //
 // Returns void
-func (r RegisterUseCase) SanitizeUserRegisterForm(form *dto.UserRegisterForm) {
+func (r RegisterUseCase) SanitizeUserRegisterForm(form *dto.UserRegisterFormDTO) {
 	form.Username = strings.TrimSpace(form.Username)
 	form.PhoneNumber = strings.TrimSpace(form.PhoneNumber)
 }
 
 // ValidateUserRegisterForm is a function that validates the register form.
 //
-// form: The register form.
+// form: The register form dto.
 //
 // Returns a map of errors.
-func (r RegisterUseCase) ValidateUserRegisterForm(form *dto.UserRegisterForm) types.FormErrorResponseMsg {
+func (r RegisterUseCase) ValidateUserRegisterForm(form *dto.UserRegisterFormDTO) types.FormErrorResponseMsg {
 	// Create an empty error map
 	errs := make(types.FormErrorResponseMsg)
 
@@ -91,10 +91,10 @@ func (r RegisterUseCase) ValidateUserRegisterForm(form *dto.UserRegisterForm) ty
 
 // ProcessUserRegister is a function that processes the register form.
 //
-// form: The register form.
+// form: The register form dto.
 //
 // Returns the user and an error message.
-func (r RegisterUseCase) ProcessUserRegister(form *dto.UserRegisterForm) *entities.ProcessError {
+func (r RegisterUseCase) ProcessUserRegister(form *dto.UserRegisterFormDTO) *entities.ProcessError {
 	// Check if the username is taken
 	taken, err := r.UserRepository.IsUsernameTaken(form.Username)
 
@@ -150,10 +150,10 @@ func (r RegisterUseCase) ProcessUserRegister(form *dto.UserRegisterForm) *entiti
 
 // CreateNewUser is a function that creates a new user.
 //
-// form: The register form.
+// form: The register form dto.
 //
 // Returns the user and an error message.
-func (r *RegisterUseCase) CreateNewUser(form *dto.UserRegisterForm) (*models.User, error) {
+func (r *RegisterUseCase) CreateNewUser(form *dto.UserRegisterFormDTO) (*models.User, error) {
 	// Hash the password
 	hashedPwd, err := r.AuthUseCase.HashPassword(form.Password)
 

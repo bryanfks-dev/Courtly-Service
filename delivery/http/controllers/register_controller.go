@@ -30,8 +30,8 @@ func NewRegisterController(r *usecases.RegisterUseCase) *RegisterController {
 //
 // Returns an error response if there is an error, otherwise a success response.
 func (r RegisterController) UserRegister(c echo.Context) error {
-	// Create a new UserRegisterForm object
-	form := new(dto.UserRegisterForm)
+	// Create a new UserRegisterForm dto object
+	form := new(dto.UserRegisterFormDTO)
 
 	// Bind the request body to the UserRegisterForm object
 	if err := c.Bind(form); err != nil {
