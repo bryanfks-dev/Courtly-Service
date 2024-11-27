@@ -11,6 +11,7 @@ type Controllers struct {
 	UserController           *controllers.UserController
 	VendorController         *controllers.VendorController
 	CourtController          *controllers.CourtController
+	ReviewController         *controllers.ReviewController
 }
 
 // InitControllers is a function that initializes all the controllers.
@@ -27,5 +28,6 @@ func InitControllers(usecase *UseCases) *Controllers {
 		UserController:           controllers.NewUserController(usecase.UserUseCase, usecase.AuthUseCase),
 		VendorController:         controllers.NewVendorController(usecase.VendorUseCase),
 		CourtController:          controllers.NewCourtController(usecase.CourtUseCase),
+		ReviewController:         controllers.NewReviewController(usecase.ReviewUseCase, usecase.CourtUseCase),
 	}
 }

@@ -13,6 +13,7 @@ type UseCases struct {
 	BlacklistedTokenUseCase *usecases.BlacklistedTokenUseCase
 	VendorUseCase           *usecases.VendorUseCase
 	CourtUseCase            *usecases.CourtUseCase
+	ReviewUseCase           *usecases.ReviewUseCase
 }
 
 // InitUseCases is a function that initializes all the use cases.
@@ -40,6 +41,8 @@ func InitUseCases(repos *Repositories) *UseCases {
 	u.VendorUseCase = usecases.NewVendorUseCase(u.AuthUseCase, repos.VendorRepository)
 
 	u.CourtUseCase = usecases.NewCourtUseCase(u.AuthUseCase, repos.CourtRepository)
+
+	u.ReviewUseCase = usecases.NewReviewUseCase(repos.ReviewRepository)
 
 	return u
 }

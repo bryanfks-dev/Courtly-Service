@@ -36,6 +36,10 @@ There are several available endpoints, such as:
 - **GET** `/api/v1/vendors/me/courts/types` - Get current vendor court types
 - **GET** `/api/v1/vendors/me/courts/types/:type` - Get current vendor courts using type from database
 
+##### Reviews endpoints
+
+- **GET** `/api/v1/vendors/:id/courts/types/:type/reviews` - Get vendor courts type reviews from database
+
 ## Response
 
 Since this service relies on REST API, so json is pretty much needed here. All endpoints have the same json response structure, which shown as an example below.
