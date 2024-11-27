@@ -73,26 +73,6 @@ func (*CourtRepository) GetAllUsingType(courtType string) (*[]models.Court, erro
 	return &courts, nil
 }
 
-// GetVendorCourtTypes is a function that returns the vendor court types.
-//
-// vendorID: The vendor ID.
-//
-// Returns the vendor court types and an error if any.
-func (*CourtRepository) GetVendorCourtTypes(vendorID uint) (*[]models.CourtType, error) {
-	// Create a new court type object
-	var courtTypes []models.CourtType
-
-	// Get the court types by vendor ID
-	err := mysql.Conn.Model(&models.Court{}).Distinct("court_types.type").Joins("JOIN court_types").Where("vendor_id = ?", vendorID).Find(&courtTypes).Error
-
-	// Return an error if any
-	if err != nil {
-		return nil, err
-	}
-
-	return &courtTypes, nil
-}
-
 // GetVendorCourtsUsingType is a function that returns the vendor courts using the court type.
 //
 // vendorID: The vendor ID.
