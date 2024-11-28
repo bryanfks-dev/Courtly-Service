@@ -39,6 +39,7 @@ func (u *UserController) GetCurrentUser(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
+	// Get the current user
 	user, err := u.UserUseCase.GetCurrentUser(cc.Token)
 
 	// Return an error if any

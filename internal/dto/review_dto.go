@@ -28,11 +28,11 @@ type ReviewDTO struct {
 // m: The review model.
 //
 // Returns the review DTO.
-func (r ReviewDTO) FromModel(m *models.Review) ReviewDTO {
+func (r ReviewDTO) FromModel(m *models.Review) *ReviewDTO {
 	// Get the date
 	date, _ := m.Date.Value()
 
-	return ReviewDTO{
+	return &ReviewDTO{
 		ID:        m.ID,
 		User:      r.User.FromModel(&m.User),
 		CourtType: m.CourtType.Type,

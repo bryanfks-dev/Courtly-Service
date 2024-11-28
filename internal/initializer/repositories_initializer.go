@@ -9,6 +9,7 @@ type Repositories struct {
 	VendorRepository           *repository.VendorRepository
 	CourtRepository            *repository.CourtRepository
 	ReviewRepository           *repository.ReviewRepository
+	BookingRepository          *repository.BookingRepository
 }
 
 // InitRepositories is a function that initializes all the repositories.
@@ -21,5 +22,6 @@ func InitRepositories() *Repositories {
 		VendorRepository:           repository.NewVendorRepository(),
 		CourtRepository:            repository.NewCourtRepository(),
 		ReviewRepository:           repository.NewReviewRepository(),
+		BookingRepository:          repository.NewBookingRepository(),
 	}
 }

@@ -5,10 +5,6 @@ type Order struct {
 	// ID is the primary key of the order.
 	ID uint `gorm:"primary_key;autoIncrement"`
 
-	// BookID is the foreign key of the book.
-	BookID uint
-	Book   Book `gorm:"foreignKey:BookID"`
-
 	// PaymentMethodID is the foreign key of the payment method.
 	PaymentMethodID uint
 	PaymentMethod   PaymentMethod `gorm:"foreignKey:PaymentMethodID"`
@@ -18,4 +14,7 @@ type Order struct {
 
 	// AppFee is the app fee of the order.
 	AppFee float64 `gorm:"not null"`
+
+	// Status is the status of the order.
+	Status string `gorm:"not null"`
 }

@@ -4,10 +4,14 @@ import (
 	"main/core/types"
 )
 
-// Book is the model for the book table.
-type Book struct {
+// Booking is the model for the booking table.
+type Booking struct {
 	// ID is the primary key of the book.
 	ID uint `gorm:"primary_key;autoIncrement"`
+
+	// OrderID is the foreign key of the order.
+	OrderId uint
+	Order   Order `gorm:"foreignKey:OrderId"`
 
 	// UserID is the foreign key of the user.
 	UserID uint
