@@ -26,7 +26,7 @@ func (*ReviewRepository) GetUsingVendorIDCourtType(vendorID uint, courtType stri
 	var reviews []models.Review
 
 	// Get the reviews using the vendor ID and court type
-	err := mysql.Conn.Model(&models.Court{}).Joins("JOIN court_types").Where("vendor_id = ? AND court_type = ?", vendorID, courtType).Find(&reviews).Error
+	err := mysql.Conn.Model(&models.Review{}).Joins("JOIN court_types").Where("vendor_id = ? AND type = ?", vendorID, courtType).Find(&reviews).Error
 
 	// Return an error if any
 	if err != nil {

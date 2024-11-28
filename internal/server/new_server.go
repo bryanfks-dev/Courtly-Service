@@ -104,7 +104,7 @@ func NewServer() (*echo.Echo, error) {
 	currentVendorCourtsTypePrefix.GET("/:type", c.CourtController.GetCurrentVendorCourtType)
 
 	// Reviews endpoints
-	vendorPrefix.GET("/:id/courts/type/:type/reviews", c.ReviewController.GetCourtReviewsUsingIDType)
+	vendorPrefix.GET("/:id/courts/types/:type/reviews", c.ReviewController.GetCourtReviewsUsingIDType)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

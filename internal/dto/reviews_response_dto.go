@@ -15,7 +15,7 @@ type ReviewsResponseDTO struct {
 // Returns the reviews response DTO.
 func (r ReviewsResponseDTO) FromModels(m *[]models.Review) *ReviewsResponseDTO {
 	// reviews is a slice of review DTOs
-	var reviews []ReviewDTO
+	reviews := []ReviewDTO{}
 
 	// Iterate over the review models
 	for _, review := range *m {
