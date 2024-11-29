@@ -48,7 +48,7 @@ func (l LoginUseCase) ValidateUserForm(form *dto.UserLoginForm) types.FormErrorR
 	}
 
 	// Check if the password is blank
-	if utils.IsBlank(form.Password) {
+	if form.Password == "" {
 		errs["password"] = append(errs["password"], "Password is required")
 	}
 
@@ -75,7 +75,7 @@ func (l LoginUseCase) ValidateVendorForm(form *dto.VendorLoginFormDTO) types.For
 	}
 
 	// Check if the password is blank
-	if utils.IsBlank(form.Password) {
+	if form.Password == "" {
 		errs["password"] = append(errs["password"], "Password is required")
 	}
 
