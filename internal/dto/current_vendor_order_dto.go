@@ -10,11 +10,11 @@ type CurrentVendorOrderDTO struct {
 	// Date is the date of the order
 	Date string `json:"date"`
 
-	// Username is the username of the user who booked the court
-	Username string `json:"username"`
+	// User is the user who made the order
+	User *PublicUserDTO `json:"user"`
 
-	// CourtType is the type of the court
-	CourtType string `json:"court_type"`
+	// Court is the ordered court
+	Court *CourtDTO `json:"court"`
 
 	// BookStartTime is the start time of the booking
 	BookStartTime string `json:"book_start_time"`
@@ -43,11 +43,10 @@ func (c CurrentVendorOrderDTO) FromModel(m *models.Booking) *CurrentVendorOrderD
 	return &CurrentVendorOrderDTO{
 		ID:            m.Order.ID,
 		Date:          date.(string),
-		Username:      m.User.Username,
-		CourtType:     m.CourtType.Type,
+		User:          PublicUserDTO{}.FromModel(&m.User),
+		Court:         CourtDTO{}.FromModel(&m.Court),
 		BookStartTime: bookStartTime.(string),
 		BookEndTime:   bookEndTime.(string),
 		Price:         m.Order.Price,
 	}
-
 }

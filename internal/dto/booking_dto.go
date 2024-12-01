@@ -10,8 +10,8 @@ type BookingDTO struct {
 	// Order is the order of the booking
 	Order *OrderDTO `json:"order"`
 
-	// CourtType is the type of the court
-	CourtType string `json:"court_type"`
+	// Court is the court of the booking
+	Court *CourtDTO `json:"court"`
 
 	// Vendor is the name of the vendor
 	Vendor *VendorDTO `json:"vendor_name"`
@@ -35,7 +35,7 @@ func (b BookingDTO) FromModel(m *models.Booking) *BookingDTO {
 	return &BookingDTO{
 		ID:            m.ID,
 		Order:         OrderDTO{}.FromModel(&m.Order),
-		CourtType:     m.CourtType.Type,
+		Court:         CourtDTO{}.FromModel(&m.Court),
 		Vendor:        VendorDTO{}.FromModel(&m.Vendor),
 		Date:          m.Date.String(),
 		BookStartTime: m.BookStartTime.String(),

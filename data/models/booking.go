@@ -21,9 +21,9 @@ type Booking struct {
 	VendorID uint
 	Vendor   Vendor `gorm:"foreignKey:VendorID"`
 
-	// CourtTypeID is the foreign key of the court type.
-	CourtTypeID uint
-	CourtType   CourtType `gorm:"foreignKey:CourtTypeID"`
+	// CourtID is the foreign key of the court.
+	CourtID uint
+	Court   Court `gorm:"foreignKey:CourtID"`
 
 	// Date is the date of the book was created.
 	Date types.DateOnly `gorm:"autoCreateTime;type:DATE"`
