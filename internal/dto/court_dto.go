@@ -7,6 +7,9 @@ type CourtDTO struct {
 	// ID is the primary key of the court.
 	ID uint `json:"id"`
 
+	// Name is the name of the court.
+	Name string `json:"name"`
+
 	// Vendor is the vendor of the court.
 	Vendor *PublicVendorDTO `json:"vendor"`
 
@@ -25,6 +28,7 @@ type CourtDTO struct {
 func (c CourtDTO) FromModel(m *models.Court) *CourtDTO {
 	return &CourtDTO{
 		ID:     m.ID,
+		Name:   m.Name,
 		Vendor: c.Vendor.FromModel(&m.Vendor),
 		Type:   m.CourtType.Type,
 		Price:  m.Price,
