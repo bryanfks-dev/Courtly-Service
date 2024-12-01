@@ -81,7 +81,11 @@ func NewServer() (*echo.Echo, error) {
 	currentVendorPrefix.PATCH("/password", c.VendorController.UpdateVendorPassword)
 
 	// Orders endpoints
-	currentVendorPrefix.GET("/orders", c.BookingController.GetCurrentVendorOrders)
+	currentVendorOrdersPrefix := currentVendorPrefix.Group("/orders")
+
+	currentVendorOrdersPrefix.GET("", c.BookingController.GetCurrentVendorOrders)
+
+	currentVendorOrdersPrefix.GET("/stats", c.BookingController.GetCurrentVendorOrdersStats)
 
 	// Courts endpoints
 	courtPrefix := prefix.Group("/courts")

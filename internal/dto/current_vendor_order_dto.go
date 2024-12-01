@@ -42,3 +42,21 @@ func (c CurrentVendorOrderDTO) FromModel(m *models.Booking) *CurrentVendorOrderD
 		Price:         m.Order.Price,
 	}
 }
+
+// FromModels is a function that converts a slice of booking models to
+// a slice of booking DTOs.
+//
+// m: The slice of booking models
+//
+// Returns a pointer to a slice of booking DTOs
+func (c CurrentVendorOrderDTO) FromModels(m *[]models.Booking) *[]CurrentVendorOrderDTO {
+	// Create a slice of booking DTOs
+	orders := []CurrentVendorOrderDTO{}
+
+	// Iterate over the slice of booking models
+	for _, order := range *m {
+		orders = append(orders, *c.FromModel(&order))
+	}
+
+	return &orders
+}

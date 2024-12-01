@@ -83,3 +83,61 @@ func (b *BookingController) GetCurrentVendorOrders(c echo.Context) error {
 		Data:    dto.CurrentVendorOrdersResponseDTO{}.FromModels(bookings),
 	})
 }
+
+// GetCurrentVendorOrdersStats is a controller that gets the current vendor orders
+// statistics from the database.
+// GET /vendors/me/orders/stats
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (b *BookingController) GetCurrentVendorOrdersStats(c echo.Context) error {
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the current vendor total bookings
+	totalBookings, err := b.BookingUseCase.GetCurrentVendorTotalBookings(cc.Token)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get vendor total bookings",
+			Data:    nil,
+		})
+	}
+
+	// Get the current vendor total bookings today
+	totalBookingsToday, err := b.BookingUseCase.GetCurrentVendorTotalBookingsToday(cc.Token)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get vendor total bookings today",
+			Data:    nil,
+		})
+	}
+
+	// Get the current vendor recent bookings
+	recentBookings, err := b.BookingUseCase.GetCurrentVendorRecentBookings(cc.Token)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get vendor recent bookings",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Vendor orders stats retrieved successfully",
+		Data: dto.CurrentVendorOrdersStatsResponseDTO{
+			TotalOrders:      totalBookings,
+			TotalOrdersToday: totalBookingsToday,
+			RecentOrders:     dto.CurrentVendorOrderDTO{}.FromModels(recentBookings),
+		},
+	})
+}
