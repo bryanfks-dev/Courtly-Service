@@ -63,9 +63,18 @@ func (v *VerifyPasswordController) UserVerifyPassword(c echo.Context) error {
 
 	// Check if there is an error
 	if err != nil {
-		return c.JSON(http.StatusForbidden, dto.ResponseDTO{
+		// Check if the error is a client error
+		if err.ClientError {
+			return c.JSON(http.StatusUnauthorized, dto.ResponseDTO{
+				Success: false,
+				Message: err.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
-			Message: err,
+			Message: err.Message,
 			Data:    nil,
 		})
 	}
@@ -117,9 +126,18 @@ func (v *VerifyPasswordController) VendorVerifyPassword(c echo.Context) error {
 
 	// Check if there is an error
 	if err != nil {
-		return c.JSON(http.StatusForbidden, dto.ResponseDTO{
+		// Check if the error is a client error
+		if err.ClientError {
+			return c.JSON(http.StatusUnauthorized, dto.ResponseDTO{
+				Success: false,
+				Message: err.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
-			Message: err,
+			Message: err.Message,
 			Data:    nil,
 		})
 	}
