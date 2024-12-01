@@ -34,3 +34,23 @@ func (*BookingRepository) GetByUserID(userID uint) (*[]models.Booking, error) {
 
 	return &bookings, nil
 }
+
+// GetByVendorID is a method that returns the bookings by the given vendor ID.
+//
+// vendorID: The ID of the vendor.
+//
+// Returns the bookings and an error if any.
+func (*BookingRepository) GetByVendorID(vendorID uint) (*[]models.Booking, error) {
+	// bookings is a placeholder for the bookings
+	var bookings []models.Booking
+
+	// Get the bookings from the database
+	err := mysql.Conn.Where("vendor_id = ?", vendorID).Find(&bookings).Error
+
+	// Return an error if any
+	if err != nil {
+		return nil, err
+	}
+
+	return &bookings, nil
+}

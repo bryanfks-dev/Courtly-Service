@@ -53,3 +53,33 @@ func (b *BookingController) GetCurrentUserBookings(c echo.Context) error {
 		Data:    dto.CurrentUserBookingsResponseDTO{}.FromModels(bookings),
 	})
 }
+
+// GetCurrentUserBooking is a controller that gets the current user booking
+// from the database.
+// GET /vendors/me/orders
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (b *BookingController) GetCurrentVendorOrders(c echo.Context) error {
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the current vendor bookings
+	bookings, err := b.BookingUseCase.GetCurrentVendorBookings(cc.Token)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get vendor orders",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Vendor orders retrieved successfully",
+		Data:    dto.CurrentVendorOrdersResponseDTO{}.FromModels(bookings),
+	})
+}

@@ -60,3 +60,42 @@ func (b *BookingUseCase) GetCurrentUserBookings(token *jwt.Token) (*[]models.Boo
 
 	return bookings, nil
 }
+
+// GetVendorBookings is a use case that gets the vendor bookings
+//
+// vendorID: The ID of the vendor
+//
+// Returns the bookings and an error if any
+func (b *BookingUseCase) GetVendorBookings(vendorID uint) (*[]models.Booking, error) {
+	// Get the bookings from the database
+	bookings, err := b.BookingRepository.GetByVendorID(vendorID)
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to get vendor bookings: ", err)
+
+		return nil, err
+	}
+
+	return bookings, nil
+}
+
+// GetVendorBookings is a use case that gets the vendor bookings
+//
+// token: The JWT token
+//
+// Returns the bookings and an error if any
+func (b *BookingUseCase) GetCurrentVendorBookings(token *jwt.Token) (*[]models.Booking, error) {
+	// Get the token claims
+	claims := b.AuthUseCase.DecodeToken(token)
+
+	// Get the vendor bookings
+	bookings, err := b.GetVendorBookings(uint(claims.Id))
+
+	// Return an error if any
+	if err != nil {
+		return nil, err
+	}
+
+	return bookings, nil
+}
