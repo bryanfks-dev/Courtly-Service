@@ -28,6 +28,9 @@ There are several available endpoints, such as:
 - **GET** `/api/v1/vendors/me` - Get current vendor information from database
 - **PATCH** `/api/v1/vendors/me/password` - Update vendor password with a new password
 
+##### Orders endpoints
+- **GET** `/api/v1/vendors/me/orders` - Get current vendor orders from database
+
 ##### Courts endpoints
 
 - **GET** `/api/v1/courts` - Get all available courts from database
