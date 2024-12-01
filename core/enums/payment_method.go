@@ -3,7 +3,6 @@ package enums
 // PaymentMethod is an enum that defines the payment methods.
 type PaymentMethod int
 
-// PaymentMethod is an enum that defines the payment methods.
 const (
 	OVO PaymentMethod = iota
 	Dana

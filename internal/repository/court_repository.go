@@ -63,7 +63,7 @@ func (*CourtRepository) GetAllUsingType(courtType string) (*[]models.Court, erro
 	var courts []models.Court
 
 	// Get the courts
-	err := mysql.Conn.Model(&models.Court{}).Joins("JOIN court_types").Where("type = ?", courtType).Find(&courts).Error
+	err := mysql.Conn.Joins("JOIN court_types").Where("type = ?", courtType).Find(&courts).Error
 
 	// Return an error if any
 	if err != nil {

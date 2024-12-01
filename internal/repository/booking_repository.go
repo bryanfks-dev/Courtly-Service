@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"main/core/enums"
 	"main/data/models"
 	"main/internal/providers/mysql"
 )
@@ -45,7 +46,7 @@ func (*BookingRepository) GetByVendorID(vendorID uint) (*[]models.Booking, error
 	var bookings []models.Booking
 
 	// Get the bookings from the database
-	err := mysql.Conn.Where("vendor_id = ?", vendorID).Find(&bookings).Error
+	err := mysql.Conn.Joins("JOIN orders").Where("vendor_id = ? AND orders.status = ?", vendorID, enums.Success.Label()).Find(&bookings).Error
 
 	// Return an error if any
 	if err != nil {
