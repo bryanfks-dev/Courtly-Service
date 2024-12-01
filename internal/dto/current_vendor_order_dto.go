@@ -32,21 +32,13 @@ type CurrentVendorOrderDTO struct {
 //
 // Returns a CurrentVendorOrdersResponseDTO
 func (c CurrentVendorOrderDTO) FromModel(m *models.Booking) *CurrentVendorOrderDTO {
-	// Get the date
-	date, _ := m.Date.Value()
-
-	// Get the start and end time
-	bookStartTime, _ := m.BookStartTime.Value()
-
-	bookEndTime, _ := m.BookEndTime.Value()
-
 	return &CurrentVendorOrderDTO{
 		ID:            m.Order.ID,
-		Date:          date.(string),
+		Date:          m.Date.String(),
 		User:          PublicUserDTO{}.FromModel(&m.User),
 		Court:         CurrentVendorCourtDTO{}.FromModel(&m.Court),
-		BookStartTime: bookStartTime.(string),
-		BookEndTime:   bookEndTime.(string),
+		BookStartTime: m.BookStartTime.String(),
+		BookEndTime:   m.BookEndTime.String(),
 		Price:         m.Order.Price,
 	}
 }

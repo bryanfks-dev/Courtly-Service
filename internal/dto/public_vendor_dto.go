@@ -29,14 +29,11 @@ type PublicVendorDTO struct {
 // Returns the public vendor DTO.
 func (v PublicVendorDTO) FromModel(m *models.Vendor) *PublicVendorDTO {
 	// Get the open and close time
-	openTime, _ := m.OpenTime.Value()
-	closeTime, _ := m.CloseTime.Value()
-
 	return &PublicVendorDTO{
-		ID:        v.ID,
-		Name:      v.Name,
-		Address:   v.Address,
-		OpenTime:  openTime.(string),
-		CloseTime: closeTime.(string),
+		ID:        m.ID,
+		Name:      m.Name,
+		Address:   m.Address,
+		OpenTime:  m.OpenTime.String(),
+		CloseTime: m.CloseTime.String(),
 	}
 }
