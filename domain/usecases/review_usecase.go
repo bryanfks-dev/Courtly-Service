@@ -22,14 +22,14 @@ func NewReviewUseCase(r *repository.ReviewRepository) *ReviewUseCase {
 	}
 }
 
-// GetCourtReviewsUsingIDType is a use case that handles the request to
-// get the reviews of a court using the court id and type.
+// GetCourtReviewsUsingIDCourtType is a use case that handles the request to
+// get the reviews of a court using the vendor id and court type.
 //
 // vendorID: The id of the vendor.
 // courtType: The type of the court.
 //
 // Returns a slice of maps containing the reviews of the court.
-func (r *ReviewUseCase) GetCourtReviewsUsingIDType(vendorID uint, courtType string) (*[]models.Review, error) {
+func (r *ReviewUseCase) GetCourtReviewsUsingVendorIDCourtType(vendorID uint, courtType string) (*[]models.Review, error) {
 	// Get the reviews using the vendor ID and court type
 	reviews, err := r.ReviewRepository.GetUsingVendorIDCourtType(vendorID, courtType)
 

@@ -95,7 +95,7 @@ func NewServer() (*echo.Echo, error) {
 	// Courts types endpoints
 	courtTypesPrefix := courtPrefix.Group("/types")
 
-	courtTypesPrefix.GET("/:type", c.CourtController.GetCourtsUsingType)
+	courtTypesPrefix.GET("/:type", c.CourtController.GetCourtsUsingCourtType)
 
 	// Selected court endpoints
 	selectedCourtPrefix := courtPrefix.Group("/:id")
@@ -108,10 +108,10 @@ func NewServer() (*echo.Echo, error) {
 	// Current vendor courts types endpoints
 	currentVendorCourtsTypePrefix := currentVendorCourtsPrefix.Group("/types")
 
-	currentVendorCourtsTypePrefix.GET("/:type", c.CourtController.GetCurrentVendorCourtsUsingType)
+	currentVendorCourtsTypePrefix.GET("/:type", c.CourtController.GetCurrentVendorCourtsUsingCourtType)
 
 	// Reviews endpoints
-	vendorPrefix.GET("/:id/courts/types/:type/reviews", c.ReviewController.GetCourtReviewsUsingIDType)
+	vendorPrefix.GET("/:id/courts/types/:type/reviews", c.ReviewController.GetCourtReviewsUsingIDCourtType)
 
 	// Bookings endpoints
 	// Current user bookings endpoints

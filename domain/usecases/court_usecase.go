@@ -74,12 +74,12 @@ func (c *CourtUseCase) ValidateCourtType(courtType string) bool {
 	return enums.InCourtType(courtType)
 }
 
-// GetCourtsUsingType is a function that returns the courts using the court type.
+// GetCourtsUsingCourtType is a function that returns the courts using the court type.
 //
 // courtType: The court type.
 //
 // Returns the courts and an error if any.
-func (c *CourtUseCase) GetCourtsUsingType(courtType string) (*[]models.Court, error) {
+func (c *CourtUseCase) GetCourtsUsingCourtType(courtType string) (*[]models.Court, error) {
 	// Get the courts
 	courts, err := c.CourtRepository.GetUsingCourtType(courtType)
 
@@ -93,12 +93,13 @@ func (c *CourtUseCase) GetCourtsUsingType(courtType string) (*[]models.Court, er
 	return courts, nil
 }
 
-// GetVendorCourtsUsingType is a function that returns the vendor courts using the court type.
+// GetVendorCourtsUsingCourtType is a function that returns the vendor courts 
+// using the court type.
 //
 // vendorID: The vendor ID.
 //
 // Returns the vendor courts and an error if any.
-func (c *CourtUseCase) GetVendorCourtsUsingType(vendorID uint, courtType string) (*[]models.Court, error) {
+func (c *CourtUseCase) GetVendorCourtsUsingCourtType(vendorID uint, courtType string) (*[]models.Court, error) {
 	// Get the vendor courts using the court type
 	courts, err := c.CourtRepository.GetUsingVendorIDCourtType(vendorID, courtType)
 
@@ -112,15 +113,16 @@ func (c *CourtUseCase) GetVendorCourtsUsingType(vendorID uint, courtType string)
 	return courts, nil
 }
 
-// GetCurrentVendorCourts is a function that returns the current vendor courts.
+// GetCurrentVendorCourtsUsingCourtType is a function that returns the current vendor courts
+// with the given court type.
 //
 // token: The token.
 //
 // Returns the vendor courts and an error if any.
-func (c *CourtUseCase) GetCurrentVendorCourtsUsingType(token *jwt.Token, courtType string) (*[]models.Court, error) {
+func (c *CourtUseCase) GetCurrentVendorCourtsUsingCourtType(token *jwt.Token, courtType string) (*[]models.Court, error) {
 	// Get the token claims
 	claims := c.AuthUseCase.DecodeToken(token)
 
 	// Get the vendor courts
-	return c.GetVendorCourtsUsingType(claims.Id, courtType)
+	return c.GetVendorCourtsUsingCourtType(claims.Id, courtType)
 }

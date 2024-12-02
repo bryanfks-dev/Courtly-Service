@@ -94,12 +94,12 @@ func (co *CourtController) GetCourtUsingID(c echo.Context) error {
 	})
 }
 
-// GetCourtsUsingType is a controller that handles the get courts using type endpoint.
+// GetCourtsUsingCourtType is a controller that handles the get courts using type endpoint.
 //
 // c: The echo context.
 //
 // Returns an error if any.
-func (co *CourtController) GetCourtsUsingType(c echo.Context) error {
+func (co *CourtController) GetCourtsUsingCourtType(c echo.Context) error {
 	// Get the court type from the URL
 	courtType := c.Param("type")
 
@@ -113,7 +113,7 @@ func (co *CourtController) GetCourtsUsingType(c echo.Context) error {
 	}
 
 	// Get the courts
-	courts, err := co.CourtUseCase.GetCourtsUsingType(courtType)
+	courts, err := co.CourtUseCase.GetCourtsUsingCourtType(courtType)
 
 	// Return an error if any
 	if err != nil {
@@ -131,14 +131,14 @@ func (co *CourtController) GetCourtsUsingType(c echo.Context) error {
 	})
 }
 
-// GetCurrentVendorCourtsUsingType is a controller that handles the get 
+// GetCurrentVendorCourtsUsingCourtType is a controller that handles the get 
 // current vendor courts using court type endpoint.
 // Endpoint: GET /vendors/me/courts/:type
 //
 // c: The echo context.
 //
 // Returns an error if any.
-func (co *CourtController) GetCurrentVendorCourtsUsingType(c echo.Context) error {
+func (co *CourtController) GetCurrentVendorCourtsUsingCourtType(c echo.Context) error {
 	// Get the court type from the URL
 	courtType := c.Param("type")
 
@@ -155,7 +155,7 @@ func (co *CourtController) GetCurrentVendorCourtsUsingType(c echo.Context) error
 	cc := c.(*dto.CustomContext)
 
 	// Get the current vendor courts
-	courts, err := co.CourtUseCase.GetCurrentVendorCourtsUsingType(cc.Token, courtType)
+	courts, err := co.CourtUseCase.GetCurrentVendorCourtsUsingCourtType(cc.Token, courtType)
 
 	// Return an error if any
 	if err != nil {

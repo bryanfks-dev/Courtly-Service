@@ -43,6 +43,7 @@ There are several available endpoints, such as:
 ##### Reviews endpoints
 
 - **GET** `/api/v1/vendors/:id/courts/types/:type/reviews` - Get vendor courts type reviews from database
+- **GET** `/api/v1/vendors/me/reviews` - Get court reviews related to the vendor from database
 
 ##### Booking endpoints
 

@@ -27,14 +27,14 @@ func NewReviewController(r *usecases.ReviewUseCase, c *usecases.CourtUseCase) *R
 	}
 }
 
-// GetCourtReviewsUsingIDType is a controller that handles the request to
-// get the reviews of a court using the court id and type.
+// GetCourtReviewsUsingIDCourtType is a controller that handles the request to
+// get the reviews of a court using the court id and court type.
 // Endpoint: GET /vendors/:id/courts/types/:type/reviews
 //
 // c: The echo context.
 //
 // Returns a response containing the reviews of the court.
-func (r *ReviewController) GetCourtReviewsUsingIDType(c echo.Context) error {
+func (r *ReviewController) GetCourtReviewsUsingIDCourtType(c echo.Context) error {
 	// Get the id from the URL
 	id := c.Param("id")
 
@@ -63,7 +63,7 @@ func (r *ReviewController) GetCourtReviewsUsingIDType(c echo.Context) error {
 	}
 
 	// Get the reviews
-	reviews, err := r.ReviewUseCase.GetCourtReviewsUsingIDType(uint(vendorID), courtType)
+	reviews, err := r.ReviewUseCase.GetCourtReviewsUsingVendorIDCourtType(uint(vendorID), courtType)
 
 	// Check if there is an error
 	if err != nil {
