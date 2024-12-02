@@ -1,6 +1,9 @@
 package enums
 
-import "slices"
+import (
+	"main/pkg/utils"
+	"slices"
+)
 
 // CourtType is an enum that defines the court types.
 type CourtType int
@@ -36,5 +39,5 @@ func (c CourtType) Label() string {
 //
 // Returns true if the string is a court type.
 func InCourtType(s string) bool {
-	return slices.Contains(courtTypes, s)
+	return slices.Contains(courtTypes, utils.UpperFirstLetter(s))
 }

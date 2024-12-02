@@ -131,13 +131,9 @@ func (a *AuthUseCase) VerifyToken(tokenString string) (*jwt.Token, bool) {
 		return []byte(config.JWTConfig.Secret), nil
 	})
 
-	// Check if there is an error parsing the token
-	if err != nil {
-		return nil, false
-	}
-
-	// Check if the token is valid
-	if !token.Valid {
+	// Check if there is an error parsing token 
+	// or the token is invalid
+	if err != nil || !token.Valid {
 		return nil, false
 	}
 

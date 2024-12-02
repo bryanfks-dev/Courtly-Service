@@ -100,7 +100,7 @@ func (v *VendorController) UpdateVendorPassword(c echo.Context) error {
 	}
 
 	// Update the password
-	vendor, err := v.VendorUseCase.ProcessChangePassword(cc.Token, form)
+	err := v.VendorUseCase.ProcessChangePassword(cc.Token, form)
 
 	// Return an error if any
 	if err != nil {
@@ -122,8 +122,6 @@ func (v *VendorController) UpdateVendorPassword(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Password updated successfully",
-		Data: dto.CurrentVendorResponseDTO{
-			Vendor: dto.CurrentVendorDTO{}.FromModel(vendor),
-		},
+		Data: nil,
 	})
 }

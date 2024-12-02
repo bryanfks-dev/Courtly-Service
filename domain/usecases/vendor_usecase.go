@@ -122,8 +122,8 @@ func (v *VendorUseCase) ValidateChangePasswordForm(form *dto.ChangePasswordFormD
 // token: The vendor token.
 // form: The change password form dto.
 //
-// Returns the vendor object and an error if any.
-func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePasswordFormDTO) (*models.Vendor, *entities.ProcessError) {
+// Returns an error if any.
+func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePasswordFormDTO) *entities.ProcessError {
 	// Get the vendor ID from the token
 	claims := v.AuthUseCase.DecodeToken(token)
 
@@ -134,7 +134,7 @@ func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.Change
 	if err != nil {
 		log.Panicln("Error getting vendor: ", err)
 
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while getting the vendor",
 		}
@@ -142,7 +142,7 @@ func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.Change
 
 	// Check if the old password is correct
 	if !v.AuthUseCase.VerifyPassword(form.OldPassword, vendor.Password) {
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			ClientError: true,
 			Message: types.FormErrorResponseMsg{
 				"old_password": []string{"Old password is incorrect"},
@@ -157,24 +157,24 @@ func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.Change
 	if err != nil {
 		log.Println("Error hashing password: ", err)
 
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while hashing the new password",
 		}
 	}
 
 	// Update the vendor's password
-	vendor, err = v.VendorRepository.UpdatePassword(claims.Id, hashedNewPassword)
+	err = v.VendorRepository.UpdatePassword(claims.Id, hashedNewPassword)
 
 	// Check if there is an error
 	if err != nil {
 		log.Println("Error updating vendor's password: ", err)
 
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while updating the vendor's password",
 		}
 	}
 
-	return vendor, nil
+	return nil
 }

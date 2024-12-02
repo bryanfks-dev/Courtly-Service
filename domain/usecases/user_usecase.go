@@ -117,8 +117,8 @@ func (u *UserUseCase) ValidateChangePasswordForm(form *dto.ChangePasswordFormDTO
 // token: The user token.
 // form: The change password form dto.
 //
-// Returns the user object and an error if any.
-func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePasswordFormDTO) (*models.User, *entities.ProcessError) {
+// Returns an error if any.
+func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePasswordFormDTO) *entities.ProcessError {
 	// Get the user ID from the token
 	claims := u.AuthUseCase.DecodeToken(token)
 
@@ -129,7 +129,7 @@ func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePa
 	if err != nil {
 		log.Panicln("Error getting user: ", err)
 
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while getting the user",
 		}
@@ -137,7 +137,7 @@ func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePa
 
 	// Check if the old password is correct
 	if !u.AuthUseCase.VerifyPassword(form.OldPassword, user.Password) {
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			ClientError: true,
 			Message: types.FormErrorResponseMsg{
 				"old_password": []string{"Old password is incorrect"},
@@ -152,26 +152,26 @@ func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePa
 	if err != nil {
 		log.Println("Error hashing password: ", err)
 
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while hashing the new password",
 		}
 	}
 
 	// Update the user's password
-	user, err = u.UserRepository.UpdatePassword(claims.Id, hashedNewPassword)
+	err = u.UserRepository.UpdatePassword(claims.Id, hashedNewPassword)
 
 	// Check if there is an error
 	if err != nil {
 		log.Println("Error updating user's password: ", err)
 
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while updating the user's password",
 		}
 	}
 
-	return user, nil
+	return nil
 }
 
 // ValidateChangeUsernameForm is a function that validates the change username form.
@@ -206,7 +206,7 @@ func (u *UserUseCase) ValidateChangeUsernameForm(form *dto.ChangeUsernameFormDTO
 // form: The change username form dto.
 //
 // Returns an error if any.
-func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUsernameFormDTO) (*models.User, *entities.ProcessError) {
+func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUsernameFormDTO) *entities.ProcessError {
 	// Get the user by ID
 	taken, err := u.UserRepository.IsUsernameTaken(form.NewUsername)
 
@@ -214,7 +214,7 @@ func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUs
 	if err != nil {
 		log.Println("Failed to check if username is taken: ", err)
 
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			Message:     "An error occurred while checking if the username is taken",
 			ClientError: false,
 		}
@@ -222,7 +222,7 @@ func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUs
 
 	// Return an error if the username is taken
 	if taken {
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			Message: types.FormErrorResponseMsg{
 				"username": []string{"The username is already taken"},
 			},
@@ -234,17 +234,17 @@ func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUs
 	claims := u.AuthUseCase.DecodeToken(token)
 
 	// Update the username
-	user, err := u.UserRepository.UpdateUsername(claims.Id, form.NewUsername)
+	err = u.UserRepository.UpdateUsername(claims.Id, form.NewUsername)
 
 	// Return an error if any
 	if err != nil {
 		log.Println("Failed to update username: ", err)
 
-		return nil, &entities.ProcessError{
+		return &entities.ProcessError{
 			Message:     "An error occurred while updating the username",
 			ClientError: false,
 		}
 	}
 
-	return user, nil
+	return nil
 }

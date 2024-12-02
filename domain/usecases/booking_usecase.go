@@ -33,7 +33,7 @@ func NewBookingUseCase(a *AuthUseCase, b *repository.BookingRepository) *Booking
 // Returns the bookings and an error if any
 func (b *BookingUseCase) GetUserBookings(userID uint) (*[]models.Booking, error) {
 	// Get the bookings from the database
-	bookings, err := b.BookingRepository.GetByUserID(userID)
+	bookings, err := b.BookingRepository.GetUsingUserID(userID)
 
 	// Return an error if any
 	if err != nil {
@@ -54,15 +54,7 @@ func (b *BookingUseCase) GetCurrentUserBookings(token *jwt.Token) (*[]models.Boo
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	// Get the user bookings
-	bookings, err := b.GetUserBookings(uint(claims.Id))
-
-	// Return an error if any
-	if err != nil {
-		return nil, err
-	}
-
-	return bookings, nil
+	return b.GetUserBookings(uint(claims.Id))
 }
 
 // GetVendorBookings is a use case that gets the vendor bookings by the vendor ID.
@@ -72,7 +64,7 @@ func (b *BookingUseCase) GetCurrentUserBookings(token *jwt.Token) (*[]models.Boo
 // Returns the bookings and an error if any
 func (b *BookingUseCase) GetVendorBookings(vendorID uint) (*[]models.Booking, error) {
 	// Get the bookings from the database
-	bookings, err := b.BookingRepository.GetByVendorID(vendorID)
+	bookings, err := b.BookingRepository.GetUsingVendorID(vendorID)
 
 	// Return an error if any
 	if err != nil {
@@ -94,15 +86,7 @@ func (b *BookingUseCase) GetCurrentVendorBookings(token *jwt.Token) (*[]models.B
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	// Get the vendor bookings
-	bookings, err := b.GetVendorBookings(uint(claims.Id))
-
-	// Return an error if any
-	if err != nil {
-		return nil, err
-	}
-
-	return bookings, nil
+	return b.GetVendorBookings(uint(claims.Id))
 }
 
 // GetVendorTotalBookings is a use case that gets the vendor
@@ -113,7 +97,7 @@ func (b *BookingUseCase) GetCurrentVendorBookings(token *jwt.Token) (*[]models.B
 // Returns the total bookings and an error if any
 func (b *BookingUseCase) GetVendorTotalBookings(vendorID uint) (int, error) {
 	// Get the bookings from the database
-	total, err := b.BookingRepository.GetTotalByVendorID(vendorID)
+	total, err := b.BookingRepository.GetTotalUsingVendorID(vendorID)
 
 	// Return an error if any
 	if err != nil {
@@ -134,15 +118,7 @@ func (b *BookingUseCase) GetCurrentVendorTotalBookings(token *jwt.Token) (int, e
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	// Get the vendor total bookings
-	total, err := b.GetVendorTotalBookings(uint(claims.Id))
-
-	// Return an error if any
-	if err != nil {
-		return 0, err
-	}
-
-	return total, nil
+	return b.GetVendorTotalBookings(uint(claims.Id))
 }
 
 // GetVendorTotalBookingsToday is a use case that gets the vendor
@@ -153,7 +129,7 @@ func (b *BookingUseCase) GetCurrentVendorTotalBookings(token *jwt.Token) (int, e
 // Returns the total bookings today and an error if any
 func (b *BookingUseCase) GetVendorTotalBookingsToday(vendorID uint) (int, error) {
 	// Get the bookings from the database
-	total, err := b.BookingRepository.GetTotalTodayByVendorID(vendorID)
+	total, err := b.BookingRepository.GetTotalTodayUsingVendorID(vendorID)
 
 	// Return an error if any
 	if err != nil {
@@ -175,15 +151,7 @@ func (b *BookingUseCase) GetCurrentVendorTotalBookingsToday(token *jwt.Token) (i
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	// Get the vendor total bookings today
-	total, err := b.GetVendorTotalBookingsToday(uint(claims.Id))
-
-	// Return an error if any
-	if err != nil {
-		return 0, err
-	}
-
-	return total, nil
+	return b.GetVendorTotalBookingsToday(uint(claims.Id))
 }
 
 // GetVendorRecentBookings is a use case that gets the vendor recent bookings
@@ -194,7 +162,7 @@ func (b *BookingUseCase) GetCurrentVendorTotalBookingsToday(token *jwt.Token) (i
 // Returns the recent bookings and an error if any
 func (b *BookingUseCase) GetVendorRecentBookings(vendorID uint) (*[]models.Booking, error) {
 	// Get the bookings from the database
-	bookings, err := b.BookingRepository.GetNLatestByVendorID(vendorID, 5)
+	bookings, err := b.BookingRepository.GetNLatestUsingVendorID(vendorID, 5)
 
 	// Return an error if any
 	if err != nil {
@@ -216,13 +184,5 @@ func (b *BookingUseCase) GetCurrentVendorRecentBookings(token *jwt.Token) (*[]mo
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	// Get the vendor recent bookings
-	bookings, err := b.GetVendorRecentBookings(uint(claims.Id))
-
-	// Return an error if any
-	if err != nil {
-		return nil, err
-	}
-
-	return bookings, nil
+	return b.GetVendorRecentBookings(uint(claims.Id))
 }

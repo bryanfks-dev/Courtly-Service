@@ -5,7 +5,6 @@ import (
 	"main/core/enums"
 	"main/data/models"
 	"main/internal/repository"
-	"main/pkg/utils"
 
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
@@ -72,7 +71,7 @@ func (c *CourtUseCase) GetCourtUsingID(courtID uint) (*models.Court, error) {
 //
 // Returns true if the court type is valid.
 func (c *CourtUseCase) ValidateCourtType(courtType string) bool {
-	return enums.InCourtType(utils.ToUpperFirst(courtType))
+	return enums.InCourtType(courtType)
 }
 
 // GetCourtsUsingType is a function that returns the courts using the court type.
@@ -82,7 +81,7 @@ func (c *CourtUseCase) ValidateCourtType(courtType string) bool {
 // Returns the courts and an error if any.
 func (c *CourtUseCase) GetCourtsUsingType(courtType string) (*[]models.Court, error) {
 	// Get the courts
-	courts, err := c.CourtRepository.GetAllUsingType(courtType)
+	courts, err := c.CourtRepository.GetUsingCourtType(courtType)
 
 	// Return an error if any
 	if err != nil {
@@ -101,11 +100,11 @@ func (c *CourtUseCase) GetCourtsUsingType(courtType string) (*[]models.Court, er
 // Returns the vendor courts and an error if any.
 func (c *CourtUseCase) GetVendorCourtsUsingType(vendorID uint, courtType string) (*[]models.Court, error) {
 	// Get the vendor courts using the court type
-	courts, err := c.CourtRepository.GetVendorCourtsUsingType(vendorID, courtType)
+	courts, err := c.CourtRepository.GetUsingVendorIDCourtType(vendorID, courtType)
 
 	// Return an error if any and ignore if the vendor has no courts
 	if err != nil && err != gorm.ErrRecordNotFound {
-		log.Println("Failed to get vendor courts using type: ", err)
+		log.Println("Failed to get vendor courts using court type: ", err)
 
 		return nil, err
 	}

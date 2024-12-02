@@ -155,7 +155,7 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	}
 
 	// Update the password
-	user, err := u.UserUseCase.ProcessChangePassword(cc.Token, form)
+	err := u.UserUseCase.ProcessChangePassword(cc.Token, form)
 
 	// Return an error if any
 	if err != nil {
@@ -177,9 +177,7 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Password updated successfully",
-		Data: dto.CurrentUserResponseDTO{
-			User: dto.CurrentUserDTO{}.FromModel(user),
-		},
+		Data:    nil,
 	})
 }
 
@@ -217,7 +215,7 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 	}
 
 	// Update the username
-	user, err := u.UserUseCase.ProcessChangeUsername(cc.Token, form)
+	err := u.UserUseCase.ProcessChangeUsername(cc.Token, form)
 
 	// Return an error if any
 	if err != nil {
@@ -239,8 +237,6 @@ func (u *UserController) UpdateUserUsername(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Username updated successfully",
-		Data: dto.CurrentUserResponseDTO{
-			User: dto.CurrentUserDTO{}.FromModel(user),
-		},
+		Data:    nil,
 	})
 }

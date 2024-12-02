@@ -111,26 +111,8 @@ func (*UserRepository) IsPhoneNumberTaken(phoneNumber string) (bool, error) {
 // hashedNewPassword: The hashed new password.
 //
 // Returns an error if any.
-func (*UserRepository) UpdatePassword(userID uint, hashedNewPassword string) (*models.User, error) {
-	var user models.User
-
-	// Get the user by ID
-	err := mysql.Conn.First(&user, "id = ?", userID).Error
-
-	// Check if there is an error
-	if err != nil {
-		return nil, err
-	}
-
-	// Update the user's password
-	err = mysql.Conn.Model(&user).Update("password", hashedNewPassword).Error
-
-	// Check if there is an error
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, err
+func (*UserRepository) UpdatePassword(userID uint, hashedNewPassword string) error {
+	return mysql.Conn.Model(&models.User{}).Update("password", hashedNewPassword).Where("id = ?", userID).Error
 }
 
 // UpdateUsername is a function that updates a user's username.
@@ -139,24 +121,6 @@ func (*UserRepository) UpdatePassword(userID uint, hashedNewPassword string) (*m
 // newUsername: The new username.
 //
 // Returns an error if any.
-func (*UserRepository) UpdateUsername(userID uint, newUsername string) (*models.User, error) {
-	var user models.User
-
-	// Get the user by ID
-	err := mysql.Conn.First(&user, "id = ?", userID).Error
-
-	// Check if there is an error
-	if err != nil {
-		return nil, err
-	}
-
-	// Update the user's username
-	err = mysql.Conn.Model(&user).Update("username", newUsername).Error
-
-	// Check if there is an error
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, err
+func (*UserRepository) UpdateUsername(userID uint, newUsername string) error {
+	return mysql.Conn.Model(&models.User{}).Update("username", newUsername).Where("id = ?", userID).Error
 }
