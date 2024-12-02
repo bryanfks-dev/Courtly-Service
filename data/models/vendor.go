@@ -33,4 +33,13 @@ type Vendor struct {
 
 	// UpdatedAt is the time when the user was updated.
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+
+	// Bookings is the list of bookings that have the vendor.
+	Bookings []Booking `gorm:"foreignKey:VendorID"`
+
+	// Courts is the list of courts that have the vendor.
+	Courts []Court `gorm:"foreignKey:VendorID"`
+
+	// Reviews is the list of reviews that have the vendor.
+	Reviews []Review `gorm:"foreignKey:VendorID"`
 }

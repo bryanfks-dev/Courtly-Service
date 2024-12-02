@@ -26,4 +26,10 @@ type User struct {
 
 	// UpdatedAt is the time when the user was updated.
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+
+	// Booking is the list of bookings that have the user.
+	Booking []Booking `gorm:"foreignKey:UserID"`
+
+	// Review is the list of reviews that have the user.
+	Review []Review `gorm:"foreignKey:UserID"`
 }

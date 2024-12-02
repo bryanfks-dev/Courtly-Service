@@ -63,7 +63,7 @@ func (*CourtRepository) GetUsingCourtType(courtType string) (*[]models.Court, er
 	var courts []models.Court
 
 	// Get the courts
-	err := mysql.Conn.Model(&models.Court{}).Joins("JOIN court_types").Where("court_types.type = ?", courtType).Find(&courts).Error
+	err := mysql.Conn.Preload("CourtType", "type = ?", courtType).Find(&courts).Error
 
 	// Return an error if any
 	if err != nil {
@@ -84,7 +84,7 @@ func (*CourtRepository) GetUsingVendorIDCourtType(vendorID uint, courtType strin
 	var courts []models.Court
 
 	// Get the courts by vendor ID and court type
-	err := mysql.Conn.Model(&models.Court{}).Joins("JOIN court_types").Where("vendor_id = ? AND court_types.type = ?", vendorID, courtType).Find(&courts).Error
+	err := mysql.Conn.Preload("CourtType", "type = ?", courtType).Where("vendor_id = ?", vendorID).Find(&courts).Error
 
 	// Return an error if any
 	if err != nil {

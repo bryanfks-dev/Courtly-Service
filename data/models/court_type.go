@@ -7,4 +7,7 @@ type CourtType struct {
 
 	// Type is the type of the court.
 	Type string `gorm:"not null;unique;type:varchar(255);index"`
+
+	// Courts is the list of courts that have the court type.
+	Courts []Court `gorm:"foreignKey:CourtTypeID"`
 }

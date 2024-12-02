@@ -47,7 +47,7 @@ func (*BookingRepository) GetUsingVendorID(vendorID uint) (*[]models.Booking, er
 	var bookings []models.Booking
 
 	// Get the bookings from the database
-	err := mysql.Conn.Model(&models.Order{}).Joins("JOIN orders").Where("vendor_id = ? AND orders.status = ?", vendorID, enums.Success.Label()).Find(&bookings).Error
+	err := mysql.Conn.Model(&models.Order{}).Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ?", vendorID).Find(&bookings).Error
 
 	// Return an error if any
 	if err != nil {
@@ -67,7 +67,7 @@ func (*BookingRepository) GetTotalUsingVendorID(vendorID uint) (int64, error) {
 	var count int64
 
 	// Get the bookings from the database
-	err := mysql.Conn.Model(&models.Booking{}).Joins("JOIN orders").Where("vendor_id = ? AND orders.status = ?", vendorID, enums.Success.Label()).Count(&count).Error
+	err := mysql.Conn.Model(&models.Booking{}).Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ?", vendorID).Count(&count).Error
 
 	// Return an error if any
 	if err != nil {
@@ -90,7 +90,7 @@ func (*BookingRepository) GetTotalTodayUsingVendorID(vendorID uint) (int64, erro
 	today := time.Now().Truncate(24 * time.Hour)
 
 	// Get the bookings from the database
-	err := mysql.Conn.Model(&models.Booking{}).Joins("JOIN orders").Where("vendor_id = ? AND orders.status = ? AND date >= ? AND date < ?", vendorID, enums.Success.Label(), today, today.Add(24*time.Hour)).Count(&count).Error
+	err := mysql.Conn.Model(&models.Booking{}).Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ? AND date >= ? AND date < ?", vendorID, today, today.Add(24*time.Hour)).Count(&count).Error
 
 	// Return an error if any
 	if err != nil {
@@ -111,7 +111,7 @@ func (*BookingRepository) GetNLatestUsingVendorID(vendorID uint, n int) (*[]mode
 	var bookings []models.Booking
 
 	// Get the bookings from the database
-	err := mysql.Conn.Model(&models.Booking{}).Joins("JOIN orders").Where("vendor_id = ? AND orders.status = ?", vendorID, enums.Success.Label()).Order("date desc").Limit(n).Find(&bookings).Error
+	err := mysql.Conn.Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ?", vendorID).Order("date desc").Limit(n).Find(&bookings).Error
 
 	// Return an error if any
 	if err != nil {
