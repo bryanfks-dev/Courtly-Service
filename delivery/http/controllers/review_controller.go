@@ -63,7 +63,8 @@ func (r *ReviewController) GetCourtReviewsUsingIDCourtType(c echo.Context) error
 	}
 
 	// Get the reviews
-	reviews, err := r.ReviewUseCase.GetCourtReviewsUsingVendorIDCourtType(uint(vendorID), courtType)
+	reviews, err :=
+		r.ReviewUseCase.GetCourtReviewsUsingVendorIDCourtType(uint(vendorID), courtType)
 
 	// Check if there is an error
 	if err != nil {
@@ -77,6 +78,36 @@ func (r *ReviewController) GetCourtReviewsUsingIDCourtType(c echo.Context) error
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Reviews retrieved successfully",
+		Data:    dto.ReviewsResponseDTO{}.FromModels(reviews),
+	})
+}
+
+// GetCurrentVendorReviews is a controller that handles the request to
+// get the reviews of the current vendor.
+// Endpoint: GET /vendors/me/reviews
+//
+// c: The echo context.
+//
+// Returns a response containing the reviews of the current vendor.
+func (r *ReviewController) GetCurrentVendorReviews(c echo.Context) error {
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the current vendor reviews
+	reviews, err := r.ReviewUseCase.GetCurrentVendorReviews(cc.Token)
+
+	// Check if there is an error
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get vendor reviews",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Vendor reviews retrieved successfully",
 		Data:    dto.ReviewsResponseDTO{}.FromModels(reviews),
 	})
 }

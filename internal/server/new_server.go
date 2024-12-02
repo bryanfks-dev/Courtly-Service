@@ -78,7 +78,7 @@ func NewServer() (*echo.Echo, error) {
 	currentVendorPrefix := vendorPrefix.Group("/me", m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.VendorMiddleware.Shield)
 
 	currentVendorPrefix.GET("", c.VendorController.GetCurrentVendor)
-	currentVendorPrefix.PATCH("/password", c.VendorController.UpdateVendorPassword)
+	currentVendorPrefix.PATCH("/password", c.VendorController.UpdateCurrentVendorPassword)
 
 	// Orders endpoints
 	currentVendorOrdersPrefix := currentVendorPrefix.Group("/orders")
@@ -112,6 +112,8 @@ func NewServer() (*echo.Echo, error) {
 
 	// Reviews endpoints
 	vendorPrefix.GET("/:id/courts/types/:type/reviews", c.ReviewController.GetCourtReviewsUsingIDCourtType)
+
+	currentVendorPrefix.GET("/reviews", c.ReviewController.GetCurrentVendorReviews)
 
 	// Bookings endpoints
 	// Current user bookings endpoints

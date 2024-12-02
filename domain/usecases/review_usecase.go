@@ -4,10 +4,13 @@ import (
 	"log"
 	"main/data/models"
 	"main/internal/repository"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // ReviewUseCase is a struct that defines the review use case.
 type ReviewUseCase struct {
+	AuthUseCase      *AuthUseCase
 	ReviewRepository *repository.ReviewRepository
 }
 
@@ -16,8 +19,9 @@ type ReviewUseCase struct {
 // r: The review repository.
 //
 // Returns a new instance of the ReviewUseCase.
-func NewReviewUseCase(r *repository.ReviewRepository) *ReviewUseCase {
+func NewReviewUseCase(a *AuthUseCase, r *repository.ReviewRepository) *ReviewUseCase {
 	return &ReviewUseCase{
+		AuthUseCase:      a,
 		ReviewRepository: r,
 	}
 }
@@ -41,5 +45,27 @@ func (r *ReviewUseCase) GetCourtReviewsUsingVendorIDCourtType(vendorID uint, cou
 	}
 
 	// Return the reviews and an error if any
+	return reviews, err
+}
+
+// GetCurrentVendorReviews is a use case that handles the request to get the current vendor's reviews.
+//
+// token: The JWT token.
+//
+// Returns a slice of current vendor's reviews and erros if any.
+func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token) (*[]models.Review, error) {
+	// Get the vendor ID from the token
+	claims := r.AuthUseCase.DecodeToken(token)
+
+	// Get the reviews using the vendor ID
+	reviews, err := r.ReviewRepository.GetUsingVendorID(uint(claims.Id))
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Error getting reviews using vendor ID:", err)
+
+		return nil, err
+	}
+
 	return reviews, err
 }

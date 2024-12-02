@@ -66,13 +66,14 @@ func (v *VendorController) GetCurrentVendor(c echo.Context) error {
 	})
 }
 
-// UpdateVendorPassword is a handler function that updates the password of the current vendor.
+// UpdateCurrentVendorPassword is a handler function that updates the password of 
+// the current vendor.
 // Endpoint: PACTH /vendors/me/password
 //
 // c: The echo context.
 //
 // Returns an error if any.
-func (v *VendorController) UpdateVendorPassword(c echo.Context) error {
+func (v *VendorController) UpdateCurrentVendorPassword(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
