@@ -68,8 +68,8 @@ func NewServer() (*echo.Echo, error) {
 	currentUserPrefix := userPrefix.Group("/me", m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.UserMiddleware.Shield)
 
 	currentUserPrefix.GET("", c.UserController.GetCurrentUser)
-	currentUserPrefix.PATCH("/username", c.UserController.UpdateUserUsername)
-	currentUserPrefix.PATCH("/password", c.UserController.UpdateUserPassword)
+	currentUserPrefix.PATCH("/username", c.UserController.UpdateCurrentUserUsername)
+	currentUserPrefix.PATCH("/password", c.UserController.UpdateCurrentUserPassword)
 
 	// Vendors endpoints
 	vendorPrefix := prefix.Group("/vendors")

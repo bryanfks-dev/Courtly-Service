@@ -121,13 +121,13 @@ func (u *UserController) GetPublicUser(c echo.Context) error {
 	})
 }
 
-// UpdateUserPassword is a handler function that updates the current user's password.
+// UpdateCurrentUserPassword is a handler function that updates the current user's password.
 // Endpoint: PATCH /users/me/password
 //
 // c: The echo context.
 //
 // Returns an error if any.
-func (u UserController) UpdateUserPassword(c echo.Context) error {
+func (u UserController) UpdateCurrentUserPassword(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
@@ -181,13 +181,13 @@ func (u UserController) UpdateUserPassword(c echo.Context) error {
 	})
 }
 
-// UpdateUserUsername is a handler function that updates the current user's username.
+// UpdateCurrentUserUsername is a handler function that updates the current user's username.
 // Endpoint: PATCH /users/me/username
 //
 // c: The echo context.
 //
 // Returns an error if any.
-func (u *UserController) UpdateUserUsername(c echo.Context) error {
+func (u *UserController) UpdateCurrentUserUsername(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
