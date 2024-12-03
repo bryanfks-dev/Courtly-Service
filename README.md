@@ -39,6 +39,7 @@ There are several available endpoints, such as:
 - **GET** `/api/v1/courts/:id` - Get court finromation from the database using court id
 - **GET** `/api/v1/courts/types/:type` - Get available courts using type from database
 - **GET** `/api/v1/vendors/me/courts/types/:type` - Get current vendor courts using court type from database
+- **POST** `/api/v1/vendors/me/courts/types/:type/new` - Create a new court for a court type
 
 ##### Reviews endpoints
 

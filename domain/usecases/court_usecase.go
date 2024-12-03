@@ -6,9 +6,11 @@ import (
 	"log"
 	"main/core/constants"
 	"main/core/enums"
+	"main/core/types"
 	"main/data/models"
 	"main/internal/dto"
 	"main/internal/repository"
+	"main/pkg/utils"
 	"os"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -131,6 +133,69 @@ func (c *CourtUseCase) GetCurrentVendorCourtsUsingCourtType(token *jwt.Token, co
 
 	// Get the vendor courts
 	return c.GetVendorCourtsUsingCourtType(claims.Id, courtType)
+}
+
+// ValidateCreateNewCourtForm is a function that validates the create new court form.
+//
+// form: The CreateNewCourtForm dto.
+//
+// Returns the form error response message.
+func (c *CourtUseCase) ValidateCreateNewCourtForm(form *dto.CreateNewCourtFormDTO) types.FormErrorResponseMsg {
+	// Create an empty error map
+	errs := make(types.FormErrorResponseMsg)
+
+	// Check if the price per hour is less than or equal to 0
+	if form.PricePerHour <= 0 {
+		errs["price_per_hour"] = append(errs["price_per_hour"], "Price per hour must be greater than 0")
+	}
+
+	// Check if the court image is blank
+	if utils.IsBlank(form.CourtImage) {
+		errs["courts_image"] = append(errs["courts_image"], "Court image is required")
+	}
+
+	// Return the errors if any
+	if len(errs) > 0 {
+		return errs
+	}
+
+	return nil
+}
+
+// GetVendorNewestCourtUsingCourtType is a function that returns the vendor newest court
+// using the court type.
+//
+// vendorID: The vendor ID.
+// courtType: The court type.
+//
+// Returns the court and an error if any.
+func (c *CourtUseCase) GetVendorNewestCourtUsingCourtType(vendorID uint, courtType string) (*models.Court, error) {
+	// Get the vendor newest court using the court type
+	courts, err := c.CourtRepository.GetNewestUsingVendorIDCourtType(vendorID, courtType)
+
+	// Return an error if any
+	if err != nil && err != gorm.ErrRecordNotFound {
+		log.Println("Failed to get vendor newest court using court type: ", err)
+
+		return nil, err
+	}
+
+	return courts, nil
+}
+
+// GetCurrentVendorNewestCourtUsingCourtType is a function that returns the current vendor newest court
+// using the court type.
+//
+// token: The token.
+// courtType: The court type.
+//
+// Returns the court and an error if any.
+func (c *CourtUseCase) GetCurrentVendorNewestCourtUsingCourtType(token *jwt.Token, courtType string) (*models.Court, error) {
+	// Get the token claims
+	claims := c.AuthUseCase.DecodeToken(token)
+
+	// Get the vendor newest court using the court type
+	return c.GetVendorNewestCourtUsingCourtType(claims.Id, courtType)
 }
 
 // CreateNewCourt is a function that creates a new court.

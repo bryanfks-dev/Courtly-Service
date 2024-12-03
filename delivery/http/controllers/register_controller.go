@@ -11,7 +11,7 @@ import (
 
 // RegisterController is a struct that defines the register controller.
 type RegisterController struct {
-	registerUseCase *usecases.RegisterUseCase
+	RegisterUseCase *usecases.RegisterUseCase
 }
 
 // NewRegisterController is a factory function that returns a new instance of the RegisterController.
@@ -20,7 +20,7 @@ type RegisterController struct {
 //
 // Returns a new instance of the RegisterController.
 func NewRegisterController(r *usecases.RegisterUseCase) *RegisterController {
-	return &RegisterController{registerUseCase: r}
+	return &RegisterController{RegisterUseCase: r}
 }
 
 // UserRegister is a function that handles the user register request.
@@ -41,10 +41,10 @@ func (r RegisterController) UserRegister(c echo.Context) error {
 	}
 
 	// Sanitize the form
-	r.registerUseCase.SanitizeUserRegisterForm(form)
+	r.RegisterUseCase.SanitizeUserRegisterForm(form)
 
 	// Validate the form
-	if errs := r.registerUseCase.ValidateUserRegisterForm(form); errs != nil {
+	if errs := r.RegisterUseCase.ValidateUserRegisterForm(form); errs != nil {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: errs,
@@ -53,7 +53,7 @@ func (r RegisterController) UserRegister(c echo.Context) error {
 	}
 
 	// Check if there is an error processing the form
-	if err := r.registerUseCase.ProcessUserRegister(form); err != nil {
+	if err := r.RegisterUseCase.ProcessUserRegister(form); err != nil {
 		// Check if the error is a client error
 		if err.ClientError {
 			return c.JSON(http.StatusForbidden, dto.ResponseDTO{
@@ -71,7 +71,7 @@ func (r RegisterController) UserRegister(c echo.Context) error {
 	}
 
 	// Register the user
-	user, err := r.registerUseCase.CreateNewUser(form)
+	user, err := r.RegisterUseCase.CreateNewUser(form)
 
 	// Return an error if any
 	if err != nil {

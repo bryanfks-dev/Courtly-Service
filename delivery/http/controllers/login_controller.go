@@ -12,8 +12,8 @@ import (
 
 // LoginController is a struct that defines the login controller.
 type LoginController struct {
-	loginUseCase *usecases.LoginUseCase
-	authUseCase  *usecases.AuthUseCase
+	LoginUseCase *usecases.LoginUseCase
+	AuthUseCase  *usecases.AuthUseCase
 }
 
 // NewLoginController is a factory function that returns a new instance of the LoginController.
@@ -23,7 +23,7 @@ type LoginController struct {
 //
 // Returns a new instance of the LoginController.
 func NewLoginController(l *usecases.LoginUseCase, a *usecases.AuthUseCase) *LoginController {
-	return &LoginController{loginUseCase: l, authUseCase: a}
+	return &LoginController{LoginUseCase: l, AuthUseCase: a}
 
 }
 
@@ -45,7 +45,7 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 	}
 
 	// Validate the login form
-	errs := l.loginUseCase.ValidateUserForm(form)
+	errs := l.LoginUseCase.ValidateUserForm(form)
 
 	// Check if there are any errors
 	if errs != nil {
@@ -57,7 +57,7 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 	}
 
 	// Process the login form
-	user, processErr := l.loginUseCase.ProcessUser(form)
+	user, processErr := l.LoginUseCase.ProcessUser(form)
 
 	// Check if there is an error processing the form
 	if processErr != nil {
@@ -78,7 +78,7 @@ func (l *LoginController) UserLogin(c echo.Context) error {
 	}
 
 	// Generate a token
-	token, err := l.authUseCase.GenerateToken(user.ID, enums.User)
+	token, err := l.AuthUseCase.GenerateToken(user.ID, enums.User)
 
 	// Check if there is an error generating the token
 	if err != nil {
@@ -117,7 +117,7 @@ func (l *LoginController) VendorLogin(c echo.Context) error {
 	}
 
 	// Validate the login form
-	errs := l.loginUseCase.ValidateVendorForm(form)
+	errs := l.LoginUseCase.ValidateVendorForm(form)
 
 	// Check if there are any errors
 	if errs != nil {
@@ -129,7 +129,7 @@ func (l *LoginController) VendorLogin(c echo.Context) error {
 	}
 
 	// Process the login form
-	vendor, processErr := l.loginUseCase.ProcessVendor(form)
+	vendor, processErr := l.LoginUseCase.ProcessVendor(form)
 
 	if processErr != nil {
 		// Check if the error is a client error
@@ -149,7 +149,7 @@ func (l *LoginController) VendorLogin(c echo.Context) error {
 	}
 
 	// Generate a token
-	token, err := l.authUseCase.GenerateToken(vendor.ID, enums.Vendor)
+	token, err := l.AuthUseCase.GenerateToken(vendor.ID, enums.Vendor)
 
 	// Check if there is an error generating the token
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 
 // LogoutController is a struct that defines the logout controller.
 type LogoutController struct {
-	logoutUseCase *usecases.LogoutUseCase
+	LogoutUseCase *usecases.LogoutUseCase
 }
 
 // NewLogoutController is a factory function that returns a new instance of the LogoutController.
@@ -19,7 +19,7 @@ type LogoutController struct {
 //
 // Returns a new instance of the LogoutController.
 func NewLogoutController(l *usecases.LogoutUseCase) *LogoutController {
-	return &LogoutController{logoutUseCase: l}
+	return &LogoutController{LogoutUseCase: l}
 }
 
 // UserLogout is a handler that logs out a user
@@ -33,7 +33,7 @@ func (l *LogoutController) UserLogout(c echo.Context) error {
 	cc := c.(*dto.CustomContext)
 
 	// Blacklist token
-	err := l.logoutUseCase.BlacklistToken(cc.Token)
+	err := l.LogoutUseCase.BlacklistToken(cc.Token)
 
 	// Check if there was an error blacklisting the token
 	if err != nil {
@@ -62,7 +62,7 @@ func (l *LogoutController) VendorLogout(c echo.Context) error {
 	cc := c.(*dto.CustomContext)
 
 	// Blacklist token
-	err := l.logoutUseCase.BlacklistToken(cc.Token)
+	err := l.LogoutUseCase.BlacklistToken(cc.Token)
 
 	// Check if there was an error blacklisting the token
 	if err != nil {
