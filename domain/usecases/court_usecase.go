@@ -1,10 +1,15 @@
 package usecases
 
 import (
+	"encoding/base64"
+	"fmt"
 	"log"
+	"main/core/constants"
 	"main/core/enums"
 	"main/data/models"
+	"main/internal/dto"
 	"main/internal/repository"
+	"os"
 
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
@@ -93,7 +98,7 @@ func (c *CourtUseCase) GetCourtsUsingCourtType(courtType string) (*[]models.Cour
 	return courts, nil
 }
 
-// GetVendorCourtsUsingCourtType is a function that returns the vendor courts 
+// GetVendorCourtsUsingCourtType is a function that returns the vendor courts
 // using the court type.
 //
 // vendorID: The vendor ID.
@@ -117,6 +122,7 @@ func (c *CourtUseCase) GetVendorCourtsUsingCourtType(vendorID uint, courtType st
 // with the given court type.
 //
 // token: The token.
+// courtType: The court type.
 //
 // Returns the vendor courts and an error if any.
 func (c *CourtUseCase) GetCurrentVendorCourtsUsingCourtType(token *jwt.Token, courtType string) (*[]models.Court, error) {
@@ -125,4 +131,52 @@ func (c *CourtUseCase) GetCurrentVendorCourtsUsingCourtType(token *jwt.Token, co
 
 	// Get the vendor courts
 	return c.GetVendorCourtsUsingCourtType(claims.Id, courtType)
+}
+
+// CreateNewCourt is a function that creates a new court.
+//
+// token: The token.
+// courtType: The court type.
+// form: The CreateNewCourtForm dto.
+//
+// Returns an error if any.
+func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *dto.CreateNewCourtFormDTO) (*models.Court, error) {
+	// Get the token claims
+	claims := c.AuthUseCase.DecodeToken(token)
+
+	// Decode the image
+	fileBytes, err := base64.StdEncoding.DecodeString(form.CourtImage)
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to decode court image: ", err)
+
+		return nil, err
+	}
+
+	// Create the court image name
+	courtImageName := fmt.Sprintf("court_%s_%s.jpg", claims.ID, courtType)
+
+	// Write the image to a file
+	err = os.WriteFile(fmt.Sprintf("%s/%s", constants.PATH_TO_COURT_IMAGES, courtImageName), fileBytes, 0644)
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to save court image: ", err)
+
+		return nil, err
+	}
+
+	// Create a new court object
+	court := &models.Court{
+		VendorID: claims.Id,
+		CourtType: models.CourtType{
+			Type: courtType,
+		},
+		Name:  "Court 1",
+		Price: form.PricePerHour,
+		Image: courtImageName,
+	}
+
+	return court, c.CourtRepository.Create(court)
 }

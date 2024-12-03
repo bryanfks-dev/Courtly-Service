@@ -37,6 +37,8 @@ func NewServer() (*echo.Echo, error) {
 	// Register static files
 	e.Static(router.UserProfiles, constants.PATH_TO_USER_PROFILE_PICTURES)
 
+	e.Static(router.CourtImages, constants.PATH_TO_COURT_IMAGES)
+
 	// Register prefix endpoint
 	prefix := e.Group("/api/v1")
 
@@ -109,6 +111,8 @@ func NewServer() (*echo.Echo, error) {
 	currentVendorCourtsTypePrefix := currentVendorCourtsPrefix.Group("/types")
 
 	currentVendorCourtsTypePrefix.GET("/:type", c.CourtController.GetCurrentVendorCourtsUsingCourtType)
+
+	currentVendorCourtsTypePrefix.POST("/:type/new", c.CourtController.CreateNewCourt)
 
 	// Reviews endpoints
 	vendorPrefix.GET("/:id/courts/types/:type/reviews", c.ReviewController.GetCourtReviewsUsingIDCourtType)

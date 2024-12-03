@@ -9,4 +9,7 @@ var (
 
 	// PATH_TO_USER_PROFILE_PICTURES is the path to the user profile pictures
 	PATH_TO_USER_PROFILE_PICTURES = "assets/user_profiles"
+
+	// PATH_TO_COURT_IMAGES is the path to the court images
+	PATH_TO_COURT_IMAGES = "assets/court_images"
 )

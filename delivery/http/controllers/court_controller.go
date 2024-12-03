@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"main/core/enums"
 	"main/domain/usecases"
 	"main/internal/dto"
@@ -131,7 +132,7 @@ func (co *CourtController) GetCourtsUsingCourtType(c echo.Context) error {
 	})
 }
 
-// GetCurrentVendorCourtsUsingCourtType is a controller that handles the get 
+// GetCurrentVendorCourtsUsingCourtType is a controller that handles the get
 // current vendor courts using court type endpoint.
 // Endpoint: GET /vendors/me/courts/:type
 //
@@ -170,5 +171,58 @@ func (co *CourtController) GetCurrentVendorCourtsUsingCourtType(c echo.Context) 
 		Success: true,
 		Message: "Success retrieve current vendor courts",
 		Data:    dto.VendorCourtResponseDTO{}.FromCourtModels(courts),
+	})
+}
+
+// CreateNewCourt is a controller that handles the create new court endpoint.
+// Endpoint: POST /vendors/me/courts/types/:type/new
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) CreateNewCourt(c echo.Context) error {
+	// Get the court type from the URL
+	courtType := c.Param("type")
+
+	// Return an error if the court type is invalid
+	if !enums.InCourtType(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
+	// Create a new CreateNeCourtFormDTO object
+	form := new(dto.CreateNewCourtFormDTO)
+
+	// Bind the request body to the UserLoginForm object
+	if err := c.Bind(form); err != nil {
+		log.Println("Error binding request body: ", err)
+
+		return err
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the current vendor courts
+	court, err := co.CourtUseCase.CreateNewCourt(cc.Token, courtType, form)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to create new court",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Success create new court",
+		Data: dto.CourtResponseDTO{
+			Court: dto.CourtDTO{}.FromModel(court),
+		},
 	})
 }
