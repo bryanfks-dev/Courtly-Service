@@ -11,7 +11,7 @@ type Vendor struct {
 	ID uint `gorm:"primaryKey;autoIncrement"`
 
 	// Name is the name of the vendor.
-	Name string `gorm:"not null;unique;type:varchar(255);index"`
+	Name string `gorm:"not null;unique;type:varchar(255)"`
 
 	// Address is the address of the vendor.
 	Address string `gorm:"not null;type:varchar(255)"`
