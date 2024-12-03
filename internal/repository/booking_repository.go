@@ -47,7 +47,7 @@ func (*BookingRepository) GetUsingVendorID(vendorID uint) (*[]models.Booking, er
 	var bookings []models.Booking
 
 	// Get the bookings from the database
-	err := mysql.Conn.Model(&models.Order{}).Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ?", vendorID).Find(&bookings).Error
+	err := mysql.Conn.Model(&models.Booking{}).Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ?", vendorID).Find(&bookings).Error
 
 	// Return an error if any
 	if err != nil {

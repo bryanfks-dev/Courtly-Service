@@ -170,7 +170,7 @@ func (co *CourtController) GetCurrentVendorCourtsUsingCourtType(c echo.Context) 
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve current vendor courts",
-		Data:    dto.VendorCourtResponseDTO{}.FromCourtModels(courts),
+		Data:    dto.CurrentVendorCourtsResponseDTO{}.FromModels(courts),
 	})
 }
 

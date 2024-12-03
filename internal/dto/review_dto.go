@@ -29,12 +29,15 @@ type ReviewDTO struct {
 //
 // Returns the review DTO.
 func (r ReviewDTO) FromModel(m *models.Review) *ReviewDTO {
+	// date is the date of the review
+	date, _ := m.Date.Value()
+
 	return &ReviewDTO{
 		ID:        m.ID,
 		User:      PublicUserDTO{}.FromModel(&m.User),
 		CourtType: m.CourtType.Type,
 		Rating:    m.Rating,
 		Review:    m.Review,
-		Date:      m.Date.String(),
+		Date:      date.(string),
 	}
 }

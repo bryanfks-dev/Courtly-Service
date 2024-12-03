@@ -32,13 +32,22 @@ type BookingDTO struct {
 //
 // Returns the booking DTO.
 func (b BookingDTO) FromModel(m *models.Booking) *BookingDTO {
+	// Get the date
+	date, _ := m.Date.Value()
+
+	// Get the book start time
+	bookStartTime, _ := m.BookStartTime.Value()
+
+	// Get the book end time
+	bookEndTime, _ := m.BookEndTime.Value()
+
 	return &BookingDTO{
 		ID:            m.ID,
 		Order:         OrderDTO{}.FromModel(&m.Order),
 		Court:         CourtDTO{}.FromModel(&m.Court),
 		Vendor:        VendorDTO{}.FromModel(&m.Vendor),
-		Date:          m.Date.String(),
-		BookStartTime: m.BookStartTime.String(),
-		BookEndTime:   m.BookEndTime.String(),
+		Date:          date.(string),
+		BookStartTime: bookStartTime.(string),
+		BookEndTime:   bookEndTime.(string),
 	}
 }

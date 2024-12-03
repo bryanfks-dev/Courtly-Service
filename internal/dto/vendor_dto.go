@@ -26,11 +26,17 @@ type VendorDTO struct {
 //
 // Returns a CurrentVendor DTO.
 func (c VendorDTO) FromModel(m *models.Vendor) *VendorDTO {
+	// Get the open time
+	openTime, _ := m.OpenTime.Value()
+
+	// Get the close time
+	closeTime, _ := m.CloseTime.Value()
+
 	return &VendorDTO{
 		ID:        m.ID,
 		Name:      m.Name,
 		Address:   m.Address,
-		OpenTime:  m.OpenTime.String(),
-		CloseTime: m.CloseTime.String(),
+		OpenTime:  openTime.(string),
+		CloseTime: closeTime.(string),
 	}
 }
