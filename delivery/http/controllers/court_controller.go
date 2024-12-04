@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"main/core/enums"
+	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"net/http"
@@ -34,8 +35,30 @@ func NewCourtController(c *usecases.CourtUseCase) *CourtController {
 //
 // Returns an error if any.
 func (co *CourtController) GetCourts(c echo.Context) error {
+	// Get the court type from the query parameter
+	courtType := c.QueryParam("type")
+
+	// Return an error if the court type is invalid
+	if courtType != "" && !enums.InCourtType(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
+	// Create a variable to store the courts
+	var (
+		courts *[]models.Court
+		err    error
+	)
+
 	// Get the courts
-	courts, err := co.CourtUseCase.GetCourts()
+	if courtType != "" {
+		courts, err = co.CourtUseCase.GetCourts()
+	} else {
+		courts, err = co.CourtUseCase.GetCourtsUsingCourtType(courtType)
+	}
 
 	// Return an error if any
 	if err != nil {
