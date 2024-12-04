@@ -186,3 +186,24 @@ func (b *BookingUseCase) GetCurrentVendorRecentBookings(token *jwt.Token) (*[]mo
 
 	return b.GetVendorRecentBookings(uint(claims.Id))
 }
+
+// CheckUserHasBookCourt is a use case that checks if the user has booked the court.
+//
+// userID: The ID of the user
+// vendorID: The ID of the vendor
+// courtID: The ID of the court
+//
+// Returns true if the user has booked the court and an error if any
+func (b *BookingUseCase) CheckUserHasBookCourt(userID uint, vendorID uint, courtID uint) (bool, error) {
+	// Check if the user has booked the court
+	booked, err := b.BookingRepository.CheckUserHasBookCourt(userID, vendorID, courtID)
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to check if user has booked the court: ", err)
+
+		return false, err
+	}
+
+	return booked, nil
+}

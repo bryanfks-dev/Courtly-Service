@@ -120,3 +120,25 @@ func (*BookingRepository) GetNLatestUsingVendorID(vendorID uint, n int) (*[]mode
 
 	return &bookings, nil
 }
+
+// CheckUserHasBookCourt is a method that checks if the user has booked the court.
+//
+// userID: The ID of the user.
+// vendorID: The ID of the vendor.
+// CheckUserHasBookCourt: The ID of the court.
+//
+// Returns true if the user has booked the court and an error if any.
+func (*BookingRepository) CheckUserHasBookCourt(userID uint, vendorID uint, courtID uint) (bool, error) {
+	// count is a placeholder for the count
+	var count int64
+
+	// Get the bookings from the database
+	err := mysql.Conn.Model(&models.Booking{}).Where("user_id = ? AND vendor_id = ? AND court_id = ?", userID, vendorID, courtID).Count(&count).Error
+
+	// Return an error if any
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}

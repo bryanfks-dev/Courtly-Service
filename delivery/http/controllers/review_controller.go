@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"log"
 	"main/data/models"
 	"main/domain/entities"
 	"main/domain/usecases"
@@ -283,5 +284,100 @@ func (r *ReviewController) GetCurrentVendorReviews(c echo.Context) error {
 			starCounts,
 			reviews,
 		),
+	})
+}
+
+// CreateReview is a controller that handles the request to create a review.
+// Endpoint: POST /vendors/:id/courts/types/:type/reviews
+//
+// c: The echo context.
+//
+// Returns a response containing the created review.
+func (r *ReviewController) CreateReview(c echo.Context) error {
+	// Get the vendor id from the URL
+	id := c.Param("vendorID")
+
+	// Convert the id to an integer
+	vendorID, err := strconv.Atoi(id)
+
+	// Check if the id is invalid
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid vendor ID",
+			Data:    nil,
+		})
+	}
+
+	// Get the court type from the URL
+	id = c.Param("courtID")
+
+	// Convert the id to an integer
+	courtID, err := strconv.Atoi(id)
+
+	// Check if the id is invalid
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court ID",
+			Data:    nil,
+		})
+	}
+
+	// Create a new CreateReviewForm dto object
+	form := new(dto.CreateReviewFormDTO)
+
+	// Bind the request body to the CreateReviewForm object
+	if err := c.Bind(form); err != nil {
+		log.Println("Error binding request body: ", err)
+
+		return err
+	}
+
+	// Sanitize the review form
+	r.ReviewUseCase.SanitizeCreateReviewForm(form)
+
+	// Validate the login form
+	errs := r.ReviewUseCase.ValidateCreateReviewForm(form)
+
+	// Check if there are any errors
+	if errs != nil {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: errs,
+			Data:    nil,
+		})
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Process the creation of the review
+	review, processErr := r.ReviewUseCase.ProcessCreateReview(cc.Token, vendorID, courtID, form)
+
+	// Check if there is an error
+	if processErr != nil {
+		// Check if the error is a client error
+		if processErr.ClientError {
+			return c.JSON(http.StatusForbidden, dto.ResponseDTO{
+				Success: false,
+				Message: processErr.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: processErr.Message,
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusCreated, dto.ResponseDTO{
+		Success: true,
+		Message: "Review created successfully",
+		Data: dto.ReviewResponseDTO{
+			Review: dto.ReviewDTO{}.FromModel(review),
+		},
 	})
 }

@@ -16,6 +16,15 @@ func NewReviewRepository() *ReviewRepository {
 	return &ReviewRepository{}
 }
 
+// Create is a function that creates a new review.
+//
+// review: The review to create.
+//
+// Returns an error if any.
+func (*ReviewRepository) Create(review *models.Review) error {
+	return mysql.Conn.Create(review).Error
+}
+
 // GetCountUsingVendorID is a function that returns the count of reviews for vendor ID.
 //
 // vendorID: The vendor ID.
@@ -151,4 +160,26 @@ func (*ReviewRepository) GetUsingVendorID(vendorID uint) (*[]models.Review, erro
 	}
 
 	return &reviews, err
+}
+
+// CheckUserHasReviewCourtType is a function that checks if the user has a review for the court type.
+//
+// userID: The user ID.
+// vendorID: The vendor ID.
+// courtType: The court type.
+//
+// Returns true if the user has a review for the court type.
+func (*ReviewRepository) CheckUserHasReviewCourtType(userID uint, vendorID uint, courtType string) (bool, error) {
+	// Create new count variable
+	var count int64
+
+	// Get the count of courts by vendor ID and court type
+	err := mysql.Conn.Model(&models.Review{}).Where("user_id = ? AND vendor_id = ? AND court_type = ?", userID, vendorID, courtType).Count(&count).Error
+
+	// Return an error if any
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }

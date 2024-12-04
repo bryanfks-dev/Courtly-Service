@@ -2,9 +2,12 @@ package usecases
 
 import (
 	"log"
+	"main/core/types"
 	"main/data/models"
 	"main/domain/entities"
+	"main/internal/dto"
 	"main/internal/repository"
+	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -13,6 +16,8 @@ import (
 type ReviewUseCase struct {
 	AuthUseCase      *AuthUseCase
 	ReviewRepository *repository.ReviewRepository
+	BookingUseCase   *BookingUseCase
+	CourtUseCase     *CourtUseCase
 }
 
 // NewReviewUseCase is a factory function that returns a new instance of the ReviewUseCase.
@@ -20,10 +25,12 @@ type ReviewUseCase struct {
 // r: The review repository.
 //
 // Returns a new instance of the ReviewUseCase.
-func NewReviewUseCase(a *AuthUseCase, r *repository.ReviewRepository) *ReviewUseCase {
+func NewReviewUseCase(a *AuthUseCase, r *repository.ReviewRepository, b *BookingUseCase, c *CourtUseCase) *ReviewUseCase {
 	return &ReviewUseCase{
 		AuthUseCase:      a,
 		ReviewRepository: r,
+		BookingUseCase:   b,
+		CourtUseCase:     c,
 	}
 }
 
@@ -141,4 +148,125 @@ func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token) (*[]models.Rev
 
 	// Get the reviews using the vendor ID
 	return r.ReviewRepository.GetUsingVendorID(uint(claims.Id))
+}
+
+// SanitizeCreateReviewForm is a use case that sanitizes the create review form.
+//
+// form: The create review form.
+//
+// Returns nothing.
+func (r *ReviewUseCase) SanitizeCreateReviewForm(form *dto.CreateReviewFormDTO) {
+	// Sanitize the review form
+	form.Review = strings.TrimSpace(form.Review)
+}
+
+// ValidateCreateReviewForm is a use case that validates the create review form.
+//
+// form: The create review form.
+//
+// Returns a form error response message.
+func (r *ReviewUseCase) ValidateCreateReviewForm(form *dto.CreateReviewFormDTO) types.FormErrorResponseMsg {
+	// Create an empty error map
+	errs := make(types.FormErrorResponseMsg)
+
+	// Check if rating is valid
+	if form.Rating <= 0 {
+		errs["rating"] = append(errs["rating"], "Rating must be greater than 0")
+	}
+
+	// Check if rating is valid
+	if form.Rating > 5 {
+		errs["rating"] = append(errs["rating"], "Rating must be less than or equal to 5")
+	}
+
+	// Check if theres any error
+	if len(errs) > 0 {
+		return errs
+	}
+
+	return nil
+}
+
+// ProcessCreateReview is a use case that processes the creation of a review.
+//
+// token: The JWT token.
+// vendorID: The id of the vendor.
+// courtID: The id of the court.
+// form: The create review form.
+//
+// Returns an error if any.
+func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, courtID int, form *dto.CreateReviewFormDTO) (*models.Review, *entities.ProcessError) {
+	// Get the user ID from the token
+	claims := r.AuthUseCase.DecodeToken(token)
+
+	// Check if user already book the court
+	booked, err := r.BookingUseCase.CheckUserHasBookCourt(uint(claims.Id), uint(vendorID), uint(courtID))
+
+	// Check if there is an error
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occurred while checking if user has booked the court",
+		}
+	}
+
+	// Return an error if user has not booked the court
+	if !booked {
+		return nil, &entities.ProcessError{
+			ClientError: true,
+			Message:     "User has not booked the court",
+		}
+	}
+
+	// Get the court type
+	court, err := r.CourtUseCase.GetCourtUsingID(uint(vendorID))
+
+	// Check if there is an error
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occurred while getting the court",
+		}
+	}
+
+	// Check if user has reviewed the court
+	reviewed, err := r.ReviewRepository.CheckUserHasReviewCourtType(uint(claims.Id), uint(vendorID), court.CourtType.Type)
+
+	// Check if there is an error
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occurred while checking if user has reviewed the court",
+		}
+	}
+
+	// Return an error if user has reviewed the court
+	if reviewed {
+		return nil, &entities.ProcessError{
+			ClientError: true,
+			Message:     "User has already reviewed the court",
+		}
+	}
+
+	// Create a new review object
+	review := &models.Review{
+		UserID:      uint(claims.Id),
+		VendorID:    uint(vendorID),
+		CourtTypeID: court.CourtTypeID,
+		Rating:      form.Rating,
+		Review:      form.Review,
+	}
+
+	// Create the review
+	err = r.ReviewRepository.Create(review)
+
+	// Check if there is an error
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occurred while creating the review",
+		}
+	}
+
+	return review, nil
 }
