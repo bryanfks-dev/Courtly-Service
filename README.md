@@ -28,6 +28,10 @@ There are several available endpoints, such as:
 - **GET** `/api/v1/vendors/me` - Get current vendor information from database
 - **PATCH** `/api/v1/vendors/me/password` - Update vendor password with a new password
 
+##### Booking endpoints
+
+- **GET** `/api/v1/users/me/bookings` - Get current user bookings from database
+
 ##### Orders endpoints
 
 - **GET** `/api/v1/vendors/me/orders` - Get current vendor orders from database
@@ -46,10 +50,6 @@ There are several available endpoints, such as:
 
 - **GET** `/api/v1/vendors/:id/courts/types/:type/reviews` - Get vendor courts type reviews from database
 - **GET** `/api/v1/vendors/me/reviews` - Get court reviews related to the vendor from database
-
-##### Booking endpoints
-
-- **GET** `/api/v1/users/me/bookings` - Get current user bookings from database
 
 ## Response
 
