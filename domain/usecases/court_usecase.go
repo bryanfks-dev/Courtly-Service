@@ -185,21 +185,6 @@ func (c *CourtUseCase) GetVendorNewestCourtUsingCourtType(vendorID uint, courtTy
 	return courts, nil
 }
 
-// GetCurrentVendorNewestCourtUsingCourtType is a function that returns the current vendor newest court
-// using the court type.
-//
-// token: The token.
-// courtType: The court type.
-//
-// Returns the court and an error if any.
-func (c *CourtUseCase) GetCurrentVendorNewestCourtUsingCourtType(token *jwt.Token, courtType string) (*models.Court, error) {
-	// Get the token claims
-	claims := c.AuthUseCase.DecodeToken(token)
-
-	// Get the vendor newest court using the court type
-	return c.GetVendorNewestCourtUsingCourtType(claims.Id, courtType)
-}
-
 // CreateNewCourt is a function that creates a new court.
 //
 // token: The token.
@@ -207,9 +192,28 @@ func (c *CourtUseCase) GetCurrentVendorNewestCourtUsingCourtType(token *jwt.Toke
 // form: The CreateNewCourtForm dto.
 //
 // Returns an error if any.
-func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *dto.CreateNewCourtFormDTO) (*models.Court, error) {
+func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *dto.CreateNewCourtFormDTO) (*models.Court, *entities.ProcessError) {
 	// Get the token claims
 	claims := c.AuthUseCase.DecodeToken(token)
+
+	// Get the vendor newest court using the court type
+	court, err := c.GetVendorNewestCourtUsingCourtType(claims.Id, courtType)
+
+	// Return an error if any
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occured while getting current vendor newest court",
+		}
+	}
+
+	// Check if the court is nil
+	if court != nil {
+		return nil, &entities.ProcessError{
+			ClientError: true,
+			Message:     "Vendor already has a court in this court type, use POST /vendor/me/courts/types/:type instead",
+		}
+	}
 
 	// Decode the image
 	fileBytes, err := base64.StdEncoding.DecodeString(form.CourtImage)
@@ -218,7 +222,10 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 	if err != nil {
 		log.Println("Failed to decode court image: ", err)
 
-		return nil, err
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occured while decoding court image",
+		}
 	}
 
 	// Create the court image name
@@ -231,11 +238,14 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 	if err != nil {
 		log.Println("Failed to save court image: ", err)
 
-		return nil, err
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occured while saving court image",
+		}
 	}
 
 	// Create a new court object
-	court := &models.Court{
+	newCourt := &models.Court{
 		VendorID: claims.Id,
 		CourtType: models.CourtType{
 			Type: courtType,
@@ -245,7 +255,18 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 		Image: courtImageName,
 	}
 
-	return court, c.CourtRepository.Create(court)
+	// Return an error if any
+	err = c.CourtRepository.Create(newCourt)
+
+	// Return an error if any
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occured while creating a new court",
+		}
+	}
+
+	return court, nil
 }
 
 // AddCourt is a function that adds a new court.
@@ -273,7 +294,7 @@ func (c *CourtUseCase) AddCourt(token *jwt.Token, courtType string) (*models.Cou
 	if court == nil {
 		return nil, &entities.ProcessError{
 			ClientError: true,
-			Message:     "Vendor doesn't have any court in this court type, use /vendor/me/courts/types/:type/new instead",
+			Message:     "Vendor doesn't have any court in this court type, use POST /vendor/me/courts/types/:type/new instead",
 		}
 	}
 

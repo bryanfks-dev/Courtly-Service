@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"main/core/enums"
 	"main/domain/usecases"
@@ -219,35 +218,23 @@ func (co *CourtController) CreateNewCourt(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
-	// Check for newest court with the given court type
-	court, err := co.CourtUseCase.GetCurrentVendorNewestCourtUsingCourtType(cc.Token, courtType)
-
-	// Return an error if any
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
-			Success: false,
-			Message: "Failed to get current vendor newest court",
-			Data:    nil,
-		})
-	}
-
-	// Return an error if the court already exists
-	if court != nil {
-		return c.JSON(http.StatusForbidden, dto.ResponseDTO{
-			Success: false,
-			Message: fmt.Sprintf("A single court with %s type already exists", courtType),
-			Data:    nil,
-		})
-	}
-
 	// Get the current vendor courts
-	court, err = co.CourtUseCase.CreateNewCourt(cc.Token, courtType, form)
+	court, err := co.CourtUseCase.CreateNewCourt(cc.Token, courtType, form)
 
 	// Return an error if any
 	if err != nil {
+		// Return an error if the client error is true
+		if err.ClientError {
+			return c.JSON(http.StatusForbidden, dto.ResponseDTO{
+				Success: false,
+				Message: err.Message,
+				Data:    nil,
+			})
+		}
+
 		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
-			Message: "Failed to create new court",
+			Message: err.Message,
 			Data:    nil,
 		})
 	}
