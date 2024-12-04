@@ -3,6 +3,7 @@ package usecases
 import (
 	"log"
 	"main/data/models"
+	"main/domain/entities"
 	"main/internal/repository"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -48,6 +49,87 @@ func (r *ReviewUseCase) GetCourtReviewsUsingVendorIDCourtType(vendorID uint, cou
 	return reviews, err
 }
 
+// GetReviewCountUsingVendorID is a use case that handles the request to get the count of
+// reviews using the vendor ID.
+//
+// vendorID: The id of the vendor.
+//
+// Returns the count of reviews and an error if any.
+func (r *ReviewUseCase) GetReviewCountUsingVendorID(vendorID uint) (int64, error) {
+	// Get the count of reviews using the vendor ID
+	count, err := r.ReviewRepository.GetCountUsingVendorID(vendorID)
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Error getting review count using vendor ID:", err)
+
+		return 0, err
+	}
+
+	return count, err
+}
+
+// GetCurrentVendorReviewCount is a use case that handles the request to get the current vendor's review count.
+//
+// token: The JWT token.
+//
+// Returns the review count and an error if any.
+func (r *ReviewUseCase) GetCurrentVendorReviewCount(token *jwt.Token) (int64, error) {
+	// Get the vendor ID from the token
+	claims := r.AuthUseCase.DecodeToken(token)
+
+	// Get the review count using the vendor ID
+	return r.GetReviewCountUsingVendorID(uint(claims.Id))
+}
+
+// GetStarCountsUsingVendorID is a use case that handles the request to get the star counts
+// using the vendor ID.
+//
+// vendorID: The id of the vendor.
+//
+// Returns the star counts and an error if any.
+func (r *ReviewUseCase) GetStarCountsUsingVendorID(vendorID uint) (*entities.ReviewStarsCount, error) {
+	// Get the star counts using the vendor ID
+	counts, err := r.ReviewRepository.GetStarCountsUsingVendorID(vendorID)
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Error getting star counts using vendor ID:", err)
+
+		return nil, err
+	}
+
+	return counts, err
+}
+
+// GetCurrentVendorStarCounts is a use case that handles the request to get the current vendor's star counts.
+//
+// token: The JWT token.
+//
+// Returns the star counts and an error if any.
+func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*entities.ReviewStarsCount, error) {
+	// Get the vendor ID from the token
+	claims := r.AuthUseCase.DecodeToken(token)
+
+	// Get the star counts using the vendor ID
+	return r.GetStarCountsUsingVendorID(uint(claims.Id))
+}
+
+// CalculateTotalRating is a function that calculates the total rating of the reviews.
+//
+// starCount: The star count of the reviews.
+// reviewCount: The total number of reviews.
+//
+// Returns the total rating.
+func (r *ReviewUseCase) CalculateTotalRating(starCount *entities.ReviewStarsCount, reviewCount int64) float64 {
+	// Check if there are no reviews
+	if reviewCount == 0 {
+		return 0
+	}
+
+	return (float64(starCount.OneStar) + float64(2*starCount.TwoStars) + float64(3*starCount.ThreeStars) + float64(4*starCount.FourStars) + float64(5*starCount.FiveStars)) / float64(reviewCount)
+}
+
 // GetCurrentVendorReviews is a use case that handles the request to get the current vendor's reviews.
 //
 // token: The JWT token.
@@ -58,14 +140,5 @@ func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token) (*[]models.Rev
 	claims := r.AuthUseCase.DecodeToken(token)
 
 	// Get the reviews using the vendor ID
-	reviews, err := r.ReviewRepository.GetUsingVendorID(uint(claims.Id))
-
-	// Check if there is an error
-	if err != nil {
-		log.Println("Error getting reviews using vendor ID:", err)
-
-		return nil, err
-	}
-
-	return reviews, err
+	return r.ReviewRepository.GetUsingVendorID(uint(claims.Id))
 }

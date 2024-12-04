@@ -1,19 +1,36 @@
 package dto
 
-import "main/data/models"
+import (
+	"main/data/models"
+	"main/domain/entities"
+	"main/pkg/utils"
+	"strconv"
+)
 
 // ReviewsResponseDTO is a struct that defines the reviews response DTO.
 type ReviewsResponseDTO struct {
+	// TotalRating is the total rating of the reviews
+	TotalRating float64 `json:"total_rating"`
+
+	// ReviewsTotal is the total number of reviews
+	ReviewsTotal string `json:"reviews_total"`
+
+	// Stars is the reviews stars DTO
+	Stars *ReviewsStarsDTO `json:"stars"`
+
 	// Reviews is a slice of review DTOs
 	Reviews *[]ReviewDTO `json:"reviews"`
 }
 
 // FromModels is a function that converts a slice of review models to a reviews response DTO.
 //
+// rate: The total rating of the reviews.
+// reviewCount: The total number of reviews.
+// stars: The reviews stars DTO.
 // m: The slice of review models.
 //
 // Returns the reviews response DTO.
-func (r ReviewsResponseDTO) FromModels(m *[]models.Review) *ReviewsResponseDTO {
+func (r ReviewsResponseDTO) FromModels(rate float64, reviewCount int, stars *entities.ReviewStarsCount, m *[]models.Review) *ReviewsResponseDTO {
 	// reviews is a slice of review DTOs
 	reviews := []ReviewDTO{}
 
@@ -23,7 +40,27 @@ func (r ReviewsResponseDTO) FromModels(m *[]models.Review) *ReviewsResponseDTO {
 		reviews = append(reviews, *ReviewDTO{}.FromModel(&review))
 	}
 
+	// Get the digits of the review count
+	digits := utils.GetDigits(reviewCount)
+
+	// reviewsCountStr is the total number of reviews as a string
+	var reviewsCountStr string
+
+	// 
+	if digits < 3 {
+		reviewsCountStr = strconv.Itoa(reviewCount)
+	} else if digits < 4 {
+		reviewsCountStr = strconv.Itoa(reviewCount/100) + "+"
+	} else if digits < 6 {
+		reviewsCountStr = strconv.Itoa(reviewCount/1000) + "K+"
+	} else {
+		reviewsCountStr = strconv.Itoa(reviewCount/1000000) + "M+"
+	}
+
 	return &ReviewsResponseDTO{
-		Reviews: &reviews,
+		TotalRating:  rate,
+		ReviewsTotal: reviewsCountStr,
+		Stars:        ReviewsStarsDTO{}.FromEntity(stars),
+		Reviews:      &reviews,
 	}
 }
