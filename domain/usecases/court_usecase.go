@@ -8,10 +8,12 @@ import (
 	"main/core/enums"
 	"main/core/types"
 	"main/data/models"
+	"main/domain/entities"
 	"main/internal/dto"
 	"main/internal/repository"
 	"main/pkg/utils"
 	"os"
+	"strconv"
 
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
@@ -244,4 +246,75 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 	}
 
 	return court, c.CourtRepository.Create(court)
+}
+
+// AddCourt is a function that adds a new court.
+//
+// token: The token.
+// courtType: The court type.
+//
+// Returns the court and an error if any.
+func (c *CourtUseCase) AddCourt(token *jwt.Token, courtType string) (*models.Court, *entities.ProcessError) {
+	// Get the token claims
+	claims := c.AuthUseCase.DecodeToken(token)
+
+	// Get the vendor newest court using the court type
+	court, err := c.GetVendorNewestCourtUsingCourtType(claims.Id, courtType)
+
+	// Return an error if any
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occured while getting current vendor newest court",
+		}
+	}
+
+	// Check if the court is nil
+	if court == nil {
+		return nil, &entities.ProcessError{
+			ClientError: true,
+			Message:     "Vendor doesn't have any court in this court type, use /vendor/me/courts/types/:type/new instead",
+		}
+	}
+
+	// Create new court name
+	courtName := "Court "
+
+	// Append number into new court name
+	courtNumber, err := strconv.Atoi(court.Name[len(courtName):])
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to convert court number: ", err)
+
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occured while converting court number",
+		}
+	}
+
+	// Append new court number
+	courtName += strconv.Itoa(courtNumber + 1)
+
+	// Create a new court object
+	newCourt := &models.Court{
+		VendorID:  claims.Id,
+		CourtType: court.CourtType,
+		Name:      courtName,
+		Price:     court.Price,
+		Image:     court.Image,
+	}
+
+	// Create the new court
+	err = c.CourtRepository.Create(newCourt)
+
+	// Return an error if any
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occured while creating a new court",
+		}
+	}
+
+	return newCourt, nil
 }

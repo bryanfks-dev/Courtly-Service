@@ -260,3 +260,55 @@ func (co *CourtController) CreateNewCourt(c echo.Context) error {
 		},
 	})
 }
+
+// AddCourt is a controller that handles the add court endpoint.
+// Endpoint: POST /vendors/me/courts/types/:type
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) AddCourt(c echo.Context) error {
+	// Get the court type from the URL
+	courtType := c.Param("type")
+
+	// Return an error if the court type is invalid
+	if !enums.InCourtType(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Add the court
+	court, err := co.CourtUseCase.AddCourt(cc.Token, courtType)
+
+	// Return an error if any
+	if err != nil {
+		// Return an error if the client error is true
+		if err.ClientError {
+			return c.JSON(http.StatusForbidden, dto.ResponseDTO{
+				Success: false,
+				Message: err.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: err.Message,
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Success add court",
+		Data: dto.CourtResponseDTO{
+			Court: dto.CourtDTO{}.FromModel(court),
+		},
+	})
+}
