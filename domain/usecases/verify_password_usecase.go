@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"log"
 	"main/core/types"
 	"main/data/models"
 	"main/domain/entities"
@@ -71,8 +70,6 @@ func (v *VerifyPasswordUseCase) ProcessUser(form *dto.VerifyPasswordFormDTO, tok
 
 	// Check if there is an error
 	if err != nil {
-		log.Println("Error getting user using ID: ", err)
-
 		return nil, &entities.ProcessError{
 			Message:     "An error occurred while getting the user",
 			ClientError: false,
@@ -83,7 +80,7 @@ func (v *VerifyPasswordUseCase) ProcessUser(form *dto.VerifyPasswordFormDTO, tok
 	if !v.AuthUseCase.VerifyPassword(form.Password, user.Password) {
 		return nil, &entities.ProcessError{
 			Message: types.FormErrorResponseMsg{
-				"password": []string{"Incorrect password"},
+				"password": []string{"Password is incorrect"},
 			},
 			ClientError: true,
 		}
@@ -107,8 +104,6 @@ func (v *VerifyPasswordUseCase) ProcessVendor(form *dto.VerifyPasswordFormDTO, t
 
 	// Check if there is an error
 	if err != nil {
-		log.Println("Error getting vendor using ID: ", err)
-
 		return nil, &entities.ProcessError{
 			Message:     "An error occurred while getting the vendor",
 			ClientError: false,
@@ -119,7 +114,7 @@ func (v *VerifyPasswordUseCase) ProcessVendor(form *dto.VerifyPasswordFormDTO, t
 	if !v.AuthUseCase.VerifyPassword(form.Password, vendor.Password) {
 		return nil, &entities.ProcessError{
 			Message: types.FormErrorResponseMsg{
-				"password": []string{"Incorrect password"},
+				"password": []string{"Password is incorrect"},
 			},
 			ClientError: true,
 		}
