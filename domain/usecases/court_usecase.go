@@ -231,6 +231,14 @@ func (c *CourtUseCase) AddCourt(token *jwt.Token, courtType string) (*models.Cou
 	// Get the newest court using vendor ID and court type
 	court, err := c.CourtRepository.GetNewestUsingVendorIDCourtType(claims.Id, courtType)
 
+	// Return an error if any
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occured while getting the newest court",
+		}
+	}
+
 	// Create new court name
 	courtName := "Court "
 
