@@ -53,7 +53,7 @@ There are several available endpoints, such as:
 
 ## Response
 
-Since this service relies on REST API, so json is pretty much needed here. All endpoints have the same json response structure, which shown as an example below.
+Since this service relies on REST API, so json is pretty much needed here. All endpoints have the same json response structure **(in general)**, which shown as an example below.
 
 ```json
 {
