@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"log"
 	"main/data/models"
 	"main/internal/providers/mysql"
 	"time"
@@ -31,9 +32,18 @@ func (*BlacklistedTokenRepository) Create(token *models.BlacklistedToken) error 
 //
 // Returns a boolean value
 func (*BlacklistedTokenRepository) IsBlacklisted(token string) (bool, error) {
+	// count is a variable that holds the number of blacklisted tokens
 	var count int64
 
+	// Check if the token is blacklisted
 	err := mysql.Conn.Model(&models.BlacklistedToken{}).Where("token = ?", token).Limit(1).Count(&count).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error checking if token is blacklisted: ", err)
+
+		return false, err
+	}
 
 	return count > 0, err
 }
@@ -43,14 +53,34 @@ func (*BlacklistedTokenRepository) IsBlacklisted(token string) (bool, error) {
 //
 // Returns an error if the operation was not successful
 func (*BlacklistedTokenRepository) Clear() error {
-	return mysql.Conn.Delete(&models.BlacklistedToken{}, "expires_at > ?", time.Now()).Error
+	// Delete all the expired tokens
+	err := mysql.Conn.Delete(&models.BlacklistedToken{}, "expires_at > ?", time.Now()).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error clearing blacklisted tokens: ", err)
+
+		return err
+	}
+
+	return nil
 }
 
-// Remove is a function that deletes a token from the blacklist table in the database
+// Delete is a function that deletes a token from the blacklist table in the database
 //
 // token: The token to be deleted
 //
 // Returns an error if the operation was not successful
-func (*BlacklistedTokenRepository) Remove(token string) error {
-	return mysql.Conn.Delete(&models.BlacklistedToken{}, "token = ?", token).Error
+func (*BlacklistedTokenRepository) Delete(token string) error {
+	// Delete the token
+	err := mysql.Conn.Delete(&models.BlacklistedToken{}, "token = ?", token).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error deleting blacklisted token: ", err)
+
+		return err
+	}
+
+	return nil
 }

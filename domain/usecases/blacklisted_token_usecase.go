@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"log"
 	"main/data/models"
 	"main/internal/repository"
 )
@@ -31,8 +30,6 @@ func (b *BlacklistedTokenUseCase) AddBlacklistToken(token *models.BlacklistedTok
 
 	// If there was an error adding the token to the blacklist, log the error and return the error
 	if err != nil {
-		log.Println("Error adding token to blacklist:", err)
-
 		return err
 	}
 
@@ -50,8 +47,6 @@ func (b *BlacklistedTokenUseCase) IsBlacklistedToken(token string) bool {
 
 	// If there was an error checking if the token is blacklisted, log the error and return false
 	if err != nil {
-		log.Println("Error checking if token is blacklisted:", err)
-
 		return false
 	}
 
@@ -67,27 +62,6 @@ func (b *BlacklistedTokenUseCase) ClearBlacklistToken() error {
 
 	// If there was an error clearing the blacklist token, log the error and return the error
 	if err != nil {
-		log.Println("Error clearing the blacklist token:", err)
-
-		return err
-	}
-
-	return nil
-}
-
-// RemoveBlacklistToken is a function that deletes a token from the blacklist.
-//
-// tokenString: The token to be deleted.
-//
-// Returns an error if the operation was not successful.
-func (b *BlacklistedTokenUseCase) RemoveBlacklistToken(tokenString string) error {
-	// Remove the token from the blacklist
-	err := b.BlacklistedTokenRepository.Remove(tokenString)
-
-	// If there was an error removing the token from the blacklist, log the error and return the error
-	if err != nil {
-		log.Println("Error removing token from blacklist: ", err)
-
 		return err
 	}
 

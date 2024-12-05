@@ -28,8 +28,10 @@ func runClearBlacklistedToken() {
 	// Check if there is an error deleting the blacklist token
 	if err != nil {
 		log.Fatal("Error deleting blacklist token: " + err.Error())
-	} else {
-		// Log the success of the cleanup
-		log.Println("Blacklist token cleaned up")
+
+		return
 	}
+
+	// Log the success of the cleanup
+	log.Println("Blacklist token cleaned up")
 }
