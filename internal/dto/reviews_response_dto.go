@@ -13,7 +13,7 @@ type ReviewsResponseDTO struct {
 	TotalRating float64 `json:"total_rating"`
 
 	// ReviewsTotal is the total number of reviews
-	ReviewsTotal string `json:"reviews_total"`
+	ReviewsTotal int `json:"reviews_total"`
 
 	// Stars is the reviews stars DTO
 	Stars *ReviewsStarsDTO `json:"stars"`
@@ -40,26 +40,9 @@ func (r ReviewsResponseDTO) FromModels(rate float64, reviewCount int, stars *ent
 		reviews = append(reviews, *ReviewDTO{}.FromModel(&review))
 	}
 
-	// Get the digits of the review count
-	digits := utils.GetDigits(reviewCount)
-
-	// reviewsCountStr is the total number of reviews as a string
-	var reviewsCountStr string
-
-	// 
-	if digits < 3 {
-		reviewsCountStr = strconv.Itoa(reviewCount)
-	} else if digits < 4 {
-		reviewsCountStr = strconv.Itoa(reviewCount/100) + "+"
-	} else if digits < 6 {
-		reviewsCountStr = strconv.Itoa(reviewCount/1000) + "K+"
-	} else {
-		reviewsCountStr = strconv.Itoa(reviewCount/1000000) + "M+"
-	}
-
 	return &ReviewsResponseDTO{
 		TotalRating:  rate,
-		ReviewsTotal: reviewsCountStr,
+		ReviewsTotal: reviewCount,
 		Stars:        ReviewsStarsDTO{}.FromEntity(stars),
 		Reviews:      &reviews,
 	}
