@@ -1,9 +1,7 @@
 package usecases
 
 import (
-	"log"
 	"main/data/models"
-	"main/internal/providers/mysql"
 	"main/internal/repository"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -39,17 +37,8 @@ func (l *LogoutUseCase) BlacklistToken(token *jwt.Token) error {
 	claims := l.AuthUseCase.DecodeToken(token)
 
 	// Insert the token into the blacklisted_tokens table
-	err := mysql.Conn.Create(&models.BlacklistedToken{
+	return l.BlacklistedTokenRepository.Create(&models.BlacklistedToken{
 		Token:     token.Raw,
 		ExpiresAt: claims.ExpiresAt.Time,
-	}).Error
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Error blacklisting token: ", err)
-
-		return err
-	}
-
-	return nil
+	})
 }
