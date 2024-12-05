@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"log"
 	"main/core/enums"
 	"main/data/models"
 	"main/internal/providers/mysql"
@@ -31,6 +32,8 @@ func (*BookingRepository) GetUsingUserID(userID uint) (*[]models.Booking, error)
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error getting bookings using user id: " + err.Error())
+
 		return nil, err
 	}
 
@@ -51,6 +54,8 @@ func (*BookingRepository) GetUsingVendorID(vendorID uint) (*[]models.Booking, er
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error getting bookings using vendor id: " + err.Error())
+
 		return nil, err
 	}
 
@@ -71,6 +76,8 @@ func (*BookingRepository) GetTotalUsingVendorID(vendorID uint) (int64, error) {
 
 	// Return an error if any
 	if err != nil {
+		print("Error getting total bookings using vendor id: " + err.Error())
+
 		return 0, err
 	}
 
@@ -94,6 +101,8 @@ func (*BookingRepository) GetTotalTodayUsingVendorID(vendorID uint) (int64, erro
 
 	// Return an error if any
 	if err != nil {
+		print("Error getting total bookings today using vendor id: " + err.Error())
+
 		return 0, err
 	}
 
@@ -115,6 +124,8 @@ func (*BookingRepository) GetNLatestUsingVendorID(vendorID uint, n int) (*[]mode
 
 	// Return an error if any
 	if err != nil {
+		log.Printf("Error getting %d latest bookings using vendor id: %v\n", n, err.Error())
+
 		return nil, err
 	}
 
@@ -137,6 +148,8 @@ func (*BookingRepository) CheckUserHasBookCourt(userID uint, vendorID uint, cour
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error checking if user has booked the court: " + err.Error())
+
 		return false, err
 	}
 

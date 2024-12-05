@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"log"
 	"main/data/models"
 	"main/internal/repository"
 
@@ -26,25 +25,6 @@ func NewBookingUseCase(a *AuthUseCase, b *repository.BookingRepository) *Booking
 	}
 }
 
-// GetUserBookings is a use case that gets the user bookings by the user ID.
-//
-// userID: The ID of the user
-//
-// Returns the bookings and an error if any
-func (b *BookingUseCase) GetUserBookings(userID uint) (*[]models.Booking, error) {
-	// Get the bookings from the database
-	bookings, err := b.BookingRepository.GetUsingUserID(userID)
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to get user bookings: ", err)
-
-		return nil, err
-	}
-
-	return bookings, nil
-}
-
 // GetCurrentUserBookings is a use case that gets the current user bookings
 //
 // token: The JWT token
@@ -54,26 +34,8 @@ func (b *BookingUseCase) GetCurrentUserBookings(token *jwt.Token) (*[]models.Boo
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	return b.GetUserBookings(uint(claims.Id))
-}
-
-// GetVendorBookings is a use case that gets the vendor bookings by the vendor ID.
-//
-// vendorID: The ID of the vendor
-//
-// Returns the bookings and an error if any
-func (b *BookingUseCase) GetVendorBookings(vendorID uint) (*[]models.Booking, error) {
 	// Get the bookings from the database
-	bookings, err := b.BookingRepository.GetUsingVendorID(vendorID)
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to get vendor bookings: ", err)
-
-		return nil, err
-	}
-
-	return bookings, nil
+	return b.BookingRepository.GetUsingUserID(claims.Id)
 }
 
 // GetVendorBookings is a use case that gets the vendor bookings
@@ -86,27 +48,7 @@ func (b *BookingUseCase) GetCurrentVendorBookings(token *jwt.Token) (*[]models.B
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	return b.GetVendorBookings(uint(claims.Id))
-}
-
-// GetVendorTotalBookings is a use case that gets the vendor
-// total bookings by the vendor ID.
-//
-// vendorID: The ID of the vendor
-//
-// Returns the total bookings and an error if any
-func (b *BookingUseCase) GetVendorTotalBookings(vendorID uint) (int, error) {
-	// Get the bookings from the database
-	total, err := b.BookingRepository.GetTotalUsingVendorID(vendorID)
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to get vendor total bookings: ", err)
-
-		return 0, err
-	}
-
-	return int(total), nil
+	return b.BookingRepository.GetUsingVendorID(claims.Id)
 }
 
 // GetCurrentVendorTotalBookings is a use case that gets the current vendor
@@ -114,31 +56,11 @@ func (b *BookingUseCase) GetVendorTotalBookings(vendorID uint) (int, error) {
 // token: The JWT token
 //
 // Returns the total bookings and an error if any
-func (b *BookingUseCase) GetCurrentVendorTotalBookings(token *jwt.Token) (int, error) {
+func (b *BookingUseCase) GetCurrentVendorTotalBookings(token *jwt.Token) (int64, error) {
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	return b.GetVendorTotalBookings(uint(claims.Id))
-}
-
-// GetVendorTotalBookingsToday is a use case that gets the vendor
-// total bookings today by the vendor ID.
-//
-// vendorID: The ID of the vendor
-//
-// Returns the total bookings today and an error if any
-func (b *BookingUseCase) GetVendorTotalBookingsToday(vendorID uint) (int, error) {
-	// Get the bookings from the database
-	total, err := b.BookingRepository.GetTotalTodayUsingVendorID(vendorID)
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to get vendor total bookings today: ", err)
-
-		return 0, err
-	}
-
-	return int(total), nil
+	return b.BookingRepository.GetTotalUsingVendorID(claims.Id)
 }
 
 // GetCurrentVendorTotalBookingsToday is a use case that gets the current vendor
@@ -147,31 +69,11 @@ func (b *BookingUseCase) GetVendorTotalBookingsToday(vendorID uint) (int, error)
 // token: The JWT token
 //
 // Returns the total bookings today and an error if any
-func (b *BookingUseCase) GetCurrentVendorTotalBookingsToday(token *jwt.Token) (int, error) {
+func (b *BookingUseCase) GetCurrentVendorTotalBookingsToday(token *jwt.Token) (int64, error) {
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	return b.GetVendorTotalBookingsToday(uint(claims.Id))
-}
-
-// GetVendorRecentBookings is a use case that gets the vendor recent bookings
-// by the vendor ID.
-//
-// vendorID: The ID of the vendor
-//
-// Returns the recent bookings and an error if any
-func (b *BookingUseCase) GetVendorRecentBookings(vendorID uint) (*[]models.Booking, error) {
-	// Get the bookings from the database
-	bookings, err := b.BookingRepository.GetNLatestUsingVendorID(vendorID, 5)
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to get vendor recent bookings: ", err)
-
-		return nil, err
-	}
-
-	return bookings, nil
+	return b.BookingRepository.GetTotalTodayUsingVendorID(claims.Id)
 }
 
 // GetCurrentVendorRecentBookings is a use case that gets the current vendor
@@ -184,26 +86,5 @@ func (b *BookingUseCase) GetCurrentVendorRecentBookings(token *jwt.Token) (*[]mo
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	return b.GetVendorRecentBookings(uint(claims.Id))
-}
-
-// CheckUserHasBookCourt is a use case that checks if the user has booked the court.
-//
-// userID: The ID of the user
-// vendorID: The ID of the vendor
-// courtID: The ID of the court
-//
-// Returns true if the user has booked the court and an error if any
-func (b *BookingUseCase) CheckUserHasBookCourt(userID uint, vendorID uint, courtID uint) (bool, error) {
-	// Check if the user has booked the court
-	booked, err := b.BookingRepository.CheckUserHasBookCourt(userID, vendorID, courtID)
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to check if user has booked the court: ", err)
-
-		return false, err
-	}
-
-	return booked, nil
+	return b.BookingRepository.GetNLatestUsingVendorID(claims.Id, 3)
 }
