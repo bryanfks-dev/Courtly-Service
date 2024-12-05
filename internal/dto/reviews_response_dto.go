@@ -3,8 +3,6 @@ package dto
 import (
 	"main/data/models"
 	"main/domain/entities"
-	"main/pkg/utils"
-	"strconv"
 )
 
 // ReviewsResponseDTO is a struct that defines the reviews response DTO.
