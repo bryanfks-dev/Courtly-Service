@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"log"
 	"main/data/models"
 	"main/internal/providers/mysql"
 )
@@ -21,7 +22,17 @@ func NewVendorRepository() *VendorRepository {
 //
 // Returns an error if any.
 func (*VendorRepository) Create(vendor *models.Vendor) error {
-	return mysql.Conn.Create(vendor).Error
+	// Create the vendor
+	err := mysql.Conn.Create(vendor).Error
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to create vendor: " + err.Error())
+
+		return err
+	}
+
+	return nil
 }
 
 // GetUsingID is a function that returns a vendor by ID.
@@ -38,6 +49,8 @@ func (*VendorRepository) GetUsingID(vendorID uint) (*models.Vendor, error) {
 
 	// Check if there is an error
 	if err != nil {
+		log.Println("Failed to get vendor using id: " + err.Error())
+
 		return nil, err
 	}
 
@@ -58,6 +71,8 @@ func (*VendorRepository) GetUsingEmail(email string) (*models.Vendor, error) {
 
 	// Check if there is an error
 	if err != nil {
+		log.Println("Failed to get vendor using email: " + err.Error())
+
 		return nil, err
 	}
 
@@ -71,5 +86,15 @@ func (*VendorRepository) GetUsingEmail(email string) (*models.Vendor, error) {
 //
 // Returns an error if any.
 func (*VendorRepository) UpdatePassword(vendorID uint, hashedNewPassword string) error {
-	return mysql.Conn.Model(&models.Vendor{}).Update("password", hashedNewPassword).Where("id = ?", vendorID).Error
+	// Update the vendor's password
+	err := mysql.Conn.Model(&models.Vendor{}).Update("password", hashedNewPassword).Where("id = ?", vendorID).Error
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to update vendor password: " + err.Error())
+
+		return err
+	}
+
+	return nil
 }

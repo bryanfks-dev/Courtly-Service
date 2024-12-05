@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"fmt"
-	"log"
 	"main/core/constants"
 	"main/core/types"
 	"main/data/models"
@@ -12,7 +11,6 @@ import (
 	"main/pkg/utils"
 
 	"github.com/golang-jwt/jwt/v5"
-	"gorm.io/gorm"
 )
 
 // VendorUseCase is a struct that defines the vendor use case.
@@ -34,36 +32,6 @@ func NewVendorUseCase(a *AuthUseCase, v *repository.VendorRepository) *VendorUse
 	}
 }
 
-// GetVendorUsingID is a function that returns a vendor using the given ID.
-//
-// vendorID: The vendor ID.
-//
-// Returns the vendor and an error if any.
-func (v *VendorUseCase) GetVendorUsingID(vendorID uint) (*models.Vendor, *entities.ProcessError) {
-	// Get the vendor from the database
-	vendor, err := v.VendorRepository.GetUsingID(vendorID)
-
-	// Return an error if the vendor is not found
-	if err == gorm.ErrRecordNotFound {
-		return nil, &entities.ProcessError{
-			Message:     "Vendor not found",
-			ClientError: true,
-		}
-	}
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to get current vendor: ", err)
-
-		return nil, &entities.ProcessError{
-			Message:     "Failed to get current vendor",
-			ClientError: false,
-		}
-	}
-
-	return vendor, nil
-}
-
 // GetCurrentVendor is a function that returns the current vendor.
 //
 // token: The token.
@@ -73,7 +41,18 @@ func (v *VendorUseCase) GetCurrentVendor(token *jwt.Token) (*models.Vendor, *ent
 	// Get the token claims
 	claims := v.AuthUseCase.DecodeToken(token)
 
-	return v.GetVendorUsingID(claims.Id)
+	// Get the vendor by ID
+	vendor, err := v.VendorRepository.GetUsingID(claims.Id)
+
+	// Check if there is an error
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occurred while getting the vendor",
+		}
+	}
+
+	return vendor, nil
 }
 
 // ValidateChangePasswordForm is a function that validates the change password form.
@@ -95,6 +74,7 @@ func (v *VendorUseCase) ValidateChangePasswordForm(form *dto.ChangePasswordFormD
 		errs["new_password"] = append(errs["new_password"], "New password is required")
 	}
 
+	// Check if the new password is less than the minimum password length
 	if len(form.NewPassword) < constants.MINIMUM_PASSWORD_LENGTH {
 		errs["new_password"] = append(errs["new_password"], fmt.Sprintf("Password must be at least %d characters long", constants.MINIMUM_PASSWORD_LENGTH))
 	}
@@ -132,8 +112,6 @@ func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.Change
 
 	// Check if there is an error
 	if err != nil {
-		log.Panicln("Error getting vendor: ", err)
-
 		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while getting the vendor",
@@ -155,8 +133,6 @@ func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.Change
 
 	// Check if there is an error
 	if err != nil {
-		log.Println("Error hashing password: ", err)
-
 		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while hashing the new password",
@@ -168,8 +144,6 @@ func (v *VendorUseCase) ProcessChangePassword(token *jwt.Token, form *dto.Change
 
 	// Check if there is an error
 	if err != nil {
-		log.Println("Error updating vendor's password: ", err)
-
 		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while updating the vendor's password",
