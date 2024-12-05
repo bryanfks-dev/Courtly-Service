@@ -1,6 +1,8 @@
 package initializer
 
-import "main/domain/usecases"
+import (
+	"main/domain/usecases"
+)
 
 // UseCases is a struct that holds all the use cases.
 type UseCases struct {
@@ -43,7 +45,7 @@ func InitUseCases(repos *Repositories) *UseCases {
 
 	u.CourtUseCase = usecases.NewCourtUseCase(u.AuthUseCase, repos.CourtRepository)
 
-	u.ReviewUseCase = usecases.NewReviewUseCase(u.AuthUseCase, repos.ReviewRepository, u.BookingUseCase, u.CourtUseCase)
+	u.ReviewUseCase = usecases.NewReviewUseCase(u.AuthUseCase, repos.ReviewRepository, repos.BookingRepository, repos.CourtRepository)
 
 	u.BookingUseCase = usecases.NewBookingUseCase(u.AuthUseCase, repos.BookingRepository)
 

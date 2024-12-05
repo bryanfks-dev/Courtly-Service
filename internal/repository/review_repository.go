@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"log"
 	"main/data/models"
 	"main/domain/entities"
 	"main/internal/providers/mysql"
@@ -22,7 +23,17 @@ func NewReviewRepository() *ReviewRepository {
 //
 // Returns an error if any.
 func (*ReviewRepository) Create(review *models.Review) error {
-	return mysql.Conn.Create(review).Error
+	// Create the review
+	err := mysql.Conn.Create(review).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error creating review: " + err.Error())
+
+		return err
+	}
+
+	return nil
 }
 
 // GetCountUsingVendorID is a function that returns the count of reviews for vendor ID.
@@ -39,6 +50,8 @@ func (*ReviewRepository) GetCountUsingVendorID(vendorID uint) (int64, error) {
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error getting count using vendor id: " + err.Error())
+
 		return 0, err
 	}
 
@@ -60,6 +73,8 @@ func (*ReviewRepository) GetCountUsingVendorIDCourtType(vendorID uint, courtType
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error getting count using vendor id and court type: " + err.Error())
+
 		return 0, err
 	}
 
@@ -83,10 +98,12 @@ func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*entities.Re
         COUNT(CASE WHEN stars = 4 THEN 1 END),
         COUNT(CASE WHEN stars = 5 THEN 1 END)
     `).
-		Where("vendor_id = ?", vendorID).Error
+		Where("vendor_id = ?", vendorID).Scan(&counts).Error
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error getting star counts using vendor id: " + err.Error())
+
 		return nil, err
 	}
 
@@ -111,10 +128,12 @@ func (*ReviewRepository) GetStarCountsUsingVendorIDCourtType(vendorID uint, cour
         COUNT(CASE WHEN stars = 4 THEN 1 END),
         COUNT(CASE WHEN stars = 5 THEN 1 END)
     `).
-		Where("vendor_id = ?", vendorID).Error
+		Where("vendor_id = ?", vendorID).Scan(&counts).Error
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error getting star counts using vendor id and court type: " + err.Error())
+
 		return nil, err
 	}
 
@@ -136,6 +155,8 @@ func (*ReviewRepository) GetUsingVendorIDCourtType(vendorID uint, courtType stri
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error getting reviews using vendor id and court type: " + err.Error())
+
 		return nil, err
 	}
 
@@ -156,6 +177,8 @@ func (*ReviewRepository) GetUsingVendorID(vendorID uint) (*[]models.Review, erro
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error getting reviews using vendor id: " + err.Error())
+
 		return nil, err
 	}
 
@@ -178,6 +201,8 @@ func (*ReviewRepository) CheckUserHasReviewCourtType(userID uint, vendorID uint,
 
 	// Return an error if any
 	if err != nil {
+		log.Println("Error checking user has review for court type: " + err.Error())
+
 		return false, err
 	}
 

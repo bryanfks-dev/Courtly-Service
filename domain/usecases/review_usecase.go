@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"log"
 	"main/core/types"
 	"main/data/models"
 	"main/domain/entities"
@@ -14,66 +13,27 @@ import (
 
 // ReviewUseCase is a struct that defines the review use case.
 type ReviewUseCase struct {
-	AuthUseCase      *AuthUseCase
-	ReviewRepository *repository.ReviewRepository
-	BookingUseCase   *BookingUseCase
-	CourtUseCase     *CourtUseCase
+	AuthUseCase       *AuthUseCase
+	ReviewRepository  *repository.ReviewRepository
+	BookingRepository *repository.BookingRepository
+	CourtRepository   *repository.CourtRepository
 }
 
 // NewReviewUseCase is a factory function that returns a new instance of the ReviewUseCase.
 //
+// a: The auth use case.
 // r: The review repository.
+// b: The booking repository.
+// c: The court repository.
 //
 // Returns a new instance of the ReviewUseCase.
-func NewReviewUseCase(a *AuthUseCase, r *repository.ReviewRepository, b *BookingUseCase, c *CourtUseCase) *ReviewUseCase {
+func NewReviewUseCase(a *AuthUseCase, r *repository.ReviewRepository, b *repository.BookingRepository, c *repository.CourtRepository) *ReviewUseCase {
 	return &ReviewUseCase{
-		AuthUseCase:      a,
-		ReviewRepository: r,
-		BookingUseCase:   b,
-		CourtUseCase:     c,
+		AuthUseCase:       a,
+		ReviewRepository:  r,
+		BookingRepository: b,
+		CourtRepository:   c,
 	}
-}
-
-// GetCourtReviewsUsingIDCourtType is a use case that handles the request to
-// get the reviews of a court using the vendor id and court type.
-//
-// vendorID: The id of the vendor.
-// courtType: The type of the court.
-//
-// Returns a slice of maps containing the reviews of the court.
-func (r *ReviewUseCase) GetCourtReviewsUsingVendorIDCourtType(vendorID uint, courtType string) (*[]models.Review, error) {
-	// Get the reviews using the vendor ID and court type
-	reviews, err := r.ReviewRepository.GetUsingVendorIDCourtType(vendorID, courtType)
-
-	// Check if there is an error
-	if err != nil {
-		log.Println("Error getting reviews using vendor ID and court type:", err)
-
-		return nil, err
-	}
-
-	// Return the reviews and an error if any
-	return reviews, err
-}
-
-// GetReviewCountUsingVendorID is a use case that handles the request to get the count of
-// reviews using the vendor ID.
-//
-// vendorID: The id of the vendor.
-//
-// Returns the count of reviews and an error if any.
-func (r *ReviewUseCase) GetReviewCountUsingVendorID(vendorID uint) (int64, error) {
-	// Get the count of reviews using the vendor ID
-	count, err := r.ReviewRepository.GetCountUsingVendorID(vendorID)
-
-	// Check if there is an error
-	if err != nil {
-		log.Println("Error getting review count using vendor ID:", err)
-
-		return 0, err
-	}
-
-	return count, err
 }
 
 // GetCurrentVendorReviewCount is a use case that handles the request to get the current vendor's review count.
@@ -86,27 +46,7 @@ func (r *ReviewUseCase) GetCurrentVendorReviewCount(token *jwt.Token) (int64, er
 	claims := r.AuthUseCase.DecodeToken(token)
 
 	// Get the review count using the vendor ID
-	return r.GetReviewCountUsingVendorID(uint(claims.Id))
-}
-
-// GetStarCountsUsingVendorID is a use case that handles the request to get the star counts
-// using the vendor ID.
-//
-// vendorID: The id of the vendor.
-//
-// Returns the star counts and an error if any.
-func (r *ReviewUseCase) GetStarCountsUsingVendorID(vendorID uint) (*entities.ReviewStarsCount, error) {
-	// Get the star counts using the vendor ID
-	counts, err := r.ReviewRepository.GetStarCountsUsingVendorID(vendorID)
-
-	// Check if there is an error
-	if err != nil {
-		log.Println("Error getting star counts using vendor ID:", err)
-
-		return nil, err
-	}
-
-	return counts, err
+	return r.ReviewRepository.GetCountUsingVendorID(claims.Id)
 }
 
 // GetCurrentVendorStarCounts is a use case that handles the request to get the current vendor's star counts.
@@ -119,7 +59,7 @@ func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*entities.
 	claims := r.AuthUseCase.DecodeToken(token)
 
 	// Get the star counts using the vendor ID
-	return r.GetStarCountsUsingVendorID(uint(claims.Id))
+	return r.ReviewRepository.GetStarCountsUsingVendorID(claims.Id)
 }
 
 // CalculateTotalRating is a function that calculates the total rating of the reviews.
@@ -134,6 +74,11 @@ func (r *ReviewUseCase) CalculateTotalRating(starCount *entities.ReviewStarsCoun
 		return 0
 	}
 
+	// Formula to calculate the total rating:
+	// (1 * OneStar + 2 * TwoStars + 3 * ThreeStars + 4 * FourStars + 5 * FiveStars)
+	// -----------------------------------------------------------------------------
+	//                           Total Reviews
+
 	return (float64(starCount.OneStar) + float64(2*starCount.TwoStars) + float64(3*starCount.ThreeStars) + float64(4*starCount.FourStars) + float64(5*starCount.FiveStars)) / float64(reviewCount)
 }
 
@@ -147,7 +92,43 @@ func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token) (*[]models.Rev
 	claims := r.AuthUseCase.DecodeToken(token)
 
 	// Get the reviews using the vendor ID
-	return r.ReviewRepository.GetUsingVendorID(uint(claims.Id))
+	return r.ReviewRepository.GetUsingVendorID(claims.Id)
+}
+
+// GetReviewCountUsingVendorIDCourtType is a use case that handles the request to get the
+// review count using the vendor ID and court type.
+//
+// vendorID: The id of the vendor.
+// courtType: The type of the court.
+//
+// Returns the review count and an error if any.
+func (r *ReviewUseCase) GetReviewCountUsingVendorIDCourtType(vendorID uint, courtType string) (int64, error) {
+	// Get the review count using the vendor ID and court type
+	return r.ReviewRepository.GetCountUsingVendorIDCourtType(vendorID, courtType)
+}
+
+// GetStarCountsUsingVendorIDCourtType is a use case that handles the request to get the
+// star counts using the vendor ID and court type.
+//
+// vendorID: The id of the vendor.
+// courtType: The type of the court.
+//
+// Returns the star counts and an error if any.
+func (r *ReviewUseCase) GetStarCountsUsingVendorIDCourtType(vendorID uint, courtType string) (*entities.ReviewStarsCount, error) {
+	// Get the star counts using the vendor ID and court type
+	return r.ReviewRepository.GetStarCountsUsingVendorIDCourtType(vendorID, courtType)
+}
+
+// GetReviewsUsingVendorIDCourtType is a use case that handles the request to get the
+// reviews using the vendor ID and court type.
+// 
+// vendorID: The id of the vendor.
+// courtType: The type of the court.
+//
+// Returns the reviews of court and error if any.
+func (r *ReviewUseCase) GetReviewsUsingVendorIDCourtType(vendorID uint, courtType string) (*[]models.Review, error) {
+	// Get the reviews using the vendor ID and court type
+	return r.ReviewRepository.GetUsingVendorIDCourtType(vendorID, courtType)
 }
 
 // SanitizeCreateReviewForm is a use case that sanitizes the create review form.
@@ -200,7 +181,7 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 	claims := r.AuthUseCase.DecodeToken(token)
 
 	// Check if user already book the court
-	booked, err := r.BookingUseCase.CheckUserHasBookCourt(uint(claims.Id), uint(vendorID), uint(courtID))
+	booked, err := r.BookingRepository.CheckUserHasBookCourt(claims.Id, uint(vendorID), uint(courtID))
 
 	// Check if there is an error
 	if err != nil {
@@ -218,8 +199,8 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 		}
 	}
 
-	// Get the court type
-	court, err := r.CourtUseCase.GetCourtUsingID(uint(vendorID))
+	// Get court using court id
+	court, err := r.CourtRepository.GetUsingID(uint(courtID))
 
 	// Check if there is an error
 	if err != nil {
@@ -230,7 +211,7 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 	}
 
 	// Check if user has reviewed the court
-	reviewed, err := r.ReviewRepository.CheckUserHasReviewCourtType(uint(claims.Id), uint(vendorID), court.CourtType.Type)
+	reviewed, err := r.ReviewRepository.CheckUserHasReviewCourtType(claims.Id, uint(vendorID), court.CourtType.Type)
 
 	// Check if there is an error
 	if err != nil {
@@ -250,7 +231,7 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 
 	// Create a new review object
 	review := &models.Review{
-		UserID:      uint(claims.Id),
+		UserID:      claims.Id,
 		VendorID:    uint(vendorID),
 		CourtTypeID: court.CourtTypeID,
 		Rating:      form.Rating,

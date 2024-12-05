@@ -117,7 +117,7 @@ func NewServer() (*echo.Echo, error) {
 	currentVendorCourtsTypePrefix.POST("/:type/new", c.CourtController.CreateNewCourt)
 
 	// Reviews endpoints
-	vendorPrefix.GET("/:id/courts/types/:type/reviews", c.ReviewController.GetCourtReviewsUsingIDCourtType)
+	vendorPrefix.GET("/:id/courts/types/:type/reviews", c.ReviewController.GetCourtTypeReviews)
 
 	currentVendorPrefix.GET("/reviews", c.ReviewController.GetCurrentVendorReviews)
 

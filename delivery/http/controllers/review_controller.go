@@ -32,14 +32,14 @@ func NewReviewController(r *usecases.ReviewUseCase, c *usecases.CourtUseCase) *R
 	}
 }
 
-// GetCourtReviewsUsingIDCourtType is a controller that handles the request to
+// GetCourtTypeReviews is a controller that handles the request to
 // get the reviews of a court using the court id and court type.
 // Endpoint: GET /vendors/:id/courts/types/:type/reviews
 //
 // c: The echo context.
 //
 // Returns a response containing the reviews of the court.
-func (r *ReviewController) GetCourtReviewsUsingIDCourtType(c echo.Context) error {
+func (r *ReviewController) GetCourtTypeReviews(c echo.Context) error {
 	// Get the id from the URL
 	id := c.Param("id")
 
@@ -87,12 +87,13 @@ func (r *ReviewController) GetCourtReviewsUsingIDCourtType(c echo.Context) error
 	// Add a new wait group
 	wg.Add(1)
 
-	go func(vendorID uint) {
+	go func() {
 		// Defer the wait group
 		defer wg.Done()
 
 		// Get the review count
-		reviewCount, err = r.ReviewUseCase.GetReviewCountUsingVendorID(vendorID)
+		reviewCount, err =
+			r.ReviewUseCase.GetReviewCountUsingVendorIDCourtType(uint(vendorID), courtType)
 
 		// Check if there is an error
 		if err != nil {
@@ -104,17 +105,18 @@ func (r *ReviewController) GetCourtReviewsUsingIDCourtType(c echo.Context) error
 
 			cancel()
 		}
-	}(uint(vendorID))
+	}()
 
 	// Add a new wait group
 	wg.Add(1)
 
-	go func(vendorID uint) {
+	go func() {
 		// Defer the wait group
 		defer wg.Done()
 
 		// Get the star counts
-		starCounts, err = r.ReviewUseCase.GetStarCountsUsingVendorID(vendorID)
+		starCounts, err =
+			r.ReviewUseCase.GetStarCountsUsingVendorIDCourtType(uint(vendorID), courtType)
 
 		// Check if there is an error
 		if err != nil {
@@ -126,18 +128,18 @@ func (r *ReviewController) GetCourtReviewsUsingIDCourtType(c echo.Context) error
 
 			cancel()
 		}
-	}(uint(vendorID))
+	}()
 
 	// Add a new wait group
 	wg.Add(1)
 
-	go func(vendorID uint, courtType string) {
+	go func() {
 		// Defer the wait group
 		defer wg.Done()
 
 		// Get the reviews
 		reviews, err =
-			r.ReviewUseCase.GetCourtReviewsUsingVendorIDCourtType(vendorID, courtType)
+			r.ReviewUseCase.GetReviewsUsingVendorIDCourtType(uint(vendorID), courtType)
 
 		// Check if there is an error
 		if err != nil {
@@ -149,7 +151,7 @@ func (r *ReviewController) GetCourtReviewsUsingIDCourtType(c echo.Context) error
 
 			cancel()
 		}
-	}(uint(vendorID), courtType)
+	}()
 
 	// Wait for all goroutines to finish
 	wg.Wait()
