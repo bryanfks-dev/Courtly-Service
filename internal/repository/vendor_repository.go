@@ -57,6 +57,28 @@ func (*VendorRepository) GetUsingID(vendorID uint) (*models.Vendor, error) {
 	return &vendor, err
 }
 
+// IsEmailTaken is a function that checks if an email is taken.
+//
+// email: The email.
+//
+// Returns a boolean and an error if any.
+func (*VendorRepository) IsEmailTaken(email string) (bool, error) {
+	// Create a counter variable
+	var count int64
+
+	// Check if the email is taken
+	err := mysql.Conn.Model(&models.Vendor{}).Where("email = ?", email).Limit(1).Count(&count).Error
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to check if email is taken: " + err.Error())
+
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
 // GetUsingEmail is a function that returns a vendor by email.
 //
 // email: The email.

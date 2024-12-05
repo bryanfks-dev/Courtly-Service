@@ -1,15 +1,12 @@
 package usecases
 
 import (
-	"log"
 	"main/core/types"
 	"main/data/models"
 	"main/domain/entities"
 	"main/internal/dto"
 	"main/internal/repository"
 	"main/pkg/utils"
-
-	"gorm.io/gorm"
 )
 
 // LoginUseCase is a struct that defines the login use case.
@@ -94,10 +91,18 @@ func (l LoginUseCase) ValidateVendorForm(form *dto.VendorLoginFormDTO) types.For
 // Returns the user object and an error if any.
 func (l LoginUseCase) ProcessUser(form *dto.UserLoginForm) (*models.User, *entities.ProcessError) {
 	// Check if the username is taken
-	user, err := l.UserRepository.GetUsingUsername(form.Username)
+	taken, err := l.UserRepository.IsUsernameTaken(form.Username)
 
-	// Check if the user does not exist
-	if err == gorm.ErrRecordNotFound {
+	// Return an error if any
+	if err != nil {
+		return nil, &entities.ProcessError{
+			Message:     "An error occurred while checking if the username is exist",
+			ClientError: false,
+		}
+	}
+
+	// Return an error if the username is not taken
+	if !taken {
 		return nil, &entities.ProcessError{
 			Message: types.FormErrorResponseMsg{
 				"username": []string{"Username does not exist"},
@@ -106,14 +111,13 @@ func (l LoginUseCase) ProcessUser(form *dto.UserLoginForm) (*models.User, *entit
 		}
 	}
 
+	// Get the user by username
+	user, err := l.UserRepository.GetUsingUsername(form.Username)
+
 	// Return an error if any
 	if err != nil {
-		log.Println("Error getting the user: ", err)
-
 		return nil, &entities.ProcessError{
-			Message: types.FormErrorResponseMsg{
-				"username": []string{"An error occurred while getting the user"},
-			},
+			Message:     "An error occurred while getting the user using the username",
 			ClientError: false,
 		}
 	}
@@ -137,11 +141,19 @@ func (l LoginUseCase) ProcessUser(form *dto.UserLoginForm) (*models.User, *entit
 //
 // Returns the vendor object and an error if any.
 func (l LoginUseCase) ProcessVendor(form *dto.VendorLoginFormDTO) (*models.Vendor, *entities.ProcessError) {
-	// Check if the email is available
-	vendor, err := l.VendorRepositoy.GetUsingEmail(form.Email)
+	// Check if the email is taken
+	taken, err := l.VendorRepositoy.IsEmailTaken(form.Email)
 
-	// Check if the vendor does not exist
-	if err == gorm.ErrRecordNotFound {
+	// Return an error if any
+	if err != nil {
+		return nil, &entities.ProcessError{
+			Message:     "An error occurred while checking if the email is exist",
+			ClientError: false,
+		}
+	}
+
+	// Return an error if the email is not taken
+	if !taken {
 		return nil, &entities.ProcessError{
 			Message: types.FormErrorResponseMsg{
 				"email": []string{"Email does not exist"},
@@ -150,14 +162,13 @@ func (l LoginUseCase) ProcessVendor(form *dto.VendorLoginFormDTO) (*models.Vendo
 		}
 	}
 
+	// Get the vendor by email
+	vendor, err := l.VendorRepositoy.GetUsingEmail(form.Email)
+
 	// Return an error if any
 	if err != nil {
-		log.Println("Error getting the vendor: ", err)
-
 		return nil, &entities.ProcessError{
-			Message: types.FormErrorResponseMsg{
-				"email": []string{"An error occurred while getting the vendor"},
-			},
+			Message:     "An error occurred while getting the vendor using the email",
 			ClientError: false,
 		}
 	}
