@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"fmt"
-	"log"
 	"main/core/constants"
 	"main/core/types"
 	"main/data/models"
@@ -12,7 +11,6 @@ import (
 	"main/pkg/utils"
 
 	"github.com/golang-jwt/jwt/v5"
-	"gorm.io/gorm"
 )
 
 // UserUseCase is a struct that defines the use case for the user entity.
@@ -34,41 +32,27 @@ func NewUserUseCase(a *AuthUseCase, u *repository.UserRepository) *UserUseCase {
 	}
 }
 
-// GetUserUsingID is a method that returns the user using the given ID.
+// GetCurrentUser is a method that returns the current user.
 //
-// userID: The ID of the user.
+// token: The user token.
 //
-// Returns the user and an error if any.
-func (u *UserUseCase) GetUserUsingID(userID uint) (*models.User, *entities.ProcessError) {
-	// Get the user from the database
-	user, err := u.UserRepository.GetUsingID(userID)
+// Returns the user object and an error if any.
+func (u *UserUseCase) GetCurrentUser(token *jwt.Token) (*models.User, *entities.ProcessError) {
+	// Get the token claims
+	claims := u.AuthUseCase.DecodeToken(token)
 
-	if err == gorm.ErrRecordNotFound {
-		return nil, &entities.ProcessError{
-			Message:     "User not found",
-			ClientError: true,
-		}
-	}
+	// Get the user by ID
+	user, err := u.UserRepository.GetUsingID(claims.Id)
 
-	// Return an error if any
+	// Check if there is an error
 	if err != nil {
-		log.Println("Failed to get current user: ", err)
-
 		return nil, &entities.ProcessError{
-			Message:     "Failed to get current user",
+			Message:     "An error occurred while getting the user",
 			ClientError: false,
 		}
 	}
 
 	return user, nil
-}
-
-// GetCurrentUser is a method that returns the current user.
-func (u *UserUseCase) GetCurrentUser(token *jwt.Token) (*models.User, *entities.ProcessError) {
-	// Get the token claims
-	claims := u.AuthUseCase.DecodeToken(token)
-
-	return u.GetUserUsingID(claims.Id)
 }
 
 // ValidateChangePasswordForm is a function that validates the change password form.
@@ -127,8 +111,6 @@ func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePa
 
 	// Check if there is an error
 	if err != nil {
-		log.Panicln("Error getting user: ", err)
-
 		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while getting the user",
@@ -150,8 +132,6 @@ func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePa
 
 	// Check if there is an error
 	if err != nil {
-		log.Println("Error hashing password: ", err)
-
 		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while hashing the new password",
@@ -163,8 +143,6 @@ func (u *UserUseCase) ProcessChangePassword(token *jwt.Token, form *dto.ChangePa
 
 	// Check if there is an error
 	if err != nil {
-		log.Println("Error updating user's password: ", err)
-
 		return &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occurred while updating the user's password",
@@ -212,8 +190,6 @@ func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUs
 
 	// Return an error if any
 	if err != nil {
-		log.Println("Failed to check if username is taken: ", err)
-
 		return &entities.ProcessError{
 			Message:     "An error occurred while checking if the username is taken",
 			ClientError: false,
@@ -238,8 +214,6 @@ func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUs
 
 	// Return an error if any
 	if err != nil {
-		log.Println("Failed to update username: ", err)
-
 		return &entities.ProcessError{
 			Message:     "An error occurred while updating the username",
 			ClientError: false,

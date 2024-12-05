@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"log"
 	"main/data/models"
 	"main/internal/providers/mysql"
 )
@@ -21,7 +22,17 @@ func NewUserRepository() *UserRepository {
 //
 // Returns an error if any.
 func (*UserRepository) Create(user *models.User) error {
-	return mysql.Conn.Create(user).Error
+	// Create the user
+	err := mysql.Conn.Create(user).Error
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to create user: " + err.Error())
+
+		return err
+	}
+
+	return nil
 }
 
 // GetUsingID is a function that returns a user by ID.
@@ -35,6 +46,13 @@ func (*UserRepository) GetUsingID(userID uint) (*models.User, error) {
 
 	// Get the user by ID
 	err := mysql.Conn.First(&user, "id = ?", userID).Error
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to get user using id: " + err.Error())
+
+		return nil, err
+	}
 
 	return &user, err
 }
@@ -51,6 +69,13 @@ func (*UserRepository) GetUsingUsername(username string) (*models.User, error) {
 	// Get the user by username
 	err := mysql.Conn.First(&user, "username = ?", username).Error
 
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to get user using username: " + err.Error())
+
+		return nil, err
+	}
+
 	return &user, err
 }
 
@@ -61,6 +86,13 @@ func (*UserRepository) GetUsingPhoneNumber(phoneNumber string) (*models.User, er
 
 	// Get the user by phone number
 	err := mysql.Conn.First(&user, "phone_number = ?", phoneNumber).Error
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to get user using phone number: " + err.Error())
+
+		return nil, err
+	}
 
 	return &user, err
 }
@@ -79,6 +111,8 @@ func (*UserRepository) IsUsernameTaken(username string) (bool, error) {
 
 	// Check if there is an error
 	if err != nil {
+		log.Println("Failed to check if username is taken: " + err.Error())
+
 		return false, err
 	}
 
@@ -99,6 +133,8 @@ func (*UserRepository) IsPhoneNumberTaken(phoneNumber string) (bool, error) {
 
 	// Check if there is an error
 	if err != nil {
+		log.Println("Failed to check if phone number is taken: " + err.Error())
+
 		return false, err
 	}
 
@@ -112,7 +148,17 @@ func (*UserRepository) IsPhoneNumberTaken(phoneNumber string) (bool, error) {
 //
 // Returns an error if any.
 func (*UserRepository) UpdatePassword(userID uint, hashedNewPassword string) error {
-	return mysql.Conn.Model(&models.User{}).Update("password", hashedNewPassword).Where("id = ?", userID).Error
+	// Update the user's password
+	err := mysql.Conn.Model(&models.User{}).Update("password", hashedNewPassword).Where("id = ?", userID).Error
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to update user's password: " + err.Error())
+
+		return err
+	}
+
+	return nil
 }
 
 // UpdateUsername is a function that updates a user's username.
@@ -122,5 +168,15 @@ func (*UserRepository) UpdatePassword(userID uint, hashedNewPassword string) err
 //
 // Returns an error if any.
 func (*UserRepository) UpdateUsername(userID uint, newUsername string) error {
-	return mysql.Conn.Model(&models.User{}).Update("username", newUsername).Where("id = ?", userID).Error
+	// Update the user's username
+	err := mysql.Conn.Model(&models.User{}).Update("username", newUsername).Where("id = ?", userID).Error
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to update user's username: " + err.Error())
+
+		return err
+	}
+
+	return nil
 }

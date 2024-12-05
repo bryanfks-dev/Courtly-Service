@@ -99,7 +99,13 @@ func (a *AuthUseCase) HashPassword(password string) (string, error) {
 	// Generate a hashed password from the password string
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 
-	return string(bytes), err
+	if err != nil {
+		log.Panicln("Error hashing password: ", err)
+
+		return "", err
+	}
+
+	return string(bytes), nil
 }
 
 // VerifyPassword is a function that verifies the password.
@@ -131,7 +137,7 @@ func (a *AuthUseCase) VerifyToken(tokenString string) (*jwt.Token, bool) {
 		return []byte(config.JWTConfig.Secret), nil
 	})
 
-	// Check if there is an error parsing token 
+	// Check if there is an error parsing token
 	// or the token is invalid
 	if err != nil || !token.Valid {
 		return nil, false

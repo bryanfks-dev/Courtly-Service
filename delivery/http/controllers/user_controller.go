@@ -5,7 +5,6 @@ import (
 	"main/domain/usecases"
 	"main/internal/dto"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -65,58 +64,6 @@ func (u *UserController) GetCurrentUser(c echo.Context) error {
 		Message: "User retrieved successfully",
 		Data: dto.CurrentUserResponseDTO{
 			User: dto.CurrentUserDTO{}.FromModel(user),
-		},
-	})
-}
-
-// GetPublicUser is a handler function that returns the user with the given ID, with restrict information.
-// Endpoint: GET /users/:id
-//
-// c: The echo context.
-//
-// Returns an error if any.
-func (u *UserController) GetPublicUser(c echo.Context) error {
-	// Get the user ID from the URL parameter
-	id := c.Param("id")
-
-	// Convert the ID to an integer
-	userID, err := strconv.Atoi(id)
-
-	// Return an error if the ID is not a valid integer
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
-			Success: false,
-			Message: "Invalid user ID",
-			Data:    nil,
-		})
-	}
-
-	// Get the user with the given ID
-	user, processErr := u.UserUseCase.GetUserUsingID(uint(userID))
-
-	// Return an error if the user does not exist
-	if processErr != nil {
-		// Check if the error is a client error
-		if processErr.ClientError {
-			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
-				Success: false,
-				Message: processErr.Message,
-				Data:    nil,
-			})
-		}
-
-		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
-			Success: false,
-			Message: processErr.Message,
-			Data:    nil,
-		})
-	}
-
-	return c.JSON(http.StatusOK, dto.ResponseDTO{
-		Success: true,
-		Message: "User retrieved successfully",
-		Data: dto.PublicUserResponseDTO{
-			User: dto.PublicUserDTO{}.FromModel(user),
 		},
 	})
 }

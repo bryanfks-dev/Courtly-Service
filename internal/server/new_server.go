@@ -64,8 +64,6 @@ func NewServer() (*echo.Echo, error) {
 	// Users endpoints
 	userPrefix := prefix.Group("/users")
 
-	userPrefix.GET("/:id", c.UserController.GetPublicUser, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
-
 	// Current user endpoints
 	currentUserPrefix := userPrefix.Group("/me", m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.UserMiddleware.Shield)
 

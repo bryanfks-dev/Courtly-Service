@@ -108,7 +108,7 @@ func registerVendor(form *RegisterForm) {
 
 	// Return an error if any
 	if err != nil {
-		panic("Failed to hash password: " + err.Error())
+		return
 	}
 
 	// Set the password
