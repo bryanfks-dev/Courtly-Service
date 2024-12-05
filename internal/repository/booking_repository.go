@@ -76,7 +76,7 @@ func (*BookingRepository) GetTotalUsingVendorID(vendorID uint) (int64, error) {
 
 	// Return an error if any
 	if err != nil {
-		print("Error getting total bookings using vendor id: " + err.Error())
+		log.Println("Error getting total bookings using vendor id: " + err.Error())
 
 		return 0, err
 	}
@@ -101,7 +101,7 @@ func (*BookingRepository) GetTotalTodayUsingVendorID(vendorID uint) (int64, erro
 
 	// Return an error if any
 	if err != nil {
-		print("Error getting total bookings today using vendor id: " + err.Error())
+		log.Println("Error getting total bookings today using vendor id: " + err.Error())
 
 		return 0, err
 	}
