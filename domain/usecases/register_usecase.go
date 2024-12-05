@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"fmt"
-	"log"
 	"main/core/constants"
 	"main/core/types"
 	"main/data/models"
@@ -100,12 +99,8 @@ func (r RegisterUseCase) ProcessUserRegister(form *dto.UserRegisterFormDTO) *ent
 
 	// Check if there is an error
 	if err != nil {
-		log.Println("Error checking if username is taken: ", err)
-
 		return &entities.ProcessError{
-			Message: types.FormErrorResponseMsg{
-				"username": []string{"An error occurred"},
-			},
+			Message:     "An error occurred while checking if the username is taken",
 			ClientError: false,
 		}
 	}
@@ -125,12 +120,8 @@ func (r RegisterUseCase) ProcessUserRegister(form *dto.UserRegisterFormDTO) *ent
 
 	// Check if there is an error
 	if err != nil {
-		log.Println("Error checking if phone number is taken: ", err)
-
 		return &entities.ProcessError{
-			Message: types.FormErrorResponseMsg{
-				"phone_number": []string{"An error occurred"},
-			},
+			Message:     "An error occurred while checking if the phone number is taken",
 			ClientError: false,
 		}
 	}
@@ -159,27 +150,23 @@ func (r *RegisterUseCase) CreateNewUser(form *dto.UserRegisterFormDTO) (*models.
 
 	// Check if there is an error hashing the password
 	if err != nil {
-		log.Println("Error hashing the password: ", err)
-
 		return nil, err
 	}
 
 	// Create a new user
-	newUser := models.User{
+	user := models.User{
 		Username:    form.Username,
 		Password:    hashedPwd,
 		PhoneNumber: form.PhoneNumber,
 	}
 
 	// Register the user into the database
-	err = r.UserRepository.Create(&newUser)
+	err = r.UserRepository.Create(&user)
 
 	// Check if there is an error creating the user
 	if err != nil {
-		log.Println("Error creating the user: ", err)
-
 		return nil, err
 	}
 
-	return &newUser, nil
+	return &user, nil
 }
