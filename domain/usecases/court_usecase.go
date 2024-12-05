@@ -16,7 +16,6 @@ import (
 	"strconv"
 
 	"github.com/golang-jwt/jwt/v5"
-	"gorm.io/gorm"
 )
 
 // CourtUseCase is a struct that defines the use case for the court entity.
@@ -43,16 +42,7 @@ func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository) *CourtUseCas
 // Returns the courts and an error if any.
 func (c *CourtUseCase) GetCourts() (*[]models.Court, error) {
 	// Get the courts
-	courts, err := c.CourtRepository.GetAll()
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to get courts: ", err)
-
-		return nil, err
-	}
-
-	return courts, nil
+	return c.CourtRepository.GetAll()
 }
 
 // GetCourtUsingID is a function that returns the court using the court ID.
@@ -62,16 +52,7 @@ func (c *CourtUseCase) GetCourts() (*[]models.Court, error) {
 // Returns the court and an error if any.
 func (c *CourtUseCase) GetCourtUsingID(courtID uint) (*models.Court, error) {
 	// Get the courts
-	court, err := c.CourtRepository.GetUsingID(courtID)
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to get courts: ", err)
-
-		return nil, err
-	}
-
-	return court, nil
+	return c.CourtRepository.GetUsingID(courtID)
 }
 
 // ValidateCourtType is a function that validates the court type.
@@ -89,37 +70,7 @@ func (c *CourtUseCase) ValidateCourtType(courtType string) bool {
 //
 // Returns the courts and an error if any.
 func (c *CourtUseCase) GetCourtsUsingCourtType(courtType string) (*[]models.Court, error) {
-	// Get the courts
-	courts, err := c.CourtRepository.GetUsingCourtType(courtType)
-
-	// Return an error if any
-	if err != nil {
-		log.Println("Failed to get courts using type ", courtType, ": ", err)
-
-		return nil, err
-	}
-
-	return courts, nil
-}
-
-// GetVendorCourtsUsingCourtType is a function that returns the vendor courts
-// using the court type.
-//
-// vendorID: The vendor ID.
-//
-// Returns the vendor courts and an error if any.
-func (c *CourtUseCase) GetVendorCourtsUsingCourtType(vendorID uint, courtType string) (*[]models.Court, error) {
-	// Get the vendor courts using the court type
-	courts, err := c.CourtRepository.GetUsingVendorIDCourtType(vendorID, courtType)
-
-	// Return an error if any and ignore if the vendor has no courts
-	if err != nil && err != gorm.ErrRecordNotFound {
-		log.Println("Failed to get vendor courts using court type: ", err)
-
-		return nil, err
-	}
-
-	return courts, nil
+	return c.CourtRepository.GetUsingCourtType(courtType)
 }
 
 // GetCurrentVendorCourtsUsingCourtType is a function that returns the current vendor courts
@@ -134,7 +85,7 @@ func (c *CourtUseCase) GetCurrentVendorCourtsUsingCourtType(token *jwt.Token, co
 	claims := c.AuthUseCase.DecodeToken(token)
 
 	// Get the vendor courts
-	return c.GetVendorCourtsUsingCourtType(claims.Id, courtType)
+	return c.CourtRepository.GetUsingVendorIDCourtType(claims.Id, courtType)
 }
 
 // ValidateCreateNewCourtForm is a function that validates the create new court form.
@@ -164,27 +115,6 @@ func (c *CourtUseCase) ValidateCreateNewCourtForm(form *dto.CreateNewCourtFormDT
 	return nil
 }
 
-// GetVendorNewestCourtUsingCourtType is a function that returns the vendor newest court
-// using the court type.
-//
-// vendorID: The vendor ID.
-// courtType: The court type.
-//
-// Returns the court and an error if any.
-func (c *CourtUseCase) GetVendorNewestCourtUsingCourtType(vendorID uint, courtType string) (*models.Court, error) {
-	// Get the vendor newest court using the court type
-	courts, err := c.CourtRepository.GetNewestUsingVendorIDCourtType(vendorID, courtType)
-
-	// Return an error if any
-	if err != nil && err != gorm.ErrRecordNotFound {
-		log.Println("Failed to get vendor newest court using court type: ", err)
-
-		return nil, err
-	}
-
-	return courts, nil
-}
-
 // CreateNewCourt is a function that creates a new court.
 //
 // token: The token.
@@ -196,19 +126,19 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 	// Get the token claims
 	claims := c.AuthUseCase.DecodeToken(token)
 
-	// Get the vendor newest court using the court type
-	court, err := c.GetVendorNewestCourtUsingCourtType(claims.Id, courtType)
+	// Check if the court already exist
+	exist, err := c.CourtRepository.CheckExistUsingVendorIDCourtType(claims.Id, courtType)
 
 	// Return an error if any
 	if err != nil {
 		return nil, &entities.ProcessError{
 			ClientError: false,
-			Message:     "An error occured while getting current vendor newest court",
+			Message:     "An error occured while checking court exist in this court type",
 		}
 	}
 
 	// Check if the court is nil
-	if court != nil {
+	if exist {
 		return nil, &entities.ProcessError{
 			ClientError: true,
 			Message:     "Vendor already has a court in this court type, use POST /vendor/me/courts/types/:type instead",
@@ -245,7 +175,7 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 	}
 
 	// Create a new court object
-	newCourt := &models.Court{
+	court := &models.Court{
 		VendorID: claims.Id,
 		CourtType: models.CourtType{
 			Type: courtType,
@@ -256,7 +186,7 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 	}
 
 	// Return an error if any
-	err = c.CourtRepository.Create(newCourt)
+	err = c.CourtRepository.Create(court)
 
 	// Return an error if any
 	if err != nil {
@@ -279,24 +209,27 @@ func (c *CourtUseCase) AddCourt(token *jwt.Token, courtType string) (*models.Cou
 	// Get the token claims
 	claims := c.AuthUseCase.DecodeToken(token)
 
-	// Get the vendor newest court using the court type
-	court, err := c.GetVendorNewestCourtUsingCourtType(claims.Id, courtType)
+	// Check if the court already exist
+	exist, err := c.CourtRepository.CheckExistUsingVendorIDCourtType(claims.Id, courtType)
 
 	// Return an error if any
 	if err != nil {
 		return nil, &entities.ProcessError{
 			ClientError: false,
-			Message:     "An error occured while getting current vendor newest court",
+			Message:     "An error occured while checking current vendor court exist in this court type",
 		}
 	}
 
 	// Check if the court is nil
-	if court == nil {
+	if !exist {
 		return nil, &entities.ProcessError{
 			ClientError: true,
 			Message:     "Vendor doesn't have any court in this court type, use POST /vendor/me/courts/types/:type/new instead",
 		}
 	}
+
+	// Get the newest court using vendor ID and court type
+	court, err := c.CourtRepository.GetNewestUsingVendorIDCourtType(claims.Id, courtType)
 
 	// Create new court name
 	courtName := "Court "
