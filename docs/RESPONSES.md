@@ -6,7 +6,7 @@ This doc will explains each endpoint in details, like request body needed, respo
 
 ---
 
-[![auth-response-doc](https://img.shields.io/badge/visit-auth--response--doc-green)](https://github.com/bryanfks-dev/Courtly-Service.git/docs/RESPONSES.md)
+[![auth-response-doc](https://img.shields.io/badge/visit-auth--response--doc-green)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/AUTH_RESPONSE.md)
 
 ### Users endpoints
 

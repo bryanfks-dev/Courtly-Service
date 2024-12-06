@@ -75,7 +75,7 @@ To see responses structure in details, please read this doc.
 
 ---
 
-[![visit-docs](https://img.shields.io/badge/visit-response--docs-blue)](https://github.com/bryanfks-dev/Courtly-Service.git/docs/RESPONSES.md)
+[![visit-docs](https://img.shields.io/badge/visit-response--docs-blue)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/RESPONSES.md)
 
 ## Run Proccess
 
