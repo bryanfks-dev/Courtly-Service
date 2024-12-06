@@ -6,6 +6,7 @@ import (
 	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
+	"main/pkg/utils"
 	"net/http"
 	"strconv"
 
@@ -39,7 +40,7 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 	courtType := c.QueryParam("type")
 
 	// Return an error if the court type is invalid
-	if courtType != "" && !enums.InCourtType(courtType) {
+	if utils.IsBlank(courtType) && !enums.InCourtType(courtType) {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid court type",
@@ -54,7 +55,7 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 	)
 
 	// Get the courts
-	if courtType != "" {
+	if utils.IsBlank(courtType) {
 		courts, err = co.CourtUseCase.GetCourts()
 	} else {
 		courts, err = co.CourtUseCase.GetCourtsUsingCourtType(courtType)
