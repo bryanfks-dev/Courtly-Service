@@ -1,8 +1,11 @@
 package usecases
 
 import (
+	"context"
+	"main/core/types"
 	"main/data/models"
 	"main/internal/repository"
+	"sync"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -66,42 +69,114 @@ func (b *BookingUseCase) GetCurrentVendorBookings(token *jwt.Token) (*[]models.B
 	return b.BookingRepository.GetUsingVendorID(claims.Id)
 }
 
-// GetCurrentVendorTotalBookings is a use case that gets the current vendor
+// GetCurrentVendorOrdersStats is a use case that gets the current vendor orders
+// statistics from the database.
 //
 // token: The JWT token
 //
-// Returns the total bookings and an error if any
-func (b *BookingUseCase) GetCurrentVendorTotalBookings(token *jwt.Token) (int64, error) {
+// Returns the map of order stat and an error if any
+func (b *BookingUseCase) GetCurrentVendorOrdersStats(token *jwt.Token) (*types.OrdersStatsMap, error) {
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
 
-	return b.BookingRepository.GetTotalUsingVendorID(claims.Id)
-}
+	// Placeholder for the bookings and error
+	stats := make(types.OrdersStatsMap)
 
-// GetCurrentVendorTotalBookingsToday is a use case that gets the current vendor
-// total bookings today.
-//
-// token: The JWT token
-//
-// Returns the total bookings today and an error if any
-func (b *BookingUseCase) GetCurrentVendorTotalBookingsToday(token *jwt.Token) (int64, error) {
-	// Get the token claims
-	claims := b.AuthUseCase.DecodeToken(token)
+	// Get the total bookings
+	var err error
 
-	return b.BookingRepository.GetTotalTodayUsingVendorID(claims.Id)
-}
+	// Create a context with a cancel function
+	_, cancel := context.WithCancel(context.Background())
 
-// GetCurrentVendorRecentBookings is a use case that gets the current vendor
-// recent bookings.
-//
-// token: The JWT token
-//
-// Returns the recent bookings and an error if any
-func (b *BookingUseCase) GetCurrentVendorRecentBookings(token *jwt.Token) (*[]models.Booking, error) {
-	// Get the token claims
-	claims := b.AuthUseCase.DecodeToken(token)
+	// Defer the cancel function
+	defer cancel()
 
-	return b.BookingRepository.GetNLatestUsingVendorID(claims.Id, 3)
+	// Create a wait group
+	var (
+		wg sync.WaitGroup
+	)
+
+	// Add a wait group
+	wg.Add(1)
+
+	// Get the total bookings
+	go func() {
+		// Defer done
+		defer wg.Done()
+
+		// Get the total bookings
+		totalOrders, e := b.BookingRepository.GetTotalUsingVendorID(claims.Id)
+
+		// Return an error if any
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the total orders to the stats
+		stats["total_orders"] = totalOrders
+	}()
+
+	// Add a wait group
+	wg.Add(1)
+
+	// Get the total bookings today
+	go func() {
+		// Defer done
+		defer wg.Done()
+
+		// Get the total bookings today
+		totalOrdersToday, e := b.BookingRepository.GetTotalTodayUsingVendorID(claims.Id)
+
+		// Return an error if any
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the total orders today to the stats
+		stats["total_orders_today"] = totalOrdersToday
+	}()
+
+	// Add a wait group
+	wg.Add(1)
+
+	// Get the recent bookings
+	go func() {
+		// Defer done
+		defer wg.Done()
+
+		// Get the recent bookings
+		recentBooking, e := b.BookingRepository.GetNLatestUsingVendorID(claims.Id, 3)
+
+		// Return an error if any
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the recent bookings to the stats
+		stats["recent_orders"] = recentBooking
+	}()
+
+	// Wait for the wait group to finish
+	wg.Wait()
+
+	// Wait for the wait group to finish
+	if err != nil {
+		return nil, err
+	}
+
+	return &stats, nil
 }
 
 // GetCurrentVendorBookingsUsingCourtType is a use case that gets the current vendor bookings
@@ -113,6 +188,6 @@ func (b *BookingUseCase) GetCurrentVendorRecentBookings(token *jwt.Token) (*[]mo
 func (b *BookingUseCase) GetCurrentVendorBookingsUsingCourtType(token *jwt.Token, courtType string) (*[]models.Booking, error) {
 	// Get the token claims
 	claims := b.AuthUseCase.DecodeToken(token)
-	
+
 	return b.BookingRepository.GetUsingVendorIDCourtType(claims.Id, courtType)
 }
