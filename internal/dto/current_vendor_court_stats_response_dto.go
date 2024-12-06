@@ -7,6 +7,9 @@ import (
 
 // CurrentVendorCourtStatsResponseDTO is a struct that defines the current vendor court stats response DTO.
 type CurrentVendorCourtStatsResponseDTO struct {
+	// TotalCourtCount is the total court count.
+	TotalCourtCount int64 `json:"total_court_count"`
+
 	// FootballCourtCount is the football court count.
 	FootballCourtCount int64 `json:"football_court_count"`
 
@@ -29,7 +32,11 @@ type CurrentVendorCourtStatsResponseDTO struct {
 //
 // Returns the current vendor court stats response DTO.
 func (c *CurrentVendorCourtStatsResponseDTO) FromMap(m *types.CourtCountsMap) *CurrentVendorCourtStatsResponseDTO {
+	// Calculate the total court count
+	total := (*m)[enums.Football.Label()] + (*m)[enums.Basketball.Label()] + (*m)[enums.Tennis.Label()] + (*m)[enums.Volleyball.Label()] + (*m)[enums.Badminton.Label()]
+
 	return &CurrentVendorCourtStatsResponseDTO{
+		TotalCourtCount:      total,
 		FootballCourtCount:   (*m)[enums.Football.Label()],
 		BasketballCourtCount: (*m)[enums.Basketball.Label()],
 		TennisCourtCount:     (*m)[enums.Tennis.Label()],
