@@ -121,7 +121,7 @@ func (r *ReviewUseCase) GetStarCountsUsingVendorIDCourtType(vendorID uint, court
 
 // GetReviewsUsingVendorIDCourtType is a use case that handles the request to get the
 // reviews using the vendor ID and court type.
-// 
+//
 // vendorID: The id of the vendor.
 // courtType: The type of the court.
 //
@@ -139,6 +139,28 @@ func (r *ReviewUseCase) GetReviewsUsingVendorIDCourtType(vendorID uint, courtTyp
 func (r *ReviewUseCase) SanitizeCreateReviewForm(form *dto.CreateReviewFormDTO) {
 	// Sanitize the review form
 	form.Review = strings.TrimSpace(form.Review)
+}
+
+// ValidateRatingParam is a use case that validates the rating parameter.
+//
+// rating: The rating parameter.
+//
+// Returns a boolean value.
+func (r *ReviewUseCase) ValidateRatingParam(rating int) bool {
+	// Check if rating is valid
+	// Rating must be greater than 0 and less than or equal to 5
+
+	// Check if rating is less or equal to 0
+	if rating <= 0 {
+		return false
+	}
+
+	// Check if rating is greater than 5
+	if rating > 5 {
+		return false
+	}
+
+	return true
 }
 
 // ValidateCreateReviewForm is a use case that validates the create review form.
@@ -250,4 +272,17 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 	}
 
 	return review, nil
+}
+
+// GetReviewsUsingVendorIDCourtTypeRating is a use case that handles the request to get the
+// reviews using the vendor ID, court type, and rating.
+//
+// vendorID: The id of the vendor.
+// courtType: The type of the court.
+// rating: The rating of the review.
+//
+// Returns the reviews and an error if any.
+func (r *ReviewUseCase) GetReviewsUsingVendorIDCourtTypeRating(vendorID uint, courtType string, rating int) (*[]models.Review, error) {
+	// Get the reviews using the vendor ID, court type, and rating
+	return r.ReviewRepository.GetUsingVendorIDCourtTypeRating(vendorID, courtType, rating)
 }

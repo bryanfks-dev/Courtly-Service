@@ -208,3 +208,27 @@ func (*ReviewRepository) CheckUserHasReviewCourtType(userID uint, vendorID uint,
 
 	return count > 0, nil
 }
+
+// GetUsingVendorIDCourtTypeRating is a function that returns the reviews using the vendor ID, court type, and rating.
+//
+// vendorID: The vendor ID.
+// courtType: The court type.
+// rating: The rating.
+//
+// Returns the reviews and an error if any.
+func (*ReviewRepository) GetUsingVendorIDCourtTypeRating(vendorID uint, courtType string, rating int) (*[]models.Review, error) {
+	// reviews is a slice of maps containing the reviews of the court
+	var reviews []models.Review
+
+	// Get the reviews using the vendor ID and court type
+	err := mysql.Conn.Preload("CourtType", "type = ?", courtType).Where("vendor_id = ? AND rating = ?", vendorID, rating).Find(&reviews).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting reviews using vendor id and court type: " + err.Error())
+
+		return nil, err
+	}
+
+	return &reviews, err
+}

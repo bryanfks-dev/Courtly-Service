@@ -7,6 +7,7 @@ import (
 	"main/domain/entities"
 	"main/domain/usecases"
 	"main/internal/dto"
+	"main/pkg/utils"
 	"net/http"
 	"strconv"
 	"sync"
@@ -65,6 +66,36 @@ func (r *ReviewController) GetCourtTypeReviews(c echo.Context) error {
 			Message: "Invalid court type",
 			Data:    nil,
 		})
+	}
+
+	// Get the rating query parameter
+	ratingParam := c.QueryParam("rating")
+
+	// Create a new rating variable
+	var rating int
+
+	// Check if the rating query parameter is empty
+	if !utils.IsBlank(ratingParam) {
+		// Convert the rating query parameter to an integer
+		rating, err = strconv.Atoi(ratingParam)
+
+		// Check if the star query parameter is invalid
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+				Success: false,
+				Message: "Invalid star query parameter",
+				Data:    nil,
+			})
+		}
+
+		// Validate the rating parameter
+		if !r.ReviewUseCase.ValidateRatingParam(rating) {
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+				Success: false,
+				Message: "Invalid rating parameter",
+				Data:    nil,
+			})
+		}
 	}
 
 	// Create a new context with a cancel function
@@ -138,8 +169,13 @@ func (r *ReviewController) GetCourtTypeReviews(c echo.Context) error {
 		defer wg.Done()
 
 		// Get the reviews
-		reviews, err =
-			r.ReviewUseCase.GetReviewsUsingVendorIDCourtType(uint(vendorID), courtType)
+		// Check if the rating query parameter is empty
+		if utils.IsBlank(ratingParam) {
+			reviews, err =
+				r.ReviewUseCase.GetReviewsUsingVendorIDCourtType(uint(vendorID), courtType)
+		} else {
+			reviews, err = r.ReviewUseCase.GetReviewsUsingVendorIDCourtTypeRating(uint(vendorID), courtType, rating)
+		}
 
 		// Check if there is an error
 		if err != nil {
