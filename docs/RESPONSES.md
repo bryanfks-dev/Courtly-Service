@@ -12,6 +12,8 @@ This doc will explains each endpoint in details, like request body needed, respo
 
 ---
 
+[![user-response-doc](https://img.shields.io/badge/visit-user--response--doc-red)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/USER_RESPONSE.md)
+
 ### Vendors endpoints
 
 ---

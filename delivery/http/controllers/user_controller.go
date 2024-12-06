@@ -43,15 +43,6 @@ func (u *UserController) GetCurrentUser(c echo.Context) error {
 
 	// Return an error if any
 	if err != nil {
-		// Check if the error is a client error
-		if err.ClientError {
-			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
-				Success: false,
-				Message: err.Message,
-				Data:    nil,
-			})
-		}
-
 		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
 			Message: "Failed to get current user",

@@ -39,8 +39,8 @@ Endpoint uses for sign user with an existing account.
 
 - `200 OK`: when response is success
 - `400 BAD REQUEST`: when fails validating request body
-- `401 UNAUTHORIZE`: when password is not valid or username not exists
-- `500 INTERNAL SERVER ERROR`: when fails checking if username is exists or fails to generate token
+- `401 UNAUTHORIZE`: when either the password is not valid or username not exists
+- `500 INTERNAL SERVER ERROR`: when either fails checking if username is exists or fails to generate token
 
 ### **POST** `/api/v1/auth/user/register`
 
@@ -80,8 +80,8 @@ Endpoint uses to register a new user account.
 
 - `200 OK`: when response is success
 - `400 BAD REQUEST`: when fails validating request body
-- `403 FORBIDDEN`: when username or phone number already exists
-- `500 INTERNAL SERVER ERROR`: when fails checking if username or phone number is exists or fails to create new user
+- `403 FORBIDDEN`: when either username or phone number already exists
+- `500 INTERNAL SERVER ERROR`: when either fails checking if username or phone number is exists or fails to hash password or fails to create new user
 
 ### **POST** `/api/v1/auth/user/logout`
 
@@ -100,7 +100,7 @@ Endpoints uses to remove user from authenticated status.
 ```json
 {
   "success": ...,
-  "message": "....",
+  "message": "...",
   "data": null
 }
 ```
@@ -127,7 +127,7 @@ Endpoints uses to remove user from authenticated status.
 ```json
 {
   "success": ...,
-  "message": "....",
+  "message": "...",
   "data": null
 }
 ```
@@ -200,7 +200,7 @@ Endpoints uses to remove user from authenticated status.
 ```json
 {
   "success": ...,
-  "message": "....",
+  "message": "...",
   "data": null
 }
 ```
@@ -297,8 +297,8 @@ Endpoint uses to sign vendor with an existing account.
 
 - `200 OK`: when response is success
 - `400 BAD REQUEST`: when fails validating request body
-- `401 UNAUTHORIZE`: when password is not valid or email not exists
-- `500 INTERNAL SERVER ERROR`: when fails checking if email is exists or fails to generate token
+- `401 UNAUTHORIZE`: when either the password is not valid or email not exists
+- `500 INTERNAL SERVER ERROR`: when either fails checking if email is exists or fails to generate token
 
 ### **POST** `/api/v1/auth/vendor/logout`
 
@@ -317,7 +317,7 @@ Endpoint uses to remove vendor from authenticated status.
 ```json
 {
   "success": ...,
-  "message": "....",
+  "message": "...",
   "data": null
 }
 ```

@@ -37,22 +37,12 @@ func NewUserUseCase(a *AuthUseCase, u *repository.UserRepository) *UserUseCase {
 // token: The user token.
 //
 // Returns the user object and an error if any.
-func (u *UserUseCase) GetCurrentUser(token *jwt.Token) (*models.User, *entities.ProcessError) {
+func (u *UserUseCase) GetCurrentUser(token *jwt.Token) (*models.User, error) {
 	// Get the token claims
 	claims := u.AuthUseCase.DecodeToken(token)
 
 	// Get the user by ID
-	user, err := u.UserRepository.GetUsingID(claims.Id)
-
-	// Check if there is an error
-	if err != nil {
-		return nil, &entities.ProcessError{
-			Message:     "An error occurred while getting the user",
-			ClientError: false,
-		}
-	}
-
-	return user, nil
+	return u.UserRepository.GetUsingID(claims.Id)
 }
 
 // ValidateChangePasswordForm is a function that validates the change password form.
