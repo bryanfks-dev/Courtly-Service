@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"main/core/enums"
 	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
@@ -46,6 +47,15 @@ func (b *BookingController) GetCurrentUserBookings(c echo.Context) error {
 		err      error
 	)
 
+	// Check if the court type is not empty
+	if utils.IsBlank(courtTypeParam) && enums.InCourtType(courtTypeParam) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
 	// Get the current user bookings
 	// Check if the court type is not empty
 	if utils.IsBlank(courtTypeParam) {
@@ -89,6 +99,15 @@ func (b *BookingController) GetCurrentVendorOrders(c echo.Context) error {
 		bookings *[]models.Booking
 		err      error
 	)
+
+	// Check if the court type is not empty
+	if utils.IsBlank(courtTypeParam) && enums.InCourtType(courtTypeParam) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
 
 	// Get the current vendor bookings
 	// Check if the court type is not empty
