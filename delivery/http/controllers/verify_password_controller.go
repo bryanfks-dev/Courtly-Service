@@ -51,7 +51,7 @@ func (v *VerifyPasswordController) UserVerifyPassword(c echo.Context) error {
 
 	// Validate the form
 	if err := v.VerifyPasswordUseCase.ValidateForm(form); err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: err,
 			Data:    nil,
@@ -114,7 +114,7 @@ func (v *VerifyPasswordController) VendorVerifyPassword(c echo.Context) error {
 
 	// Validate the form
 	if err := v.VerifyPasswordUseCase.ValidateForm(form); err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: err,
 			Data:    nil,
