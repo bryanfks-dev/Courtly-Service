@@ -35,3 +35,5 @@ This doc will explains each endpoint in details, like request body needed, respo
 ### Reviews endpoints
 
 ---
+
+[![reviews-response-doc](https://img.shields.io/badge/visit-booking--response--doc-purple)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/REVIEWS_RESPONSE.md)
