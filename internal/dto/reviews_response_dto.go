@@ -20,28 +20,24 @@ type ReviewsResponseDTO struct {
 	Reviews *[]ReviewDTO `json:"reviews"`
 }
 
-// FromModels is a function that converts a slice of review models to a reviews response DTO.
+// FromMap is a function that converts a reviews map to a reviews response DTO.
 //
-// rate: The total rating of the reviews.
-// reviewCount: The total number of reviews.
-// stars: The reviews stars map.
-// m: The slice of review models.
+// m: The reviews map.
 //
-// Returns the reviews response DTO.
-func (r ReviewsResponseDTO) FromModels(rate float64, reviewCount int64, stars *types.StartCountsMap, m *[]models.Review) *ReviewsResponseDTO {
-	// reviews is a slice of review DTOs
-	reviews := []ReviewDTO{}
+// Returns a pointer to the reviews response DTO.
+func (r ReviewsResponseDTO) FromMap(m *types.CourtReviewsMap) *ReviewsResponseDTO {
+	// Create a slice of review DTOs
+	var dto []ReviewDTO
 
-	// Iterate over the review models
-	for _, review := range *m {
-		// Append the review DTO to the reviews slice
-		reviews = append(reviews, *ReviewDTO{}.FromModel(&review))
+	// Convert the reviews to review DTOs
+	for _, review := range (*m)["reviews"].([]models.Review) {
+		dto = append(dto, *ReviewDTO{}.FromModel(&review))
 	}
 
 	return &ReviewsResponseDTO{
-		TotalRating:  rate,
-		ReviewsTotal: reviewCount,
-		Stars:        ReviewsStarsDTO{}.FromMap(stars),
-		Reviews:      &reviews,
+		TotalRating:  (*m)["total_rating"].(float64),
+		ReviewsTotal: (*m)["reviews_total"].(int64),
+		Stars:        ReviewsStarsDTO{}.FromMap((*m)["star_counts"].(*types.StarCountsMap)),
+		Reviews:      &dto,
 	}
 }

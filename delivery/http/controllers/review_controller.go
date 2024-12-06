@@ -1,16 +1,12 @@
 package controllers
 
 import (
-	"context"
 	"log"
-	"main/core/types"
-	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"main/pkg/utils"
 	"net/http"
 	"strconv"
-	"sync"
 
 	"github.com/labstack/echo/v4"
 )
@@ -98,114 +94,22 @@ func (r *ReviewController) GetCourtTypeReviews(c echo.Context) error {
 		}
 	}
 
-	// Create a new context with a cancel function
-	_, cancel := context.WithCancel(context.Background())
-
-	defer cancel()
-
-	// Create a new wait group for concurrency
-	var (
-		wg sync.WaitGroup
-	)
-
-	// Create review count, star counts and reviews
-	var (
-		reviewCount int64
-		starCounts  *types.StartCountsMap
-		reviews     *[]models.Review
-	)
-
-	// Add a new wait group
-	wg.Add(1)
-
-	go func() {
-		// Defer the wait group
-		defer wg.Done()
-
-		// Get the review count
-		reviewCount, err =
-			r.ReviewUseCase.GetReviewCountUsingVendorIDCourtType(uint(vendorID), courtType)
-
-		// Check if there is an error
-		if err != nil {
-			err = c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
-				Success: false,
-				Message: "Failed to get review count",
-				Data:    nil,
-			})
-
-			cancel()
-		}
-	}()
-
-	// Add a new wait group
-	wg.Add(1)
-
-	go func() {
-		// Defer the wait group
-		defer wg.Done()
-
-		// Get the star counts
-		starCounts, err =
-			r.ReviewUseCase.GetStarCountsUsingVendorIDCourtType(uint(vendorID), courtType)
-
-		// Check if there is an error
-		if err != nil {
-			err = c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
-				Success: false,
-				Message: "Failed to get star counts",
-				Data:    nil,
-			})
-
-			cancel()
-		}
-	}()
-
-	// Add a new wait group
-	wg.Add(1)
-
-	go func() {
-		// Defer the wait group
-		defer wg.Done()
-
-		// Get the reviews
-		// Check if the rating query parameter is empty
-		if utils.IsBlank(ratingParam) {
-			reviews, err =
-				r.ReviewUseCase.GetReviewsUsingVendorIDCourtType(uint(vendorID), courtType)
-		} else {
-			reviews, err = r.ReviewUseCase.GetReviewsUsingVendorIDCourtTypeRating(uint(vendorID), courtType, rating)
-		}
-
-		// Check if there is an error
-		if err != nil {
-			err = c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
-				Success: false,
-				Message: "Failed to get reviews",
-				Data:    nil,
-			})
-
-			cancel()
-		}
-	}()
-
-	// Wait for all goroutines to finish
-	wg.Wait()
+	// Get the reviews from the database
+	reviewsMap, err := r.ReviewUseCase.GetCourtTypeReviews(uint(vendorID), courtType, &rating)
 
 	// Check if there is an error
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get court reviews",
+			Data:    nil,
+		})
 	}
 
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Reviews retrieved successfully",
-		Data: dto.ReviewsResponseDTO{}.FromModels(
-			r.ReviewUseCase.CalculateTotalRating(starCounts, reviewCount),
-			reviewCount,
-			starCounts,
-			reviews,
-		),
+		Data:    dto.ReviewsResponseDTO{}.FromMap(reviewsMap),
 	})
 }
 
@@ -253,110 +157,22 @@ func (r *ReviewController) GetCurrentVendorReviews(c echo.Context) error {
 		}
 	}
 
-	// Create a new context with a cancel function
-	_, cancel := context.WithCancel(context.Background())
-
-	defer cancel()
-
-	// Create a new wait group for concurrency
-	var wg sync.WaitGroup
-
-	// Create review count, star counts and reviews
-	var (
-		reviewCount int64
-		starCounts  *types.StartCountsMap
-		reviews     *[]models.Review
-	)
-
-	// Add a new wait group
-	wg.Add(1)
-
-	go func() {
-		// Defer the wait group
-		defer wg.Done()
-
-		// Get the review count
-		reviewCount, err = r.ReviewUseCase.GetCurrentVendorReviewCount(cc.Token)
-
-		// Check if there is an error
-		if err != nil {
-			err = c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
-				Success: false,
-				Message: "Failed to get vendor review count",
-				Data:    nil,
-			})
-
-			cancel()
-		}
-	}()
-
-	// Add a new wait group
-	wg.Add(1)
-
-	go func() {
-		// Defer the wait group
-		defer wg.Done()
-
-		// Get the star counts
-		starCounts, err = r.ReviewUseCase.GetCurrentVendorStarCounts(cc.Token)
-
-		// Check if there is an error
-		if err != nil {
-			err = c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
-				Success: false,
-				Message: "Failed to get vendor review star counts",
-				Data:    nil,
-			})
-
-			cancel()
-		}
-	}()
-
-	// Add a new wait group
-	wg.Add(1)
-
-	go func() {
-		// Defer the wait group
-		defer wg.Done()
-
-		// Get the reviews
-		// Check if the rating query parameter is empty
-		if utils.IsBlank(ratingParam) {
-			reviews, err =
-				r.ReviewUseCase.GetCurrentVendorReviews(cc.Token)
-		} else {
-			reviews, err = r.ReviewUseCase.GetCurrentVendorReviewsUsingRating(cc.Token, rating)
-		}
-
-		// Check if there is an error
-		if err != nil {
-			err = c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
-				Success: false,
-				Message: "Failed to get vendor reviews",
-				Data:    nil,
-			})
-
-			cancel()
-		}
-	}()
-
-	// Wait for all goroutines to finish
-	wg.Wait()
+	// Get the reviews from the database
+	reviewsMap, err := r.ReviewUseCase.GetCurrentVendorReviews(cc.Token, &rating)
 
 	// Check if there is an error
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get vendor reviews",
+			Data:    nil,
+		})
 	}
 
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Vendor reviews retrieved successfully",
-		Data: dto.ReviewsResponseDTO{}.FromModels(
-			r.ReviewUseCase.CalculateTotalRating(starCounts, reviewCount),
-			reviewCount,
-			starCounts,
-			reviews,
-		),
+		Data:    dto.ReviewsResponseDTO{}.FromMap(reviewsMap),
 	})
 }
 

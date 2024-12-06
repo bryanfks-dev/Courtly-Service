@@ -86,7 +86,7 @@ func (*ReviewRepository) GetCountUsingVendorIDCourtType(vendorID uint, courtType
 // vendorID: The vendor ID.
 //
 // Returns the star count and an error if any.
-func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*types.StartCountsMap, error) {
+func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*types.StarCountsMap, error) {
 	// Create a new struct for the results
 	var results struct {
 		OneStar   int64
@@ -113,7 +113,7 @@ func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*types.Start
 		return nil, err
 	}
 
-	return &types.StartCountsMap{
+	return &types.StarCountsMap{
 		1: results.OneStar,
 		2: results.TwoStar,
 		3: results.ThreeStar,
@@ -128,7 +128,7 @@ func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*types.Start
 // courtType: The court type.
 //
 // Returns map of the star count and an error if any.
-func (*ReviewRepository) GetStarCountsUsingVendorIDCourtType(vendorID uint, courtType string) (*types.StartCountsMap, error) {
+func (*ReviewRepository) GetStarCountsUsingVendorIDCourtType(vendorID uint, courtType string) (*types.StarCountsMap, error) {
 	// Create a new struct for the results
 	var results struct {
 		OneStar   int64
@@ -155,7 +155,7 @@ func (*ReviewRepository) GetStarCountsUsingVendorIDCourtType(vendorID uint, cour
 		return nil, err
 	}
 
-	return &types.StartCountsMap{
+	return &types.StarCountsMap{
 		1: results.OneStar,
 		2: results.TwoStar,
 		3: results.ThreeStar,

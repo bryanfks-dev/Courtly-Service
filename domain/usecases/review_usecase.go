@@ -1,12 +1,14 @@
 package usecases
 
 import (
+	"context"
 	"main/core/types"
 	"main/data/models"
 	"main/domain/entities"
 	"main/internal/dto"
 	"main/internal/repository"
 	"strings"
+	"sync"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -54,7 +56,7 @@ func (r *ReviewUseCase) GetCurrentVendorReviewCount(token *jwt.Token) (int64, er
 // token: The JWT token.
 //
 // Returns the star counts and an error if any.
-func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*types.StartCountsMap, error) {
+func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*types.StarCountsMap, error) {
 	// Get the vendor ID from the token
 	claims := r.AuthUseCase.DecodeToken(token)
 
@@ -68,7 +70,7 @@ func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*types.Sta
 // reviewCount: The total number of reviews.
 //
 // Returns the total rating.
-func (r *ReviewUseCase) CalculateTotalRating(starCount *types.StartCountsMap, reviewCount int64) float64 {
+func (r *ReviewUseCase) CalculateTotalRating(starCount *types.StarCountsMap, reviewCount int64) float64 {
 	// Check if there are no reviews
 	if reviewCount == 0 {
 		return 0
@@ -80,55 +82,6 @@ func (r *ReviewUseCase) CalculateTotalRating(starCount *types.StartCountsMap, re
 	//                           Total Reviews
 
 	return (float64((*starCount)[1]) + float64(2*(*starCount)[2]) + float64(3*(*starCount)[3]) + float64(4*(*starCount)[4]) + float64(5*(*starCount)[5])) / float64(reviewCount)
-}
-
-// GetCurrentVendorReviews is a use case that handles the request to get the current vendor's reviews.
-//
-// token: The JWT token.
-//
-// Returns a slice of current vendor's reviews and erros if any.
-func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token) (*[]models.Review, error) {
-	// Get the vendor ID from the token
-	claims := r.AuthUseCase.DecodeToken(token)
-
-	// Get the reviews using the vendor ID
-	return r.ReviewRepository.GetUsingVendorID(claims.Id)
-}
-
-// GetReviewCountUsingVendorIDCourtType is a use case that handles the request to get the
-// review count using the vendor ID and court type.
-//
-// vendorID: The id of the vendor.
-// courtType: The type of the court.
-//
-// Returns the review count and an error if any.
-func (r *ReviewUseCase) GetReviewCountUsingVendorIDCourtType(vendorID uint, courtType string) (int64, error) {
-	// Get the review count using the vendor ID and court type
-	return r.ReviewRepository.GetCountUsingVendorIDCourtType(vendorID, courtType)
-}
-
-// GetStarCountsUsingVendorIDCourtType is a use case that handles the request to get the
-// star counts using the vendor ID and court type.
-//
-// vendorID: The id of the vendor.
-// courtType: The type of the court.
-//
-// Returns the star counts and an error if any.
-func (r *ReviewUseCase) GetStarCountsUsingVendorIDCourtType(vendorID uint, courtType string) (*types.StartCountsMap, error) {
-	// Get the star counts using the vendor ID and court type
-	return r.ReviewRepository.GetStarCountsUsingVendorIDCourtType(vendorID, courtType)
-}
-
-// GetReviewsUsingVendorIDCourtType is a use case that handles the request to get the
-// reviews using the vendor ID and court type.
-//
-// vendorID: The id of the vendor.
-// courtType: The type of the court.
-//
-// Returns the reviews of court and error if any.
-func (r *ReviewUseCase) GetReviewsUsingVendorIDCourtType(vendorID uint, courtType string) (*[]models.Review, error) {
-	// Get the reviews using the vendor ID and court type
-	return r.ReviewRepository.GetUsingVendorIDCourtType(vendorID, courtType)
 }
 
 // SanitizeCreateReviewForm is a use case that sanitizes the create review form.
@@ -272,6 +225,237 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 	}
 
 	return review, nil
+}
+
+// GetCourtTypeReviews is a use case that handles the request to get the court type reviews.
+//
+// courtType: The type of the court.
+//
+// Returns the reviews map and an error if any.
+func (r *ReviewUseCase) GetCourtTypeReviews(vendorID uint, courtType string, rating *int) (*types.CourtReviewsMap, error) {
+	// Create a new context with a cancel function
+	_, cancel := context.WithCancel(context.Background())
+
+	defer cancel()
+
+	// Create a new wait group for concurrency and error
+	var (
+		wg  sync.WaitGroup
+		err error
+	)
+
+	// Create reviews map
+	reviews := make(types.CourtReviewsMap)
+
+	// Add a new wait group
+	wg.Add(1)
+
+	go func() {
+		// Defer the wait group
+		defer wg.Done()
+
+		// Get the review count
+		reviewCount, e :=
+			r.ReviewRepository.GetCountUsingVendorIDCourtType(vendorID, courtType)
+
+		// Check if there is an error
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the review count to the reviews map
+		reviews["reviews_total"] = reviewCount
+	}()
+
+	// Add a new wait group
+	wg.Add(1)
+
+	go func() {
+		// Defer the wait group
+		defer wg.Done()
+
+		// Get the star counts
+		starCounts, e :=
+			r.ReviewRepository.GetStarCountsUsingVendorIDCourtType(vendorID, courtType)
+
+		// Check if there is an error
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the star counts to the reviews map
+		reviews["star_counts"] = starCounts
+	}()
+
+	// Add a new wait group
+	wg.Add(1)
+
+	go func() {
+		// Defer the wait group
+		defer wg.Done()
+
+		// Create a variable to store the reviews and error
+		var (
+			records *[]models.Review
+			e       error
+		)
+
+		// Get the reviews
+		// Check if the rating query parameter is empty
+		if rating != nil {
+			records, e =
+				r.ReviewRepository.GetUsingVendorIDCourtTypeRating(vendorID, courtType, *rating)
+		} else {
+			records, e = r.ReviewRepository.GetUsingVendorIDCourtType(vendorID, courtType)
+		}
+
+		// Check if there is an error
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the reviews to the reviews map
+		reviews["reviews"] = records
+	}()
+
+	// Wait for all goroutines to finish
+	wg.Wait()
+
+	// Return an error if any
+	if err != nil {
+		return nil, err
+	}
+
+	return &reviews, err
+}
+
+// GetCurrentVendorReviews is a use case that handles the request to get the current vendor's reviews.
+//
+// token: The JWT token.
+// rating: The rating of the review.
+//
+// Returns the reviews map and an error if any.
+func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token, rating *int) (*types.CourtReviewsMap, error) {
+	// Get the vendor ID from the token
+	claims := r.AuthUseCase.DecodeToken(token)
+
+	// Create a new context with a cancel function
+	_, cancel := context.WithCancel(context.Background())
+
+	// Defer the cancel function
+	defer cancel()
+
+	// Create a new wait group for concurrency and error
+	var (
+		wg  sync.WaitGroup
+		err error
+	)
+
+	// Create a reviews map variable
+	reviews := make(types.CourtReviewsMap)
+
+	// Add a new wait group
+	wg.Add(1)
+
+	go func() {
+		// Defer the wait group
+		defer wg.Done()
+
+		// Get the review count
+		reviewCount, e := r.ReviewRepository.GetCountUsingVendorID(claims.Id)
+
+		// Check if there is an error
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the review count to the reviews map
+		reviews["reviews_total"] = reviewCount
+	}()
+
+	// Add a new wait group
+	wg.Add(1)
+
+	go func() {
+		// Defer the wait group
+		defer wg.Done()
+
+		// Get the star counts
+		starCounts, e := r.ReviewRepository.GetStarCountsUsingVendorID(claims.Id)
+
+		// Check if there is an error
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the star counts to the reviews map
+		reviews["star_counts"] = starCounts
+	}()
+
+	// Add a new wait group
+	wg.Add(1)
+
+	go func() {
+		// Defer the wait group
+		defer wg.Done()
+
+		// Create a variable to store the reviews and error
+		var (
+			records *[]models.Review
+			e       error
+		)
+
+		// Get the reviews
+		// Check if the rating query parameter is empty
+		if rating != nil {
+			records, e =
+				r.ReviewRepository.GetUsingVendorIDRating(claims.Id, *rating)
+		} else {
+			records, e = r.ReviewRepository.GetUsingVendorID(claims.Id)
+		}
+
+		// Check if there is an error
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the reviews to the reviews map
+		reviews["reviews"] = records
+	}()
+
+	// Wait for all goroutines to finish
+	wg.Wait()
+
+	// Check if there is an error
+	if err != nil {
+		return nil, err
+	}
+
+	return &reviews, nil
 }
 
 // GetReviewsUsingVendorIDCourtTypeRating is a use case that handles the request to get the

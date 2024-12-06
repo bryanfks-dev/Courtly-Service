@@ -25,7 +25,7 @@ type ReviewsStarsDTO struct {
 // m: The review stars count map.
 //
 // Returns the reviews stars DTO.
-func (r ReviewsStarsDTO) FromMap(m *types.StartCountsMap) *ReviewsStarsDTO {
+func (r ReviewsStarsDTO) FromMap(m *types.StarCountsMap) *ReviewsStarsDTO {
 	return &ReviewsStarsDTO{
 		OneStar:    int((*m)[1]),
 		TwoStars:   int((*m)[2]),
