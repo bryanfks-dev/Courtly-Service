@@ -41,3 +41,10 @@ func (c CourtType) Label() string {
 func InCourtType(s string) bool {
 	return slices.Contains(courtTypes, utils.UpperFirstLetter(s))
 }
+
+// CourtTypes is a function that returns the court types.
+//
+// Returns the court types.
+func CourtTypes() []string {
+	return courtTypes
+}

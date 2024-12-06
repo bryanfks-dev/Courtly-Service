@@ -2,6 +2,8 @@ package repository
 
 import (
 	"log"
+	"main/core/enums"
+	"main/core/types"
 	"main/data/models"
 	"main/internal/providers/mysql"
 )
@@ -165,4 +167,45 @@ func (*CourtRepository) CheckExistUsingVendorIDCourtType(vendorID uint, courtTyp
 	}
 
 	return count > 0, nil
+}
+
+// GetCountsUsingVendorID is a function that returns the counts of the courts by vendor ID.
+//
+// vendorID: The vendor ID.
+//
+// Returns the counts of the courts map and an error if any.
+func (*CourtRepository) GetCountsUsingVendorID(vendorID uint) (*types.CourtCountsMap, error) {
+	// Create a new struct for the results
+	var results struct {
+		FootballCount   int64
+		BasketballCount int64
+		VolleyballCount int64
+		TennisCount     int64
+		BadmintonCount  int64
+	}
+
+	// Get the counts of the courts by vendor ID
+	err := mysql.Conn.Model(&models.Court{}).Preload("CourtType", `
+        COUNT(CASE WHEN type = ? THEN 1 END),
+        COUNT(CASE WHEN rating = ? THEN 1 END),
+        COUNT(CASE WHEN rating = ? THEN 1 END),
+        COUNT(CASE WHEN rating = ? THEN 1 END),
+        COUNT(CASE WHEN rating = ? THEN 1 END)
+    `, enums.Football.Label(), enums.Basketball.Label(), enums.Volleyball.Label(), enums.Tennis.Label(), enums.Badminton.Label()).
+		Where("vendor_id = ?", vendorID).Scan(&results).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting court counts using vendor id: " + err.Error())
+
+		return nil, err
+	}
+
+	return &types.CourtCountsMap{
+		enums.Football.Label():   results.FootballCount,
+		enums.Basketball.Label(): results.BasketballCount,
+		enums.Volleyball.Label(): results.VolleyballCount,
+		enums.Tennis.Label():     results.TennisCount,
+		enums.Badminton.Label():  results.BadmintonCount,
+	}, nil
 }

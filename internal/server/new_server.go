@@ -105,6 +105,8 @@ func NewServer() (*echo.Echo, error) {
 	// Current vendor courts endpoints
 	currentVendorCourtsPrefix := currentVendorPrefix.Group("/courts")
 
+	currentVendorCourtsPrefix.GET("/stats", c.CourtController.GetCurrentVendorCourtStats)
+
 	// Current vendor courts types endpoints
 	currentVendorCourtsTypePrefix := currentVendorCourtsPrefix.Group("/types")
 

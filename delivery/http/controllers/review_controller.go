@@ -3,8 +3,8 @@ package controllers
 import (
 	"context"
 	"log"
+	"main/core/types"
 	"main/data/models"
-	"main/domain/entities"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"main/pkg/utils"
@@ -111,7 +111,7 @@ func (r *ReviewController) GetCourtTypeReviews(c echo.Context) error {
 	// Create review count, star counts and reviews
 	var (
 		reviewCount int64
-		starCounts  *entities.ReviewStarsCount
+		starCounts  *types.StartCountsMap
 		reviews     *[]models.Review
 	)
 
@@ -264,7 +264,7 @@ func (r *ReviewController) GetCurrentVendorReviews(c echo.Context) error {
 	// Create review count, star counts and reviews
 	var (
 		reviewCount int64
-		starCounts  *entities.ReviewStarsCount
+		starCounts  *types.StartCountsMap
 		reviews     *[]models.Review
 	)
 

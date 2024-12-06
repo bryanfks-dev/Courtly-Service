@@ -2,8 +2,8 @@ package repository
 
 import (
 	"log"
+	"main/core/types"
 	"main/data/models"
-	"main/domain/entities"
 	"main/internal/providers/mysql"
 )
 
@@ -86,19 +86,25 @@ func (*ReviewRepository) GetCountUsingVendorIDCourtType(vendorID uint, courtType
 // vendorID: The vendor ID.
 //
 // Returns the star count and an error if any.
-func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*entities.ReviewStarsCount, error) {
-	// Create a new count variable
-	var counts entities.ReviewStarsCount
+func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*types.StartCountsMap, error) {
+	// Create a new struct for the results
+	var results struct {
+		OneStar   int64
+		TwoStar   int64
+		ThreeStar int64
+		FourStar  int64
+		FiveStar  int64
+	}
 
 	// Get the courts by vendor ID and star
 	err := mysql.Conn.Model(&models.Review{}).Select(`
-        COUNT(CASE WHEN stars = 1 THEN 1 END),
-        COUNT(CASE WHEN stars = 2 THEN 1 END),
-        COUNT(CASE WHEN stars = 3 THEN 1 END),
-        COUNT(CASE WHEN stars = 4 THEN 1 END),
-        COUNT(CASE WHEN stars = 5 THEN 1 END)
+        COUNT(CASE WHEN rating = 1 THEN 1 END),
+        COUNT(CASE WHEN rating = 2 THEN 1 END),
+        COUNT(CASE WHEN rating = 3 THEN 1 END),
+        COUNT(CASE WHEN rating = 4 THEN 1 END),
+        COUNT(CASE WHEN rating = 5 THEN 1 END)
     `).
-		Where("vendor_id = ?", vendorID).Scan(&counts).Error
+		Where("vendor_id = ?", vendorID).Scan(&results).Error
 
 	// Return an error if any
 	if err != nil {
@@ -107,7 +113,13 @@ func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*entities.Re
 		return nil, err
 	}
 
-	return &counts, nil
+	return &types.StartCountsMap{
+		1: results.OneStar,
+		2: results.TwoStar,
+		3: results.ThreeStar,
+		4: results.FourStar,
+		5: results.FiveStar,
+	}, nil
 }
 
 // GetStarCountsUsingVendorIDCourtType is a function that returns the star count by vendor ID and court type.
@@ -115,20 +127,26 @@ func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*entities.Re
 // vendorID: The vendor ID.
 // courtType: The court type.
 //
-// Returns the star count and an error if any.
-func (*ReviewRepository) GetStarCountsUsingVendorIDCourtType(vendorID uint, courtType string) (*entities.ReviewStarsCount, error) {
-	// Create a new count variable
-	var counts entities.ReviewStarsCount
+// Returns map of the star count and an error if any.
+func (*ReviewRepository) GetStarCountsUsingVendorIDCourtType(vendorID uint, courtType string) (*types.StartCountsMap, error) {
+	// Create a new struct for the results
+	var results struct {
+		OneStar   int64
+		TwoStar   int64
+		ThreeStar int64
+		FourStar  int64
+		FiveStar  int64
+	}
 
 	// Get the courts by vendor ID and court type
 	err := mysql.Conn.Model(&models.Review{}).Preload("CourtType", "type = ?", courtType).Select(`
-        COUNT(CASE WHEN stars = 1 THEN 1 END),
-        COUNT(CASE WHEN stars = 2 THEN 1 END),
-        COUNT(CASE WHEN stars = 3 THEN 1 END),
-        COUNT(CASE WHEN stars = 4 THEN 1 END),
-        COUNT(CASE WHEN stars = 5 THEN 1 END)
+        COUNT(CASE WHEN rating = 1 THEN 1 END),
+        COUNT(CASE WHEN rating = 2 THEN 1 END),
+        COUNT(CASE WHEN rating = 3 THEN 1 END),
+        COUNT(CASE WHEN rating = 4 THEN 1 END),
+        COUNT(CASE WHEN rating = 5 THEN 1 END)
     `).
-		Where("vendor_id = ?", vendorID).Scan(&counts).Error
+		Where("vendor_id = ?", vendorID).Scan(&results).Error
 
 	// Return an error if any
 	if err != nil {
@@ -137,7 +155,13 @@ func (*ReviewRepository) GetStarCountsUsingVendorIDCourtType(vendorID uint, cour
 		return nil, err
 	}
 
-	return &counts, nil
+	return &types.StartCountsMap{
+		1: results.OneStar,
+		2: results.TwoStar,
+		3: results.ThreeStar,
+		4: results.FourStar,
+		5: results.FiveStar,
+	}, nil
 }
 
 // GetUsingVendorIDCourtType is a function that returns the reviews using the vendor ID and court type.

@@ -1,8 +1,8 @@
 package dto
 
 import (
+	"main/core/types"
 	"main/data/models"
-	"main/domain/entities"
 )
 
 // ReviewsResponseDTO is a struct that defines the reviews response DTO.
@@ -24,11 +24,11 @@ type ReviewsResponseDTO struct {
 //
 // rate: The total rating of the reviews.
 // reviewCount: The total number of reviews.
-// stars: The reviews stars DTO.
+// stars: The reviews stars map.
 // m: The slice of review models.
 //
 // Returns the reviews response DTO.
-func (r ReviewsResponseDTO) FromModels(rate float64, reviewCount int64, stars *entities.ReviewStarsCount, m *[]models.Review) *ReviewsResponseDTO {
+func (r ReviewsResponseDTO) FromModels(rate float64, reviewCount int64, stars *types.StartCountsMap, m *[]models.Review) *ReviewsResponseDTO {
 	// reviews is a slice of review DTOs
 	reviews := []ReviewDTO{}
 
@@ -41,7 +41,7 @@ func (r ReviewsResponseDTO) FromModels(rate float64, reviewCount int64, stars *e
 	return &ReviewsResponseDTO{
 		TotalRating:  rate,
 		ReviewsTotal: reviewCount,
-		Stars:        ReviewsStarsDTO{}.FromEntity(stars),
+		Stars:        ReviewsStarsDTO{}.FromMap(stars),
 		Reviews:      &reviews,
 	}
 }

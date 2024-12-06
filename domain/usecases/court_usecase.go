@@ -280,3 +280,16 @@ func (c *CourtUseCase) AddCourt(token *jwt.Token, courtType string) (*models.Cou
 
 	return newCourt, nil
 }
+
+// GetCurrentVendorCourtStats is a function that returns the current vendor court stats.
+//
+// token: The token.
+//
+// Returns the vendor court count as map and an error if any.
+func (c *CourtUseCase) GetCurrentVendorCourtStats(token *jwt.Token) (*types.CourtCountsMap, error) {
+	// Get the token claims
+	claims := c.AuthUseCase.DecodeToken(token)
+
+	// Get the court counts
+	return c.CourtRepository.GetCountsUsingVendorID(claims.Id)
+}

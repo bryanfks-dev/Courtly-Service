@@ -54,7 +54,7 @@ func (r *ReviewUseCase) GetCurrentVendorReviewCount(token *jwt.Token) (int64, er
 // token: The JWT token.
 //
 // Returns the star counts and an error if any.
-func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*entities.ReviewStarsCount, error) {
+func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*types.StartCountsMap, error) {
 	// Get the vendor ID from the token
 	claims := r.AuthUseCase.DecodeToken(token)
 
@@ -68,7 +68,7 @@ func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*entities.
 // reviewCount: The total number of reviews.
 //
 // Returns the total rating.
-func (r *ReviewUseCase) CalculateTotalRating(starCount *entities.ReviewStarsCount, reviewCount int64) float64 {
+func (r *ReviewUseCase) CalculateTotalRating(starCount *types.StartCountsMap, reviewCount int64) float64 {
 	// Check if there are no reviews
 	if reviewCount == 0 {
 		return 0
@@ -79,7 +79,7 @@ func (r *ReviewUseCase) CalculateTotalRating(starCount *entities.ReviewStarsCoun
 	// -----------------------------------------------------------------------------
 	//                           Total Reviews
 
-	return (float64(starCount.OneStar) + float64(2*starCount.TwoStars) + float64(3*starCount.ThreeStars) + float64(4*starCount.FourStars) + float64(5*starCount.FiveStars)) / float64(reviewCount)
+	return (float64((*starCount)[1]) + float64(2*(*starCount)[2]) + float64(3*(*starCount)[3]) + float64(4*(*starCount)[4]) + float64(5*(*starCount)[5])) / float64(reviewCount)
 }
 
 // GetCurrentVendorReviews is a use case that handles the request to get the current vendor's reviews.
@@ -114,7 +114,7 @@ func (r *ReviewUseCase) GetReviewCountUsingVendorIDCourtType(vendorID uint, cour
 // courtType: The type of the court.
 //
 // Returns the star counts and an error if any.
-func (r *ReviewUseCase) GetStarCountsUsingVendorIDCourtType(vendorID uint, courtType string) (*entities.ReviewStarsCount, error) {
+func (r *ReviewUseCase) GetStarCountsUsingVendorIDCourtType(vendorID uint, courtType string) (*types.StartCountsMap, error) {
 	// Get the star counts using the vendor ID and court type
 	return r.ReviewRepository.GetStarCountsUsingVendorIDCourtType(vendorID, courtType)
 }

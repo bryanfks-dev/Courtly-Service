@@ -323,3 +323,38 @@ func (co *CourtController) AddCourt(c echo.Context) error {
 		},
 	})
 }
+
+// GetCourtStats is a controller that handles the get court stats endpoint.
+// Endpoint: GET /courts/stats
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) GetCurrentVendorCourtStats(c echo.Context) error {
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the current vendor court stats
+	courtCounts, err := co.CourtUseCase.GetCurrentVendorCourtStats(cc.Token)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get current vendor court stats",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Success retrieve current vendor court stats",
+		Data: &dto.CurrentVendorCourtStatsResponseDTO{
+			FootballCourtCount:   (*courtCounts)[enums.Football.Label()],
+			BasketballCourtCount: (*courtCounts)[enums.Basketball.Label()],
+			TennisCourtCount:     (*courtCounts)[enums.Tennis.Label()],
+			VolleyballCourtCount: (*courtCounts)[enums.Volleyball.Label()],
+			BadmintonCourtCount:  (*courtCounts)[enums.Badminton.Label()],
+		},
+	})
+}

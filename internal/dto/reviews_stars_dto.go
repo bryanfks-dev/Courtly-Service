@@ -1,6 +1,6 @@
 package dto
 
-import "main/domain/entities"
+import "main/core/types"
 
 // ReviewsStarsDTO is a struct that defines the reviews stars DTO.
 type ReviewsStarsDTO struct {
@@ -20,17 +20,17 @@ type ReviewsStarsDTO struct {
 	FiveStars int `json:"5"`
 }
 
-// FromEntity is a function that converts a review stars count entity to a reviews stars DTO.
+// FromMap is a function that converts a review stars count map to a reviews stars DTO.
 //
-// e: The review stars count entity.
+// m: The review stars count map.
 //
 // Returns the reviews stars DTO.
-func (r ReviewsStarsDTO) FromEntity(e *entities.ReviewStarsCount) *ReviewsStarsDTO {
+func (r ReviewsStarsDTO) FromMap(m *types.StartCountsMap) *ReviewsStarsDTO {
 	return &ReviewsStarsDTO{
-		OneStar:    int(e.OneStar),
-		TwoStars:   int(e.TwoStars),
-		ThreeStars: int(e.ThreeStars),
-		FourStars:  int(e.FourStars),
-		FiveStars:  int(e.FiveStars),
+		OneStar:    int((*m)[1]),
+		TwoStars:   int((*m)[2]),
+		ThreeStars: int((*m)[3]),
+		FourStars:  int((*m)[4]),
+		FiveStars:  int((*m)[5]),
 	}
 }
