@@ -225,7 +225,7 @@ func (*ReviewRepository) GetUsingVendorIDCourtTypeRating(vendorID uint, courtTyp
 
 	// Return an error if any
 	if err != nil {
-		log.Println("Error getting reviews using vendor id and court type: " + err.Error())
+		log.Println("Error getting reviews using vendor id, court type, and rating: " + err.Error())
 
 		return nil, err
 	}
