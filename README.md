@@ -71,6 +71,12 @@ From the example, we can see there are 3 properties in the response body, which 
 - `"message"` - The message of the response, this could be either a success message, failed message, or error messages for inputs
 - `"data"` - The passed data to the frontend server. The data structure could be different for each endpoint response, so make sure to read the response carefully
 
+To see responses structure in details, please read this doc.
+
+---
+
+[![visit-docs](https://img.shields.io/badge/visit-response--docs-blue)](https://github.com/bryanfks-dev/Courtly-Service.git/docs/RESPONSES.md)
+
 ## Run Proccess
 
 To start the service, make sure to follow the steps below.
