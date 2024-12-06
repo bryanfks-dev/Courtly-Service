@@ -172,3 +172,26 @@ func (*BookingRepository) CheckUserHasBookCourt(userID uint, vendorID uint, cour
 
 	return count > 0, nil
 }
+
+// GetUsingVendorIDCourtType is a method that returns the bookings by the given vendor ID and court type.
+//
+// vendorID: The ID of the vendor.
+// courtType: The type of the court.
+//
+// Returns the bookings and an error if any.
+func (*BookingRepository) GetUsingVendorIDCourtType(vendorID uint, courtType string) (*[]models.Booking, error) {
+	// bookings is a placeholder for the bookings
+	var bookings []models.Booking
+
+	// Get the bookings using court type from the database
+	err := mysql.Conn.Preload("Court.CourtType", "type = ?", courtType).Where("vendor_id = ?", vendorID).Find(&bookings).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting bookings using vendor id and court type: " + err.Error())
+
+		return nil, err
+	}
+
+	return &bookings, nil
+}

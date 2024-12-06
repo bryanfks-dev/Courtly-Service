@@ -103,3 +103,16 @@ func (b *BookingUseCase) GetCurrentVendorRecentBookings(token *jwt.Token) (*[]mo
 
 	return b.BookingRepository.GetNLatestUsingVendorID(claims.Id, 3)
 }
+
+// GetCurrentVendorBookingsUsingCourtType is a use case that gets the current vendor bookings
+// by the court type.
+//
+// token: The JWT token
+//
+// Returns the bookings and an error if any
+func (b *BookingUseCase) GetCurrentVendorBookingsUsingCourtType(token *jwt.Token, courtType string) (*[]models.Booking, error) {
+	// Get the token claims
+	claims := b.AuthUseCase.DecodeToken(token)
+	
+	return b.BookingRepository.GetUsingVendorIDCourtType(claims.Id, courtType)
+}

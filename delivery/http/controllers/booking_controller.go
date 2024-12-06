@@ -81,8 +81,22 @@ func (b *BookingController) GetCurrentVendorOrders(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
+	// Get the court type from the query parameter
+	courtTypeParam := c.QueryParam("type")
+
+	// Placeholder for the bookings and error
+	var (
+		bookings *[]models.Booking
+		err      error
+	)
+
 	// Get the current vendor bookings
-	bookings, err := b.BookingUseCase.GetCurrentVendorBookings(cc.Token)
+	// Check if the court type is not empty
+	if utils.IsBlank(courtTypeParam) {
+		bookings, err = b.BookingUseCase.GetCurrentVendorBookings(cc.Token)
+	} else {
+		bookings, err = b.BookingUseCase.GetCurrentVendorBookingsUsingCourtType(cc.Token, courtTypeParam)
+	}
 
 	// Return an error if any
 	if err != nil {
