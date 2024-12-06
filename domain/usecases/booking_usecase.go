@@ -38,6 +38,21 @@ func (b *BookingUseCase) GetCurrentUserBookings(token *jwt.Token) (*[]models.Boo
 	return b.BookingRepository.GetUsingUserID(claims.Id)
 }
 
+// GetCurrentUserBookingsUsingCourtType is a use case that gets the current user bookings
+// by the court type.
+//
+// token: The JWT token
+// courtType: The court type
+//
+// Returns the bookings and an error if any
+func (b *BookingUseCase) GetCurrentUserBookingsUsingCourtType(token *jwt.Token, courtType string) (*[]models.Booking, error) {
+	// Get the token claims
+	claims := b.AuthUseCase.DecodeToken(token)
+
+	// Get the bookings from the database
+	return b.BookingRepository.GetUsingUserIDCourtType(claims.Id, courtType)
+}
+
 // GetVendorBookings is a use case that gets the vendor bookings
 // by the vendor ID.
 //

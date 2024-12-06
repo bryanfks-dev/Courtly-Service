@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
+	"main/pkg/utils"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -35,8 +37,22 @@ func (b *BookingController) GetCurrentUserBookings(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
-	// Get the current user
-	bookings, err := b.BookingUseCase.GetCurrentUserBookings(cc.Token)
+	// Get the court type from the query parameter
+	courtTypeParam := c.QueryParam("type")
+
+	// Placeholder for the bookings and error
+	var (
+		bookings *[]models.Booking
+		err      error
+	)
+
+	// Get the current user bookings
+	// Check if the court type is not empty
+	if utils.IsBlank(courtTypeParam) {
+		bookings, err = b.BookingUseCase.GetCurrentUserBookings(cc.Token)
+	} else {
+		bookings, err = b.BookingUseCase.GetCurrentUserBookingsUsingCourtType(cc.Token, courtTypeParam)
+	}
 
 	// Return an error if any
 	if err != nil {

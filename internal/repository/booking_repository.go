@@ -40,6 +40,23 @@ func (*BookingRepository) GetUsingUserID(userID uint) (*[]models.Booking, error)
 	return &bookings, nil
 }
 
+func (*BookingRepository) GetUsingUserIDCourtType(userID uint, courtType string) (*[]models.Booking, error) {
+	// bookings is a placeholder for the bookings
+	var bookings []models.Booking
+
+	// Get the bookings using court type from the database
+	err := mysql.Conn.Preload("Court.CourtType", "type = ?", courtType).Where("user_id = ?", userID).Find(&bookings).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting bookings using user id and court type: " + err.Error())
+
+		return nil, err
+	}
+
+	return &bookings, nil
+}
+
 // GetUsingVendorID is a method that returns the bookings by the given vendor ID.
 //
 // vendorID: The ID of the vendor.
