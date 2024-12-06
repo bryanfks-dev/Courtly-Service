@@ -11,7 +11,7 @@ type ReviewsResponseDTO struct {
 	TotalRating float64 `json:"total_rating"`
 
 	// ReviewsTotal is the total number of reviews
-	ReviewsTotal int `json:"reviews_total"`
+	ReviewsTotal int64 `json:"reviews_total"`
 
 	// Stars is the reviews stars DTO
 	Stars *ReviewsStarsDTO `json:"stars"`
@@ -28,7 +28,7 @@ type ReviewsResponseDTO struct {
 // m: The slice of review models.
 //
 // Returns the reviews response DTO.
-func (r ReviewsResponseDTO) FromModels(rate float64, reviewCount int, stars *entities.ReviewStarsCount, m *[]models.Review) *ReviewsResponseDTO {
+func (r ReviewsResponseDTO) FromModels(rate float64, reviewCount int64, stars *entities.ReviewStarsCount, m *[]models.Review) *ReviewsResponseDTO {
 	// reviews is a slice of review DTOs
 	reviews := []ReviewDTO{}
 

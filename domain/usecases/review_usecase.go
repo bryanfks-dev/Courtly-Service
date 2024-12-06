@@ -286,3 +286,18 @@ func (r *ReviewUseCase) GetReviewsUsingVendorIDCourtTypeRating(vendorID uint, co
 	// Get the reviews using the vendor ID, court type, and rating
 	return r.ReviewRepository.GetUsingVendorIDCourtTypeRating(vendorID, courtType, rating)
 }
+
+// GetCurrentVendorReviewsUsingRating is a use case that handles the request to get the current vendor's
+// reviews using the rating.
+//
+// token: The JWT token.
+// rating: The rating of the review.
+//
+// Returns the reviews and an error if any.
+func (r *ReviewUseCase) GetCurrentVendorReviewsUsingRating(token *jwt.Token, rating int) (*[]models.Review, error) {
+	// Get the vendor ID from the token
+	claims := r.AuthUseCase.DecodeToken(token)
+
+	// Get the reviews using the vendor ID and rating
+	return r.ReviewRepository.GetUsingVendorIDRating(claims.Id, rating)
+}

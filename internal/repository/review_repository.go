@@ -232,3 +232,26 @@ func (*ReviewRepository) GetUsingVendorIDCourtTypeRating(vendorID uint, courtTyp
 
 	return &reviews, err
 }
+
+// GetUsingVendorIDRating is a function that returns the reviews using the vendor ID and rating.
+//
+// vendorID: The vendor ID.
+// rating: The rating.
+//
+// Returns the reviews and an error if any.
+func (*ReviewRepository) GetUsingVendorIDRating(vendorID uint, rating int) (*[]models.Review, error) {
+	// reviews is a slice of maps containing the reviews of the court
+	var reviews []models.Review
+
+	// Get the reviews using the vendor ID and court type
+	err := mysql.Conn.Where("vendor_id = ? AND rating = ?", vendorID, rating).Find(&reviews).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting reviews using vendor id and rating: " + err.Error())
+
+		return nil, err
+	}
+
+	return &reviews, err
+}

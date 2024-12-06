@@ -83,7 +83,7 @@ func (r *ReviewController) GetCourtTypeReviews(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 				Success: false,
-				Message: "Invalid star query parameter",
+				Message: "Invalid rating query parameter",
 				Data:    nil,
 			})
 		}
@@ -202,7 +202,7 @@ func (r *ReviewController) GetCourtTypeReviews(c echo.Context) error {
 		Message: "Reviews retrieved successfully",
 		Data: dto.ReviewsResponseDTO{}.FromModels(
 			r.ReviewUseCase.CalculateTotalRating(starCounts, reviewCount),
-			int(reviewCount),
+			reviewCount,
 			starCounts,
 			reviews,
 		),
@@ -220,16 +220,46 @@ func (r *ReviewController) GetCurrentVendorReviews(c echo.Context) error {
 	// Get custom context
 	cc := c.(*dto.CustomContext)
 
+	// Get the rating query parameter
+	ratingParam := c.QueryParam("rating")
+
+	// Create a new rating and error variable
+	var (
+		rating int
+		err    error
+	)
+
+	// Check if the rating query parameter is empty
+	if !utils.IsBlank(ratingParam) {
+		// Convert the rating query parameter to an integer
+		rating, err = strconv.Atoi(ratingParam)
+
+		// Check if the star query parameter is invalid
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+				Success: false,
+				Message: "Invalid rating query parameter",
+				Data:    nil,
+			})
+		}
+
+		// Validate the rating parameter
+		if !r.ReviewUseCase.ValidateRatingParam(rating) {
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+				Success: false,
+				Message: "Invalid rating parameter",
+				Data:    nil,
+			})
+		}
+	}
+
 	// Create a new context with a cancel function
 	_, cancel := context.WithCancel(context.Background())
 
 	defer cancel()
 
-	// Create a new wait group for concurrency and error
-	var (
-		wg  sync.WaitGroup
-		err error
-	)
+	// Create a new wait group for concurrency
+	var wg sync.WaitGroup
 
 	// Create review count, star counts and reviews
 	var (
@@ -290,8 +320,13 @@ func (r *ReviewController) GetCurrentVendorReviews(c echo.Context) error {
 		defer wg.Done()
 
 		// Get the reviews
-		reviews, err =
-			r.ReviewUseCase.GetCurrentVendorReviews(cc.Token)
+		// Check if the rating query parameter is empty
+		if utils.IsBlank(ratingParam) {
+			reviews, err =
+				r.ReviewUseCase.GetCurrentVendorReviews(cc.Token)
+		} else {
+			reviews, err = r.ReviewUseCase.GetCurrentVendorReviewsUsingRating(cc.Token, rating)
+		}
 
 		// Check if there is an error
 		if err != nil {
@@ -318,7 +353,7 @@ func (r *ReviewController) GetCurrentVendorReviews(c echo.Context) error {
 		Message: "Vendor reviews retrieved successfully",
 		Data: dto.ReviewsResponseDTO{}.FromModels(
 			r.ReviewUseCase.CalculateTotalRating(starCounts, reviewCount),
-			int(reviewCount),
+			reviewCount,
 			starCounts,
 			reviews,
 		),
