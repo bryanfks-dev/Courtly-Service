@@ -33,7 +33,7 @@ Endpoint uses for sign user with an existing account.
 }
 ```
 
-> message field possibly return a string or a map of string (likely a form error)
+> **message** field possibly return a string or a map of string (likely a form error)
 
 #### Possible HTTP status codes
 
@@ -74,7 +74,7 @@ Endpoint uses to register a new user account.
 }
 ```
 
-> message field possibly return a string or a map of string (likely a form error)
+> **message** field possibly return a string or a map of string (likely a form error)
 
 #### Possible HTTP status codes
 
@@ -174,7 +174,7 @@ Endpoint uses to verify current user password.
 }
 ```
 
-> message field possibly return a string or a map of string (likely a form error)
+> **message** field possibly return a string or a map of string (likely a form error)
 
 #### Possible HTTP status codes
 
@@ -249,7 +249,7 @@ Endpoint uses to verify current vendor password.
 }
 ```
 
-> message field possibly return a string or a map of string (likely a form error)
+> **message** field possibly return a string or a map of string (likely a form error)
 
 #### Possible HTTP status codes
 
@@ -291,7 +291,7 @@ Endpoint uses to sign vendor with an existing account.
 }
 ```
 
-> message field possibly return a string or a map of string (likely a form error)
+> **message** field possibly return a string or a map of string (likely a form error)
 
 #### Possible HTTP status codes
 

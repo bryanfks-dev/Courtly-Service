@@ -68,7 +68,7 @@ Endpoint uses to update user password with a new password.
 }
 ```
 
-> message field possibly return a string or a map of string (likely a form error)
+> **message** field possibly return a string or a map of string (likely a form error)
 
 #### Possible HTTP status codes
 
@@ -106,7 +106,7 @@ Endpoint uses to update user username with a new available username.
 }
 ```
 
-> message field possibly return a string or a map of string (likely a form error)
+> **message** field possibly return a string or a map of string (likely a form error)
 
 #### Possible HTTP status codes
 
