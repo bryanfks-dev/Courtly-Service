@@ -10,7 +10,7 @@ Endpoint uses for sign user with an existing account.
 
 ```json
 {
-  "username": ""..".",
+  "username": "...",
   "password": "..."
 }
 ```
@@ -50,7 +50,7 @@ Endpoint uses to register a new user account.
 
 ```json
 {
-  "username": ""..".",
+  "username": "...",
   "phone_number": "...",
   "password": "...",
   "confirm_password": "..."
