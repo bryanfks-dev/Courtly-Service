@@ -1,6 +1,6 @@
 # AUTH RESPONSE
 
-This doc will explain auth endpoints response in details.
+This doc will explain auth endpoints in details.
 
 ### **POST** `/api/v1/auth/user/login`
 
