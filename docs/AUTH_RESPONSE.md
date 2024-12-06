@@ -10,7 +10,7 @@ Endpoint uses for sign user with an existing account.
 
 ```json
 {
-  "username": "...",
+  "username": ""..".",
   "password": "..."
 }
 ```
@@ -24,7 +24,7 @@ Endpoint uses for sign user with an existing account.
   "data": {
     "user": {
       "id": ...,
-      "username": ...,
+      "username": "...",
       "phone_number": "...",
       "profile_picture_url": "..."
     },
@@ -50,7 +50,7 @@ Endpoint uses to register a new user account.
 
 ```json
 {
-  "username": "...",
+  "username": ""..".",
   "phone_number": "...",
   "password": "...",
   "confirm_password": "..."
@@ -66,7 +66,7 @@ Endpoint uses to register a new user account.
   "data": {
     "user": {
       "id": ...,
-      "username": ...,
+      "username": "...",
       "phone_number": "...",
       "profile_picture_url": "..."
     }
@@ -166,7 +166,7 @@ Endpoint uses to verify current user password.
   "data": {
     "user": {
       "id": ...,
-      "username": ...,
+      "username": "...",
       "phone_number": "...",
       "profile_picture_url": "..."
     }
@@ -239,7 +239,7 @@ Endpoint uses to verify current vendor password.
   "data": {
     "vendor": {
       "id": ...,
-      "name": ...,
+      "name": "...",
       "email": "...",
       "address": "...",
       "open_time": "...",
@@ -280,7 +280,7 @@ Endpoint uses to sign vendor with an existing account.
   "data": {
     "vendor": {
       "id": ...,
-      "name": ...,
+      "name": "...",
       "email": "...",
       "address": "...",
       "open_time": "...",
