@@ -22,7 +22,7 @@ This doc will explains each endpoint in details, like request body needed, respo
 
 ---
 
-[![booking-response-doc](https://img.shields.io/badge/visit-booking--response--doc-purple)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/USER_RESPONSE.md)
+[![booking-response-doc](https://img.shields.io/badge/visit-booking--response--doc-purple)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/BOOKING_RESPONSE.md)
 
 ### Orders endpoints
 
