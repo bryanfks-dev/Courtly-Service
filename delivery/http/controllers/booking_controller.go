@@ -101,7 +101,7 @@ func (b *BookingController) GetCurrentVendorOrders(c echo.Context) error {
 	)
 
 	// Check if the court type is not empty
-	if utils.IsBlank(courtTypeParam) && enums.InCourtType(courtTypeParam) {
+	if !utils.IsBlank(courtTypeParam) && enums.InCourtType(courtTypeParam) {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid court type",
