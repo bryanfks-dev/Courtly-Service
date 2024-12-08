@@ -40,7 +40,7 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 	courtType := c.QueryParam("type")
 
 	// Return an error if the court type is invalid
-	if utils.IsBlank(courtType) && !enums.InCourtType(courtType) {
+	if !utils.IsBlank(courtType) && !enums.InCourtType(courtType) {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid court type",
@@ -129,7 +129,7 @@ func (co *CourtController) GetCourtsUsingCourtType(c echo.Context) error {
 	courtType := c.Param("type")
 
 	// Return an error if the court type is invalid
-	if !co.CourtUseCase.ValidateCourtType(courtType) {
+	if !enums.InCourtType(courtType) {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid court type",

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"main/core/enums"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"main/pkg/utils"
@@ -14,7 +15,6 @@ import (
 // ReviewController is a struct that defines the ReviewController
 type ReviewController struct {
 	ReviewUseCase *usecases.ReviewUseCase
-	CourtUseCase  *usecases.CourtUseCase
 }
 
 // NewReviewController is a factory function that returns a new instance of the ReviewController.
@@ -22,10 +22,9 @@ type ReviewController struct {
 // r: The review use case.
 //
 // Returns a new instance of the ReviewController.
-func NewReviewController(r *usecases.ReviewUseCase, c *usecases.CourtUseCase) *ReviewController {
+func NewReviewController(r *usecases.ReviewUseCase) *ReviewController {
 	return &ReviewController{
 		ReviewUseCase: r,
-		CourtUseCase:  c,
 	}
 }
 
@@ -56,7 +55,7 @@ func (r *ReviewController) GetCourtTypeReviews(c echo.Context) error {
 	courtType := c.Param("type")
 
 	// Validate the court type
-	if !r.CourtUseCase.ValidateCourtType(courtType) {
+	if !enums.InCourtType(courtType) {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid court type",
