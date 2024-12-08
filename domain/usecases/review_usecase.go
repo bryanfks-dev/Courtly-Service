@@ -73,7 +73,7 @@ func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*types.Sta
 func (r *ReviewUseCase) CalculateTotalRating(starCount *types.StarCountsMap, reviewCount int64) float64 {
 	// Check if there are no reviews
 	if reviewCount == 0 {
-		return 0
+		return 0.0
 	}
 
 	// Formula to calculate the total rating:
@@ -338,6 +338,9 @@ func (r *ReviewUseCase) GetCourtTypeReviews(vendorID uint, courtType string, rat
 		return nil, err
 	}
 
+	// Calculate the total rating
+	reviews["total_rating"] = r.CalculateTotalRating(reviews["star_counts"].(*types.StarCountsMap), reviews["reviews_total"].(int64))
+
 	return &reviews, err
 }
 
@@ -454,6 +457,9 @@ func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token, rating *int) (
 	if err != nil {
 		return nil, err
 	}
+
+	// Calculate the total rating
+	reviews["total_rating"] = r.CalculateTotalRating(reviews["star_counts"].(*types.StarCountsMap), reviews["reviews_total"].(int64))
 
 	return &reviews, nil
 }

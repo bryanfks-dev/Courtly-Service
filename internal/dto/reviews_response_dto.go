@@ -27,10 +27,10 @@ type ReviewsResponseDTO struct {
 // Returns a pointer to the reviews response DTO.
 func (r ReviewsResponseDTO) FromMap(m *types.CourtReviewsMap) *ReviewsResponseDTO {
 	// Create a slice of review DTOs
-	var dto []ReviewDTO
+	dto := []ReviewDTO{}
 
 	// Convert the reviews to review DTOs
-	for _, review := range (*m)["reviews"].([]models.Review) {
+	for _, review := range *(*m)["reviews"].(*[]models.Review) {
 		dto = append(dto, *ReviewDTO{}.FromModel(&review))
 	}
 
