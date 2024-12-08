@@ -18,6 +18,8 @@ This doc will explains each endpoint in details, like request body needed, respo
 
 ---
 
+[![vendor-response-doc](https://img.shields.io/badge/visit-vendor--response--doc-lime)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/VENDOR_RESPONSE.md)
+
 ### Booking endpoints
 
 ---
@@ -28,7 +30,7 @@ This doc will explains each endpoint in details, like request body needed, respo
 
 ---
 
-[![orders-response-doc](https://img.shields.io/badge/visit-orders--response--doc-pinkW)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/ORDERS_RESPONSE.md)
+[![orders-response-doc](https://img.shields.io/badge/visit-orders--response--doc-pink)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/ORDERS_RESPONSE.md)
 
 ### Courts endpoints
 
