@@ -92,11 +92,6 @@ func NewServer() (*echo.Echo, error) {
 
 	courtPrefix.GET("", c.CourtController.GetCourts)
 
-	// Courts types endpoints
-	courtTypesPrefix := courtPrefix.Group("/types")
-
-	courtTypesPrefix.GET("/:type", c.CourtController.GetCourtsUsingCourtType)
-
 	// Selected court endpoints
 	selectedCourtPrefix := courtPrefix.Group("/:id")
 

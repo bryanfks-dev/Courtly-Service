@@ -58,9 +58,84 @@ Endpoint uses to get all available courts from database.
 - `400 BAD REQUEST`: when court type is invalid
 - `500 INTERNAL SERVER ERROR`: when fails to get courts
 
-### **PATCH** `/api/v1/vendors/me/password`
+### **GET** `/api/v1/courts/:id`
 
-Endpoint uses to update vendor password with a new password.
+Endpoint uses to get court finromation from the database using court id.
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "court": {
+      "id": ...,
+      "name": "...",
+      "vendor": {
+        "id": ...,
+        "name": "...",
+        "address": "...",
+        "open_time": "...",
+        "close_time": "..."
+      },
+      "type": "...",
+      "price": ...,
+      "image_url": "..."
+    }
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response success
+- `400 BAD REQUEST`: when court id is invalid
+- `500 INTERNAL SERVER ERROR`: when fails getting court using id
+
+### GET `/api/v1/vendors/me/courts/types/:type`
+
+Endpoint uses to get current vendor courts using court type from database.
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "courts": [{
+      "id": ...,
+      "name": "...",
+      "type": "...",
+      "price": ...,
+      "image_url": "..."
+    },
+    {...},
+    {...},
+    ...
+    ]
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response success
+- `400 BAD REQUEST`: when court type is invalid
+- `500 INTERNAL SERVER ERROR`: when fails getting courts using court type
+
+### **POST** `/api/v1/vendors/me/courts/types/:type/new`
+
+Endpoint uses to create a new court for a court type.
 
 #### Request header needed
 
@@ -74,9 +149,8 @@ Endpoint uses to update vendor password with a new password.
 
 ```json
 {
-  "old_password": "...",
-  "new_password": "...",
-  "confirm_password": "..."
+  "price_per_hour": ...,
+  "court_image": "..."
 }
 ```
 
@@ -86,7 +160,15 @@ Endpoint uses to update vendor password with a new password.
 {
   "success": ...,
   "message": "...",
-  "data": null
+  "data": {
+    "court": {
+      "id": ...,
+      "name": "...",
+      "type": "...",
+      "price": ...,
+      "image_url": "..."
+    }
+  }
 }
 ```
 
@@ -95,5 +177,76 @@ Endpoint uses to update vendor password with a new password.
 #### Possible HTTP status codes
 
 - `200 OK`: when response success
-- `400 BAD REQUEST`: when either fails to validate request body or old password is invalid or new password and cofirm password not match
-- `500 INTERNAL SERVER ERROR`: when either fails getting vendor or fails hashing password or fails updating vendor password
+- `400 BAD REQUEST`: when either court type is invalid or fails to validate request body
+- `403 FORBIDDEN`: when a vendor with current court type already exists
+- `500 INTERNAL SERVER ERROR`: when either fails to check if court exists in current court type or fails to decode court image or fails to save court image or fails to create new court
+
+### **POST** `/api/v1/vendors/me/courts/types/:type`
+
+Endpoint uses to create a new court for a court type from the existing court.
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "court": {
+      "id": ...,
+      "name": "...",
+      "type": "...",
+      "price": ...,
+      "image_url": "..."
+    }
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response success
+- `400 BAD REQUEST`: when court type is invalid
+- `403 FORBIDDEN`: when a vendor with current court type is not exists
+- `500 INTERNAL SERVER ERROR`: when either fails to check if court exists in current court type or fails to create new court
+
+### **GET** `/api/v1/vendors/me/courts/stats`
+
+Endpoint uses to get current vendor courts stats from database.
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "football_court_count": ...,
+    "basketball_court_count": ...,
+    "tennis_court_count": ...,
+    "volleyball_court_count": ...,
+    "badminton_court_count": ...
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response success
+- `500 INTERNAL SERVER ERROR`: when fails to get vendor courts stats
