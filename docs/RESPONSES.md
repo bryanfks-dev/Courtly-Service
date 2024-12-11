@@ -6,7 +6,7 @@ This doc will explains each endpoint in details, like request body needed, respo
 
 ---
 
-[![auth-response-doc](https://img.shields.io/badge/visit-auth--response--doc-green)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/AUTH_RESPONSE.md)
+[![auth-response-doc](https://img.shields.io/badge/visit-auth--response--doc-default)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/AUTH_RESPONSE.md)
 
 ### Users endpoints
 
@@ -18,7 +18,7 @@ This doc will explains each endpoint in details, like request body needed, respo
 
 ---
 
-[![vendor-response-doc](https://img.shields.io/badge/visit-vendor--response--doc-lime)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/VENDOR_RESPONSE.md)
+[![vendor-response-doc](https://img.shields.io/badge/visit-vendor--response--doc-silver)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/VENDOR_RESPONSE.md)
 
 ### Booking endpoints
 
@@ -36,8 +36,10 @@ This doc will explains each endpoint in details, like request body needed, respo
 
 ---
 
+[![courts-response-doc](https://img.shields.io/badge/visit-courts--response--doc-white)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/COURTS_RESPONSE.md)
+
 ### Reviews endpoints
 
 ---
 
-[![reviews-response-doc](https://img.shields.io/badge/visit-reviews--response--doc-yellow)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/REVIEWS_RESPONSE.md)
+[![reviews-response-doc](https://img.shields.io/badge/visit-reviews--response--doc-gold)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/REVIEWS_RESPONSE.md)

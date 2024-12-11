@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"main/core/constants"
-	"main/core/enums"
 	"main/core/types"
 	"main/data/models"
 	"main/domain/entities"
@@ -53,15 +52,6 @@ func (c *CourtUseCase) GetCourts() (*[]models.Court, error) {
 func (c *CourtUseCase) GetCourtUsingID(courtID uint) (*models.Court, error) {
 	// Get the courts
 	return c.CourtRepository.GetUsingID(courtID)
-}
-
-// ValidateCourtType is a function that validates the court type.
-//
-// courtType: The court type.
-//
-// Returns true if the court type is valid.
-func (c *CourtUseCase) ValidateCourtType(courtType string) bool {
-	return enums.InCourtType(courtType)
 }
 
 // GetCourtsUsingCourtType is a function that returns the courts using the court type.
