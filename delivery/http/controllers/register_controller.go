@@ -85,6 +85,8 @@ func (r RegisterController) UserRegister(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "User registered successfully",
-		Data:    dto.CurrentUserDTO{}.FromModel(user),
+		Data: dto.CurrentUserResponseDTO{
+			User: dto.CurrentUserDTO{}.FromModel(user),
+		},
 	})
 }
