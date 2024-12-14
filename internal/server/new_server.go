@@ -52,7 +52,7 @@ func NewServer() (*echo.Echo, error) {
 	userAuthPrefix.POST("/register", c.RegisterController.UserRegister)
 	userAuthPrefix.POST("/login", c.LoginController.UserLogin)
 	userAuthPrefix.POST("/verify-password", c.VerifyPasswordController.UserVerifyPassword, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
-	userAuthPrefix.POST("/logout", c.LogoutController.UserLogout, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.VendorMiddleware.Shield)
+	userAuthPrefix.POST("/logout", c.LogoutController.UserLogout, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.UserMiddleware.Shield)
 
 	// Vendor Auth endpoints
 	vendorAuthPrefix := authPrefix.Group("/vendor")
