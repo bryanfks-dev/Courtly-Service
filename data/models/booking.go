@@ -1,7 +1,7 @@
 package models
 
 import (
-	"main/core/types"
+	"main/core/shared"
 )
 
 // Booking is the model for the booking table.
@@ -26,11 +26,11 @@ type Booking struct {
 	Court   Court `gorm:"foreignKey:CourtID"`
 
 	// Date is the date of the book was created.
-	Date types.DateOnly `gorm:"autoCreateTime;type:DATE"`
+	Date shared.DateOnly `gorm:"autoCreateTime;type:DATE"`
 
 	//	BookStartTime is the start time of the book.
-	BookStartTime types.TimeOnly `gorm:"not null"`
+	BookStartTime shared.TimeOnly `gorm:"not null"`
 
 	// BookEndTime is the end time of the book.
-	BookEndTime types.TimeOnly `gorm:"not null"`
+	BookEndTime shared.TimeOnly `gorm:"not null"`
 }

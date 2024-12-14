@@ -27,6 +27,7 @@ type CourtUseCase struct {
 //
 // a: The auth use case.
 // c: The court repository.
+// r: The review repository.
 //
 // Returns a new instance of the CourtUseCase.
 func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository) *CourtUseCase {
@@ -38,10 +39,9 @@ func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository) *CourtUseCas
 
 // GetCourts is a function that returns the courts.
 //
-// Returns the courts and an error if any.
-func (c *CourtUseCase) GetCourts() (*[]models.Court, error) {
-	// Get the courts
-	return c.CourtRepository.GetAll()
+// Returns the court maps and an error if any.
+func (c *CourtUseCase) GetCourts() (*[]types.CourtMap, error) {
+	return c.CourtRepository.GetAllWithTotalRating()
 }
 
 // GetCourtUsingID is a function that returns the court using the court ID.
@@ -49,18 +49,18 @@ func (c *CourtUseCase) GetCourts() (*[]models.Court, error) {
 // courtID: The court ID.
 //
 // Returns the court and an error if any.
-func (c *CourtUseCase) GetCourtUsingID(courtID uint) (*models.Court, error) {
-	// Get the courts
-	return c.CourtRepository.GetUsingID(courtID)
+func (c *CourtUseCase) GetCourtUsingID(courtID uint) (*types.CourtMap, error) {
+	// Get court with total rating using id
+	return c.CourtRepository.GetWithTotalRatingUsingID(courtID)
 }
 
 // GetCourtsUsingCourtType is a function that returns the courts using the court type.
 //
 // courtType: The court type.
 //
-// Returns the courts and an error if any.
-func (c *CourtUseCase) GetCourtsUsingCourtType(courtType string) (*[]models.Court, error) {
-	return c.CourtRepository.GetUsingCourtType(courtType)
+// Returns the court maps and an error if any.
+func (c *CourtUseCase) GetCourtsUsingCourtType(courtType string) (*[]types.CourtMap, error) {
+	return c.CourtRepository.GetWithTotalRatingUsingCourtType(courtType)
 }
 
 // GetCurrentVendorCourtsUsingCourtType is a function that returns the current vendor courts

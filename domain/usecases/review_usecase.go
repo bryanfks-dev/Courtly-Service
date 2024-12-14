@@ -7,6 +7,7 @@ import (
 	"main/domain/entities"
 	"main/internal/dto"
 	"main/internal/repository"
+	"main/pkg/utils"
 	"strings"
 	"sync"
 
@@ -62,26 +63,6 @@ func (r *ReviewUseCase) GetCurrentVendorStarCounts(token *jwt.Token) (*types.Sta
 
 	// Get the star counts using the vendor ID
 	return r.ReviewRepository.GetStarCountsUsingVendorID(claims.Id)
-}
-
-// CalculateTotalRating is a function that calculates the total rating of the reviews.
-//
-// starCount: The star count of the reviews.
-// reviewCount: The total number of reviews.
-//
-// Returns the total rating.
-func (r *ReviewUseCase) CalculateTotalRating(starCount *types.StarCountsMap, reviewCount int64) float64 {
-	// Check if there are no reviews
-	if reviewCount == 0 {
-		return 0.0
-	}
-
-	// Formula to calculate the total rating:
-	// (1 * OneStar + 2 * TwoStars + 3 * ThreeStars + 4 * FourStars + 5 * FiveStars)
-	// -----------------------------------------------------------------------------
-	//                           Total Reviews
-
-	return (float64((*starCount)[1]) + float64(2*(*starCount)[2]) + float64(3*(*starCount)[3]) + float64(4*(*starCount)[4]) + float64(5*(*starCount)[5])) / float64(reviewCount)
 }
 
 // SanitizeCreateReviewForm is a use case that sanitizes the create review form.
@@ -339,7 +320,7 @@ func (r *ReviewUseCase) GetCourtTypeReviews(vendorID uint, courtType string, rat
 	}
 
 	// Calculate the total rating
-	reviews["total_rating"] = r.CalculateTotalRating(reviews["star_counts"].(*types.StarCountsMap), reviews["reviews_total"].(int64))
+	reviews["total_rating"] = utils.CalculateTotalRating(reviews["star_counts"].(*types.StarCountsMap), reviews["reviews_total"].(int64))
 
 	return &reviews, err
 }
@@ -459,7 +440,7 @@ func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token, rating *int) (
 	}
 
 	// Calculate the total rating
-	reviews["total_rating"] = r.CalculateTotalRating(reviews["star_counts"].(*types.StarCountsMap), reviews["reviews_total"].(int64))
+	reviews["total_rating"] = utils.CalculateTotalRating(reviews["star_counts"].(*types.StarCountsMap), reviews["reviews_total"].(int64))
 
 	return &reviews, nil
 }

@@ -1,11 +1,33 @@
 package dto
 
-import "main/data/models"
+import (
+	"main/core/types"
+	"main/data/models"
+)
 
 // CourtsResponseDTO is a struct that defines the court response data transfer object.
 type CourtsResponseDTO struct {
 	// Courts is the list of courts.
 	Courts *[]CourtDTO `json:"courts"`
+}
+
+// FromCourtMaps is a function that converts court maps to court response DTOs.
+//
+// m: The court maps.
+//
+// Returns a new instance of the CourtsResponseDTO.
+func (c CourtsResponseDTO) FromCourtMaps(m *[]types.CourtMap) *CourtsResponseDTO {
+	// Create a new court response DTO
+	courts := []CourtDTO{}
+
+	// Loop through the court maps
+	for _, courtMap := range *m {
+		courts = append(courts, *CourtDTO{}.FromCourtMap(&courtMap))
+	}
+
+	return &CourtsResponseDTO{
+		Courts: &courts,
+	}
 }
 
 // FromModels is a function that converts court models to court response DTOs.

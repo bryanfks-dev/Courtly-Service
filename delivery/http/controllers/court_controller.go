@@ -3,7 +3,7 @@ package controllers
 import (
 	"log"
 	"main/core/enums"
-	"main/data/models"
+	"main/core/types"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"main/pkg/utils"
@@ -50,15 +50,15 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 
 	// Create a variable to store the courts
 	var (
-		courts *[]models.Court
-		err    error
+		courtMaps *[]types.CourtMap
+		err       error
 	)
 
 	// Get the courts
 	if utils.IsBlank(courtType) {
-		courts, err = co.CourtUseCase.GetCourts()
+		courtMaps, err = co.CourtUseCase.GetCourts()
 	} else {
-		courts, err = co.CourtUseCase.GetCourtsUsingCourtType(courtType)
+		courtMaps, err = co.CourtUseCase.GetCourtsUsingCourtType(courtType)
 	}
 
 	// Return an error if any
@@ -73,11 +73,12 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve courts",
-		Data:    dto.CourtsResponseDTO{}.FromCourtModels(courts),
+		Data:    dto.CourtsResponseDTO{}.FromCourtMaps(courtMaps),
 	})
 }
 
 // GetCourtUsingID is a controller that handles the get court using ID endpoint.
+// Endpoint: GET /courts/:id
 //
 // c: The echo context.
 //
@@ -98,8 +99,8 @@ func (co *CourtController) GetCourtUsingID(c echo.Context) error {
 		})
 	}
 
-	// Get the courts
-	court, err := co.CourtUseCase.GetCourtUsingID(uint(courtID))
+	// Get the court map using the court ID
+	courtMap, err := co.CourtUseCase.GetCourtUsingID(uint(courtID))
 
 	// Return an error if any
 	if err != nil {
@@ -114,7 +115,7 @@ func (co *CourtController) GetCourtUsingID(c echo.Context) error {
 		Success: true,
 		Message: "Success retrieve court",
 		Data: dto.CourtResponseDTO{
-			Court: dto.CourtDTO{}.FromModel(court), // Return the first court
+			Court: dto.CourtDTO{}.FromCourtMap(courtMap), // Return the first court
 		},
 	})
 }

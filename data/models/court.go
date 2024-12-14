@@ -8,11 +8,11 @@ type Court struct {
 	ID uint `gorm:"primaryKey;autoIncrement"`
 
 	// VendorID is the foreign key of the vendor.
-	VendorID uint `gorm:"not null;index"`
+	VendorID uint   `gorm:"not null;index"`
 	Vendor   Vendor `gorm:"foreignKey:VendorID"`
 
 	// CourtTypeID is the foreign key of the court type.
-	CourtTypeID uint `gorm:"not null;index"`
+	CourtTypeID uint      `gorm:"not null;index"`
 	CourtType   CourtType `gorm:"foreignKey:CourtTypeID"`
 
 	// Name is the name of the court.
@@ -29,4 +29,7 @@ type Court struct {
 
 	// UpdatedAt is the time when the court was updated.
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+
+	// Reviews is the list of reviews that have the court.
+	Reviews []Review `gorm:"foreignKey:CourtTypeID"`
 }
