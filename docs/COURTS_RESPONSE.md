@@ -43,6 +43,7 @@ Endpoint uses to get all available courts from database.
         "type": "...",
         "price": ...,
         "image_url": "...",
+        "rating": ...,
       },
       {...},
       {...},
@@ -81,7 +82,8 @@ Endpoint uses to get court finromation from the database using court id.
       },
       "type": "...",
       "price": ...,
-      "image_url": "..."
+      "image_url": "...",
+      "rating": ...,
     }
   }
 }

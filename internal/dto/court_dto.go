@@ -70,5 +70,6 @@ func (c CourtDTO) FromCourtMap(m *types.CourtMap) *CourtDTO {
 		Type:     court.CourtType.Type,
 		Price:    court.Price,
 		ImageUrl: courtImagePath,
+		Rating:   m.GetTotalRating(),
 	}
 }
