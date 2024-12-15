@@ -21,6 +21,7 @@ Endpoint uses to get all available courts from database.
 > **search** query parameter should contains the vendor name to search courts based on vendor name
 
 To use multiple query parameter in a place, use this format:
+
 ```js
 ?type=...&search=...
 ```
