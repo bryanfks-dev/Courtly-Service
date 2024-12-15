@@ -39,9 +39,25 @@ func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository) *CourtUseCas
 
 // GetCourts is a function that returns the courts.
 //
-// Returns the court maps and an error if any.
-func (c *CourtUseCase) GetCourts() (*[]types.CourtMap, error) {
-	return c.CourtRepository.GetAllWithTotalRating()
+// courtType: The court type.
+// search: The search query.
+//
+// Returns the courts and an error if any.
+func (c *CourtUseCase) GetCourts(courtType *string, search *string) (*[]types.CourtMap, error) {
+	// Get the courts
+	if (courtType == nil || utils.IsBlank(*courtType)) && (search == nil || utils.IsBlank(*search)) {
+		return c.CourtRepository.GetAllWithTotalRating()
+	}
+
+	if (courtType != nil && !utils.IsBlank(*courtType)) && (search == nil || utils.IsBlank(*search)) {
+		return c.CourtRepository.GetWithTotalRatingUsingCourtType(*courtType)
+	}
+
+	if (courtType == nil || utils.IsBlank(*courtType)) && (search != nil && !utils.IsBlank(*search)) {
+		return c.CourtRepository.GetAllWithTotalRatingUsingVendorName(*search)
+	}
+
+	return c.CourtRepository.GetAllWithTotalRatingUsingCourtTypeVendorName(*courtType, *search)
 }
 
 // GetCourtUsingID is a function that returns the court using the court ID.
@@ -52,15 +68,6 @@ func (c *CourtUseCase) GetCourts() (*[]types.CourtMap, error) {
 func (c *CourtUseCase) GetCourtUsingID(courtID uint) (*types.CourtMap, error) {
 	// Get court with total rating using id
 	return c.CourtRepository.GetWithTotalRatingUsingID(courtID)
-}
-
-// GetCourtsUsingCourtType is a function that returns the courts using the court type.
-//
-// courtType: The court type.
-//
-// Returns the court maps and an error if any.
-func (c *CourtUseCase) GetCourtsUsingCourtType(courtType string) (*[]types.CourtMap, error) {
-	return c.CourtRepository.GetWithTotalRatingUsingCourtType(courtType)
 }
 
 // GetCurrentVendorCourtsUsingCourtType is a function that returns the current vendor courts

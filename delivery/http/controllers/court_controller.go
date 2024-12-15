@@ -3,7 +3,6 @@ package controllers
 import (
 	"log"
 	"main/core/enums"
-	"main/core/types"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"main/pkg/utils"
@@ -48,18 +47,11 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 		})
 	}
 
-	// Create a variable to store the courts
-	var (
-		courtMaps *[]types.CourtMap
-		err       error
-	)
+	// Get the vendor name from the query parameter
+	vendorName := c.QueryParam("search")
 
 	// Get the courts
-	if utils.IsBlank(courtType) {
-		courtMaps, err = co.CourtUseCase.GetCourts()
-	} else {
-		courtMaps, err = co.CourtUseCase.GetCourtsUsingCourtType(courtType)
-	}
+	courtMaps, err := co.CourtUseCase.GetCourts(&courtType, &vendorName)
 
 	// Return an error if any
 	if err != nil {

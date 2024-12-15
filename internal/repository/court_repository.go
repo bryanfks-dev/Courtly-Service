@@ -111,6 +111,116 @@ func (*CourtRepository) GetAllWithTotalRating() (*[]types.CourtMap, error) {
 	return &courtMaps, nil
 }
 
+// GetAllWithTotalRatingUsingVendorName is a function that returns all the courts with total rating by vendor name.
+//
+// vendorName: The vendor name.
+//
+// Returns the court maps and an error if any.
+func (*CourtRepository) GetAllWithTotalRatingUsingVendorName(vendorName string) (*[]types.CourtMap, error) {
+	// Create court with rating object
+	var courtMaps []types.CourtMap
+
+	// Get the courts
+	res, err := mysql.Conn.Model(&models.Court{}).Preload("Vendor", "name = ?", vendorName).Select(`
+        courts.*,
+        COALESCE(AVG(reviews.rating), 0) AS average_rating
+    `).
+		Joins("LEFT JOIN reviews ON reviews.court_type_id = courts.court_type_id").
+		Group("courts.id, courts.vendor_id, courts.court_type_id").Rows()
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting all courts: " + err.Error())
+
+		return nil, err
+	}
+
+	defer res.Close()
+
+	// Iterate through the results
+	for res.Next() {
+		// Create court with rating object
+		var (
+			court       models.Court
+			totalRating float64
+		)
+
+		// Scan the results
+		err := res.Scan(&court, &totalRating)
+
+		// Return an error if any
+		if err != nil {
+			log.Println("Error scanning courts: " + err.Error())
+
+			return nil, err
+		}
+
+		// Append the court map
+		courtMaps = append(courtMaps, types.CourtMap{
+			"court":        court,
+			"total_rating": totalRating,
+		})
+	}
+
+	return &courtMaps, nil
+}
+
+// GetAllWithTotalRatingUsingCourtTypeVendorName is a function that returns all the courts with 
+//total rating by court type and vendor name.
+//
+// courtType: The court type.
+// vendorName: The vendor name.
+//
+// Returns the court maps and an error if any.
+func (*CourtRepository) GetAllWithTotalRatingUsingCourtTypeVendorName(courtType string, vendorName string) (*[]types.CourtMap, error) {
+	// Create court with rating object
+	var courtMaps []types.CourtMap
+
+	// Get the courts
+	res, err := mysql.Conn.Model(&models.Court{}).Preload("CourtType", "type = ?", courtType).Preload("Vendor", "name = ?", vendorName).Select(`
+        courts.*,
+        COALESCE(AVG(reviews.rating), 0) AS average_rating
+    `).
+		Joins("LEFT JOIN reviews ON reviews.court_type_id = courts.court_type_id").
+		Group("courts.id, courts.vendor_id, courts.court_type_id").Rows()
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting all courts: " + err.Error())
+
+		return nil, err
+	}
+
+	defer res.Close()
+
+	// Iterate through the results
+	for res.Next() {
+		// Create court with rating object
+		var (
+			court       models.Court
+			totalRating float64
+		)
+
+		// Scan the results
+		err := res.Scan(&court, &totalRating)
+
+		// Return an error if any
+		if err != nil {
+			log.Println("Error scanning courts: " + err.Error())
+
+			return nil, err
+		}
+
+		// Append the court map
+		courtMaps = append(courtMaps, types.CourtMap{
+			"court":        court,
+			"total_rating": totalRating,
+		})
+	}
+
+	return &courtMaps, nil
+}
+
 // GetUsingID is a function that returns the courts by ID.
 //
 // courtID: The court ID.
