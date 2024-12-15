@@ -68,9 +68,11 @@ func (*CourtRepository) GetAllWithTotalRating() (*[]types.CourtMap, error) {
 
 	// Get the courts
 	res, err := mysql.Conn.Model(&models.Court{}).Select(`
-		courts.*,
-		IFNULL(AVG(reviews.rating), 0)
-	`).Joins("LEFT JOIN reviews ON reviews.court_type_id = courts.court_type_id").Group("courts.id").Rows()
+        courts.*,
+        COALESCE(AVG(reviews.rating), 0) AS average_rating
+    `).
+		Joins("LEFT JOIN reviews ON reviews.court_type_id = courts.court_type_id").
+		Group("courts.id, courts.vendor_id, courts.court_type_id").Rows()
 
 	// Return an error if any
 	if err != nil {
@@ -178,9 +180,11 @@ func (*CourtRepository) GetWithTotalRatingUsingCourtType(courtType string) (*[]t
 
 	// Get the courts
 	res, err := mysql.Conn.Model(&models.Court{}).Preload("CourtType", "type = ?", courtType).Select(`
-		courts.*,
-		IFNULL(AVG(reviews.rating), 0)
-	`).Joins("LEFT JOIN reviews ON reviews.court_type_id = courts.court_type_id").Group("courts.id").Rows()
+        courts.*,
+        COALESCE(AVG(reviews.rating), 0) AS average_rating
+    `).
+		Joins("LEFT JOIN reviews ON reviews.court_type_id = courts.court_type_id").
+		Group("courts.id, courts.vendor_id, courts.court_type_id").Rows()
 
 	// Return an error if any
 	if err != nil {
