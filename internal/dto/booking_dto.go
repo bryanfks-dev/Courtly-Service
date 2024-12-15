@@ -14,7 +14,7 @@ type BookingDTO struct {
 	Court *CourtDTO `json:"court"`
 
 	// Vendor is the name of the vendor
-	Vendor *VendorDTO `json:"vendor_name"`
+	Vendor *VendorDTO `json:"vendor"`
 
 	// Date is the date of the booking
 	Date string `json:"date"`

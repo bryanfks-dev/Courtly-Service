@@ -37,7 +37,7 @@ Endpoint uses to get current user bookings from database.
           "payment_method": "...",
           "price": ...,
           "app_fee": ...,
-          "status": ...
+          "status": "..."
         },
         "court": {
           "id": ...,
@@ -52,7 +52,10 @@ Endpoint uses to get current user bookings from database.
           "type": "...",
           "price": ...,
           "image_url": "..."
-        }
+        },
+        "date": "...",
+        "book_start_time": "...",
+        "book_end_time": "..."
       },
       {...},
       {...},
