@@ -19,8 +19,9 @@ import (
 
 // CourtUseCase is a struct that defines the use case for the court entity.
 type CourtUseCase struct {
-	AuthUseCase     *AuthUseCase
-	CourtRepository *repository.CourtRepository
+	AuthUseCase      *AuthUseCase
+	CourtRepository  *repository.CourtRepository
+	ReviewRepository *repository.ReviewRepository
 }
 
 // NewCourtUseCase is a factory function that returns a new instance of the CourtUseCase struct.
@@ -30,10 +31,11 @@ type CourtUseCase struct {
 // r: The review repository.
 //
 // Returns a new instance of the CourtUseCase.
-func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository) *CourtUseCase {
+func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository, r *repository.ReviewRepository) *CourtUseCase {
 	return &CourtUseCase{
-		AuthUseCase:     a,
-		CourtRepository: c,
+		AuthUseCase:      a,
+		CourtRepository:  c,
+		ReviewRepository: r,
 	}
 }
 
@@ -44,20 +46,49 @@ func NewCourtUseCase(a *AuthUseCase, c *repository.CourtRepository) *CourtUseCas
 //
 // Returns the courts and an error if any.
 func (c *CourtUseCase) GetCourts(courtType *string, search *string) (*[]types.CourtMap, error) {
+	// Create an empty courts slice and an error
+	var (
+		courts *[]models.Court
+		err    error
+	)
+
 	// Get the courts
 	if (courtType == nil || utils.IsBlank(*courtType)) && (search == nil || utils.IsBlank(*search)) {
-		return c.CourtRepository.GetAllWithTotalRating()
+		courts, err = c.CourtRepository.Get()
+	} else if (courtType != nil && !utils.IsBlank(*courtType)) && (search == nil || utils.IsBlank(*search)) {
+		courts, err = c.CourtRepository.GetUsingCourtType(*courtType)
+	} else if (courtType == nil || utils.IsBlank(*courtType)) && (search != nil && !utils.IsBlank(*search)) {
+		courts, err = c.CourtRepository.GetUsingVendorName(*search)
+	} else {
+		courts, err = c.CourtRepository.GetUsingCourtTypeVendorName(*courtType, *search)
 	}
 
-	if (courtType != nil && !utils.IsBlank(*courtType)) && (search == nil || utils.IsBlank(*search)) {
-		return c.CourtRepository.GetWithTotalRatingUsingCourtType(*courtType)
+	// Return an error if any
+	if err != nil {
+		return nil, err
 	}
 
-	if (courtType == nil || utils.IsBlank(*courtType)) && (search != nil && !utils.IsBlank(*search)) {
-		return c.CourtRepository.GetAllWithTotalRatingUsingVendorName(*search)
+	// Create a new court maps slice
+	courtMaps := make([]types.CourtMap, len(*courts))
+
+	// Loop through the courts
+	for i, court := range *courts {
+		// Get the court average rating
+		totalRating, err := c.ReviewRepository.GetAvgRatingUsingCourtTypeVendorID(court.CourtType.Type, court.VendorID)
+
+		// Return an error if any
+		if err != nil {
+			return nil, err
+		}
+
+		// Append the court map
+		courtMaps[i] = types.CourtMap{
+			"court":        court,
+			"total_rating": totalRating,
+		}
 	}
 
-	return c.CourtRepository.GetAllWithTotalRatingUsingCourtTypeVendorName(*courtType, *search)
+	return &courtMaps, nil
 }
 
 // GetCourtUsingID is a function that returns the court using the court ID.
@@ -66,8 +97,26 @@ func (c *CourtUseCase) GetCourts(courtType *string, search *string) (*[]types.Co
 //
 // Returns the court and an error if any.
 func (c *CourtUseCase) GetCourtUsingID(courtID uint) (*types.CourtMap, error) {
-	// Get court with total rating using id
-	return c.CourtRepository.GetWithTotalRatingUsingID(courtID)
+	// Get court using id
+	court, err := c.CourtRepository.GetUsingID(courtID)
+
+	// Return an error if any
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the court average rating
+	totalRating, err := c.ReviewRepository.GetAvgRatingUsingCourtTypeVendorID(court.CourtType.Type, court.VendorID)
+
+	// Return an error if any
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.CourtMap{
+		"court":        *court,
+		"total_rating": totalRating,
+	}, nil
 }
 
 // GetCurrentVendorCourtsUsingCourtType is a function that returns the current vendor courts
