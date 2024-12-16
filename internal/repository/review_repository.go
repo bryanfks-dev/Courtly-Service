@@ -279,3 +279,27 @@ func (*ReviewRepository) GetUsingVendorIDRating(vendorID uint, rating int) (*[]m
 
 	return &reviews, err
 }
+
+// GetAvgRatingUsingCourtTypeVendorID is a function that returns the average rating using
+// the court type and vendor ID.
+//
+// courtType: The court type.
+// vendorID: The vendor ID.
+//
+// Returns the average rating and an error if any.
+func (*ReviewRepository) GetAvgRatingUsingCourtTypeVendorID(courtType string, vendorID uint) (float64, error) {
+	// Create new count variable
+	var avgRating float64
+
+	// Get the count of courts by vendor ID and court type
+	err := mysql.Conn.Model(&models.Review{}).Preload("CourtType", "type = ?", courtType).Where("vendor_id = ?", vendorID).Select("COALESCE(AVG(rating), 0)").Scan(&avgRating).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting avg rating using court type and vendor id: " + err.Error())
+
+		return 0, err
+	}
+
+	return avgRating, nil
+}

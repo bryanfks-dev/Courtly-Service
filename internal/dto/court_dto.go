@@ -20,13 +20,13 @@ type CourtDTO struct {
 	Vendor *PublicVendorDTO `json:"vendor"`
 
 	// CourtType is the type of the court.
-	Type string `json:"court_type"`
+	Type string `json:"type"`
 
 	// Name is the name of the court.
 	Price float64 `json:"price"`
 
 	// Rating is the rating of the court.
-	Rating float64 `json:"rating,omitempty"`
+	Rating float64 `json:"rating"`
 
 	// ImageUrl is the image URL of the court.
 	ImageUrl string `json:"image_url"`
