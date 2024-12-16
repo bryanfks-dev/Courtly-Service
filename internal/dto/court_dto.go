@@ -2,7 +2,6 @@ package dto
 
 import (
 	"fmt"
-	"main/core/config"
 	"main/core/types"
 	"main/data/models"
 	"main/delivery/http/router"
@@ -39,7 +38,7 @@ type CourtDTO struct {
 // Returns the court DTO.
 func (c CourtDTO) FromModel(m *models.Court) *CourtDTO {
 	// courtImagePath is the path to the court image.
-	courtImagePath := fmt.Sprintf("%s:%d%s/%s", config.ServerConfig.Host, config.ServerConfig.Port, router.CourtImages, m.Image)
+	courtImagePath := fmt.Sprintf("%s/%s", router.CourtImages, m.Image)
 
 	return &CourtDTO{
 		ID:       m.ID,
@@ -61,7 +60,7 @@ func (c CourtDTO) FromCourtMap(m *types.CourtMap) *CourtDTO {
 	court := m.GetCourt()
 
 	// courtImagePath is the path to the court image.
-	courtImagePath := fmt.Sprintf("%s:%d%s/%s", config.ServerConfig.Host, config.ServerConfig.Port, router.CourtImages, court.Image)
+	courtImagePath := fmt.Sprintf("%s/%s", router.CourtImages, court.Image)
 
 	return &CourtDTO{
 		ID:       court.ID,

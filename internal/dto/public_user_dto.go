@@ -2,7 +2,6 @@ package dto
 
 import (
 	"fmt"
-	"main/core/config"
 	"main/data/models"
 	"main/delivery/http/router"
 	"main/pkg/utils"
@@ -36,7 +35,7 @@ func (p PublicUserDTO) FromModel(m *models.User) *PublicUserDTO {
 	}
 
 	// profilePicturePath is the path to the profile picture.
-	profilePicturePath := fmt.Sprintf("%s:%d%s/%s", config.ServerConfig.Host, config.ServerConfig.Port, router.UserProfiles, m.ProfilePicture)
+	profilePicturePath := fmt.Sprintf("%s/%s", router.UserProfiles, m.ProfilePicture)
 
 	return &PublicUserDTO{
 		ID:                m.ID,

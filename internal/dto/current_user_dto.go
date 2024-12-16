@@ -2,7 +2,6 @@ package dto
 
 import (
 	"fmt"
-	"main/core/config"
 	"main/data/models"
 	"main/delivery/http/router"
 	"main/pkg/utils"
@@ -24,7 +23,7 @@ type CurrentUserDTO struct {
 }
 
 // FromModel creates a CurrentUser DTO from a User model.
-// 
+//
 // m: The user model.
 //
 // Returns a CurrentUser DTO.
@@ -40,7 +39,7 @@ func (c CurrentUserDTO) FromModel(m *models.User) *CurrentUserDTO {
 	}
 
 	// profilePicturePath is the path to the profile picture.
-	profilePicturePath := fmt.Sprintf("%s:%d%s/%s", config.ServerConfig.Host, config.ServerConfig.Port, router.UserProfiles, m.ProfilePicture)
+	profilePicturePath := fmt.Sprintf("%s/%s", router.UserProfiles, m.ProfilePicture)
 
 	return &CurrentUserDTO{
 		ID:                m.ID,
