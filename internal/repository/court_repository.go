@@ -195,7 +195,7 @@ func (*CourtRepository) GetUsingVendorIDCourtType(vendorID uint, courtType strin
 	var courts []models.Court
 
 	// Get the courts by vendor ID and court type
-	err := mysql.Conn.Preload("CourtType", "type = ?", courtType).Where("vendor_id = ?", vendorID).Find(&courts).Error
+	err := mysql.Conn.Preload("CourtType", "type = ?", courtType).Preload("Vendor").Where("vendor_id = ?", vendorID).Find(&courts).Error
 
 	// Return an error if any
 	if err != nil {
