@@ -92,6 +92,13 @@ func NewServer() (*echo.Echo, error) {
 
 	courtPrefix.GET("", c.CourtController.GetCourts)
 
+	// Vendor courts endpoints
+	vendorCourtsPrefix := vendorPrefix.Group("/:id/courts")
+
+	vendorTypeCourtsPrefix := vendorCourtsPrefix.Group("/:type")
+
+	vendorTypeCourtsPrefix.GET("", c.CourtController.GetVendorCourtsUsingCourtType)
+
 	// Current vendor courts endpoints
 	currentVendorCourtsPrefix := currentVendorPrefix.Group("/courts")
 
@@ -107,7 +114,7 @@ func NewServer() (*echo.Echo, error) {
 	currentVendorCourtsTypePrefix.POST("/new", c.CourtController.CreateNewCourt)
 
 	// Reviews endpoints
-	vendorPrefix.GET("/:id/courts/types/:type/reviews", c.ReviewController.GetCourtTypeReviews)
+	vendorTypeCourtsPrefix.GET("/reviews", c.ReviewController.GetCourtTypeReviews)
 
 	currentVendorPrefix.GET("/reviews", c.ReviewController.GetCurrentVendorReviews)
 

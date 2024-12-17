@@ -82,21 +82,26 @@ Endpoint uses to get court finromation from the database using court id.
   "success": ...,
   "message": "...",
   "data": {
-    "court": {
-      "id": ...,
-      "name": "...",
-      "vendor": {
+    "courts": [
+      {
         "id": ...,
         "name": "...",
-        "address": "...",
-        "open_time": "...",
-        "close_time": "..."
+        "vendor": {
+          "id": ...,
+          "name": "...",
+          "address": "...",
+          "open_time": "...",
+          "close_time": "..."
+        },
+        "type": "...",
+        "price": ...,
+        "image_url": "...",
+        "rating": ...,
       },
-      "type": "...",
-      "price": ...,
-      "image_url": "...",
-      "rating": ...,
-    }
+      {...},
+      {...},
+      ...
+    ]
   }
 }
 ```
@@ -195,7 +200,7 @@ Endpoint uses to create a new court for a court type.
 - `403 FORBIDDEN`: when a vendor with current court type already exists
 - `500 INTERNAL SERVER ERROR`: when either fails to check if court exists in current court type or fails to decode court image or fails to save court image or fails to create new court
 
-### **POST** `/api/v1/vendors/me/courts/types/:type`
+### **POST** `/api/v1/vendors/me/courts/:type`
 
 Endpoint uses to create a new court for a court type from the existing court.
 

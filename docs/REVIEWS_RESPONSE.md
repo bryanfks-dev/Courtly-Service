@@ -2,7 +2,7 @@
 
 This doc will explain reviews endpoints in details.
 
-### **GET** `/api/v1/vendors/:id/courts/types/:type/reviews`
+### **GET** `/api/v1/vendors/:id/courts/:type/reviews`
 
 Endpoint uses to get vendor courts type reviews from database.
 

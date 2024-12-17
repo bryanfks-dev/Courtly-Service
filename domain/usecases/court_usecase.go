@@ -91,32 +91,42 @@ func (c *CourtUseCase) GetCourts(courtType *string, search *string) (*[]types.Co
 	return &courtMaps, nil
 }
 
-// GetCourtUsingID is a function that returns the court using the court ID.
+// GetVendorCourtsUsingCourtType is a function that returns the vendor courts with the given court type.
 //
-// courtID: The court ID.
+// vendorID: The vendor ID.
+// courtType: The court type.
 //
-// Returns the court and an error if any.
-func (c *CourtUseCase) GetCourtUsingID(courtID uint) (*types.CourtMap, error) {
-	// Get court using id
-	court, err := c.CourtRepository.GetUsingID(courtID)
+// Returns the vendor courts map and an error if any.
+func (c *CourtUseCase) GetVendorCourtsUsingCourtType(vendorID uint, courtType string) (*[]types.CourtMap, error) {
+	// Get the courts
+	courts, err := c.CourtRepository.GetUsingVendorIDCourtType(vendorID, courtType)
 
 	// Return an error if any
 	if err != nil {
 		return nil, err
 	}
 
-	// Get the court average rating
-	totalRating, err := c.ReviewRepository.GetAvgRatingUsingCourtTypeVendorID(court.CourtType.Type, court.VendorID)
+	// Create a new court maps slice
+	courtMaps := make([]types.CourtMap, len(*courts))
 
-	// Return an error if any
-	if err != nil {
-		return nil, err
+	// Get average rating for the court type
+	totalRating, err := c.ReviewRepository.GetAvgRatingUsingCourtTypeVendorID(courtType, vendorID)
+
+	// Loop through the courts
+	for i, court := range *courts {
+		// Return an error if any
+		if err != nil {
+			return nil, err
+		}
+
+		// Append the court map
+		courtMaps[i] = types.CourtMap{
+			"court":        court,
+			"total_rating": totalRating,
+		}
 	}
 
-	return &types.CourtMap{
-		"court":        *court,
-		"total_rating": totalRating,
-	}, nil
+	return &courtMaps, nil
 }
 
 // GetCurrentVendorCourtsUsingCourtType is a function that returns the current vendor courts

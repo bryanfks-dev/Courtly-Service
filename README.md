@@ -39,15 +39,15 @@ There are several available endpoints, such as:
 ##### Courts endpoints
 
 - **GET** `/api/v1/courts` - Get all available courts from database
-- **GET** `/api/v1/vendors/:id/courts/types/:type` - Get vendor courts using vendor id and court type from database
-- **GET** `/api/v1/vendors/me/courts/types/:type` - Get current vendor courts using court type from database
-- **POST** `/api/v1/vendors/me/courts/types/:type/new` - Create a new court for a court type
-- **POST** `/api/v1/vendors/me/courts/types/:type` - Create a new court for a court type from the existing court
+- **GET** `/api/v1/vendors/:id/courts/:type` - Get vendor courts using vendor id and court type from database
+- **GET** `/api/v1/vendors/me/courts/:type` - Get current vendor courts using court type from database
+- **POST** `/api/v1/vendors/me/courts/:type/new` - Create a new court for a court type
+- **POST** `/api/v1/vendors/me/courts/:type` - Create a new court for a court type from the existing court
 - **GET** `/api/v1/vendors/me/courts/stats` - Get current vendor courts stats from database
 
 ##### Reviews endpoints
 
-- **GET** `/api/v1/vendors/:id/courts/types/:type/reviews` - Get vendor courts type reviews from database
+- **GET** `/api/v1/vendors/:id/courts/:type/reviews` - Get vendor courts type reviews from database
 - **GET** `/api/v1/vendors/me/reviews` - Get court reviews related to the vendor from database
 - **POST** `/api/v1/vendors/:vendorID/courts/:courtID/reviews` - Create a new review for current vendor and court type
 

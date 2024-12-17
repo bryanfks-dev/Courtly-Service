@@ -69,46 +69,47 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 	})
 }
 
-// GetCourtUsingID is a controller that handles the get court using ID endpoint.
-// Endpoint: GET /courts/:id
-//
-// c: The echo context.
-//
-// Returns an error if any.
-func (co *CourtController) GetCourtUsingID(c echo.Context) error {
-	// Get the court ID from the URL
-	id := c.Param("id")
+func (co *CourtController) GetVendorCourtsUsingCourtType(c echo.Context) error {
+	// Get the vendor id from the URL
+	vendorID, err := strconv.Atoi(c.Param("id"))
 
-	// Convert the ID to an integer
-	courtID, err := strconv.Atoi(id)
-
-	// Return an error if the ID is invalid
+	// Return an error if the vendor id is invalid
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
-			Message: "Invalid court ID",
+			Message: "Invalid vendor id",
 			Data:    nil,
 		})
 	}
 
-	// Get the court map using the court ID
-	courtMap, err := co.CourtUseCase.GetCourtUsingID(uint(courtID))
+	// Get the court type from the URL
+	courtType := c.Param("type")
+
+	// Return an error if the court type is invalid
+	if !enums.InCourtType(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
+	// Get the courts
+	courts, err := co.CourtUseCase.GetVendorCourtsUsingCourtType(uint(vendorID), courtType)
 
 	// Return an error if any
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
 			Success: false,
-			Message: "Failed to get court",
+			Message: "Failed to get vendor courts",
 			Data:    nil,
 		})
 	}
 
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
-		Message: "Success retrieve court",
-		Data: dto.CourtResponseDTO{
-			Court: dto.CourtDTO{}.FromCourtMap(courtMap), // Return the first court
-		},
+		Message: "Success retrieve vendor courts",
+		Data:    dto.CourtsResponseDTO{}.FromCourtMaps(courts),
 	})
 }
 
