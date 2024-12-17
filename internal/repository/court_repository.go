@@ -67,7 +67,8 @@ func (*CourtRepository) Get() (*[]models.Court, error) {
 	var courts []models.Court
 
 	// Subquery to get the minimum id for each vendor id and court type id
-	subQuery := mysql.Conn.Model(&models.Court{}).Select("MIN(id)").Group("vendor_id, court_type_id")
+	subQuery :=
+		mysql.Conn.Model(&models.Court{}).Select("MIN(id)").Group("vendor_id, court_type_id")
 
 	// Get the courts
 	err := mysql.Conn.Preload("Vendor").Preload("CourtType").
@@ -93,7 +94,8 @@ func (*CourtRepository) GetUsingVendorName(vendorName string) (*[]models.Court, 
 	var courts []models.Court
 
 	// Subquery to get the minimum id for each vendor id and court type id
-	subQuery := mysql.Conn.Model(&models.Court{}).Select("MIN(courts.id)").Joins("JOIN vendors ON vendors.id = courts.vendor_id").Where("vendors.name LIKE ?", "%"+vendorName+"%").Group("vendor_id, court_type_id")
+	subQuery :=
+		mysql.Conn.Model(&models.Court{}).Select("MIN(courts.id)").Joins("JOIN vendors ON vendors.id = courts.vendor_id").Where("vendors.name LIKE ?", "%"+vendorName+"%").Group("vendor_id, court_type_id")
 
 	// Get the courts
 	err := mysql.Conn.Preload("Vendor").Preload("CourtType").
@@ -119,7 +121,8 @@ func (*CourtRepository) GetUsingCourtType(courtType string) (*[]models.Court, er
 	var courts []models.Court
 
 	// Subquery to get the minimum id for each vendor id and court type id
-	subQuery := mysql.Conn.Model(&models.Court{}).Select("MIN(courts.id)").Joins("JOIN court_types ON court_types.id = courts.court_type_id").Where("court_types.type = ?", courtType).Group("vendor_id, court_type_id")
+	subQuery :=
+		mysql.Conn.Model(&models.Court{}).Select("MIN(courts.id)").Joins("JOIN court_types ON court_types.id = courts.court_type_id").Where("court_types.type = ?", courtType).Group("vendor_id, court_type_id")
 
 	// Get the courts
 	err := mysql.Conn.Preload("Vendor").Preload("CourtType").
@@ -146,7 +149,8 @@ func (*CourtRepository) GetUsingCourtTypeVendorName(courtType string, vendorName
 	var courts []models.Court
 
 	// Subquery to get the minimum id for each vendor id and court type id
-	subQuery := mysql.Conn.Model(&models.Court{}).Select("MIN(courts.id)").Joins("JOIN vendors ON vendors.id = courts.vendor_id").Joins("JOIN court_types ON court_types.id = courts.court_type_id").Where("vendors.name LIKE ?", "%"+vendorName+"%").Where("court_types.type = ?", courtType).Group("vendor_id, court_type_id")
+	subQuery :=
+		mysql.Conn.Model(&models.Court{}).Select("MIN(courts.id)").Joins("JOIN vendors ON vendors.id = courts.vendor_id").Joins("JOIN court_types ON court_types.id = courts.court_type_id").Where("vendors.name LIKE ?", "%"+vendorName+"%").Where("court_types.type = ?", courtType).Group("vendor_id, court_type_id")
 
 	// Get the courts
 	err := mysql.Conn.Preload("Vendor").Preload("CourtType").
@@ -172,7 +176,8 @@ func (*CourtRepository) GetUsingID(courtID uint) (*models.Court, error) {
 	var court models.Court
 
 	// Get the courts by ID
-	err := mysql.Conn.Where("id = ?", courtID).Find(&court).Error
+	err :=
+		mysql.Conn.Preload("Vendor").Preload("CourtType").Where("id = ?", courtID).Find(&court).Error
 
 	// Return an error if any
 	if err != nil {
@@ -195,7 +200,8 @@ func (*CourtRepository) GetUsingVendorIDCourtType(vendorID uint, courtType strin
 	var courts []models.Court
 
 	// Get the courts by vendor ID and court type
-	err := mysql.Conn.Preload("CourtType", "type = ?", courtType).Preload("Vendor").Where("vendor_id = ?", vendorID).Find(&courts).Error
+	err :=
+		mysql.Conn.Preload("Vendor").Joins("CourtType").Where("vendor_id = ?", vendorID).Where("CourtType.type = ?", courtType).Find(&courts).Error
 
 	// Return an error if any
 	if err != nil {
@@ -218,7 +224,8 @@ func (*CourtRepository) CheckExistUsingVendorIDCourtType(vendorID uint, courtTyp
 	var count int64
 
 	// Get the courts by vendor ID and court type
-	err := mysql.Conn.Model(&models.Court{}).Preload("CourtType", "type = ?", courtType).Where("vendor_id = ?", vendorID).Limit(1).Count(&count).Error
+	err :=
+		mysql.Conn.Model(&models.Court{}).Joins("CourtType").Where("vendor_id = ?", vendorID).Where("CourtType.type = ?", courtType).Limit(1).Count(&count).Error
 
 	// Return an error if any
 	if err != nil {
@@ -246,7 +253,7 @@ func (*CourtRepository) GetCountsUsingVendorID(vendorID uint) (*types.CourtCount
 	}
 
 	// Get the counts of the courts by vendor ID
-	err := mysql.Conn.Model(&models.Court{}).Preload("CourtType", `
+	err := mysql.Conn.Model(&models.Court{}).Select(`
         COUNT(CASE WHEN type = ? THEN 1 END),
         COUNT(CASE WHEN rating = ? THEN 1 END),
         COUNT(CASE WHEN rating = ? THEN 1 END),

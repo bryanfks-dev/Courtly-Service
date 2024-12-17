@@ -7,6 +7,7 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var (
@@ -27,7 +28,9 @@ func Connect() error {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.DBConfig.Username, config.DBConfig.Password, config.DBConfig.Hostname, config.DBConfig.Port, config.DBConfig.DatabaseName)
 
 	// Open a connection to the databasea
-	Conn, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	Conn, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 
 	// Check if there is an error connecting to the database
 	if err != nil {
