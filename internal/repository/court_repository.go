@@ -119,7 +119,7 @@ func (*CourtRepository) GetUsingCourtType(courtType string) (*[]models.Court, er
 	var courts []models.Court
 
 	// Subquery to get the minimum id for each vendor id and court type id
-	subQuery := mysql.Conn.Model(&models.Court{}).Select("MIN(courts.id)").Joins("JOIN court_types ON court_types.id = courts.court_type_id").Where("courts_types.type = ?", courtType).Group("vendor_id, court_type_id")
+	subQuery := mysql.Conn.Model(&models.Court{}).Select("MIN(courts.id)").Joins("JOIN court_types ON court_types.id = courts.court_type_id").Where("court_types.type = ?", courtType).Group("vendor_id, court_type_id")
 
 	// Get the courts
 	err := mysql.Conn.Preload("Vendor").Preload("CourtType").
