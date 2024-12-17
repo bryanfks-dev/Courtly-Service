@@ -92,24 +92,19 @@ func NewServer() (*echo.Echo, error) {
 
 	courtPrefix.GET("", c.CourtController.GetCourts)
 
-	// Selected court endpoints
-	selectedCourtPrefix := courtPrefix.Group("/:id")
-
-	selectedCourtPrefix.GET("", c.CourtController.GetCourtUsingID)
-
 	// Current vendor courts endpoints
 	currentVendorCourtsPrefix := currentVendorPrefix.Group("/courts")
 
 	currentVendorCourtsPrefix.GET("/stats", c.CourtController.GetCurrentVendorCourtStats)
 
 	// Current vendor courts types endpoints
-	currentVendorCourtsTypePrefix := currentVendorCourtsPrefix.Group("/types")
+	currentVendorCourtsTypePrefix := currentVendorCourtsPrefix.Group("/:type")
 
-	currentVendorCourtsTypePrefix.GET("/:type", c.CourtController.GetCurrentVendorCourtsUsingCourtType)
+	currentVendorCourtsTypePrefix.GET("", c.CourtController.GetCurrentVendorCourtsUsingCourtType)
 
-	currentVendorCourtsTypePrefix.POST("/:type", c.CourtController.AddCourt)
+	currentVendorCourtsTypePrefix.POST("", c.CourtController.AddCourt)
 
-	currentVendorCourtsTypePrefix.POST("/:type/new", c.CourtController.CreateNewCourt)
+	currentVendorCourtsTypePrefix.POST("/new", c.CourtController.CreateNewCourt)
 
 	// Reviews endpoints
 	vendorPrefix.GET("/:id/courts/types/:type/reviews", c.ReviewController.GetCourtTypeReviews)

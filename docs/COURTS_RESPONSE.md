@@ -71,7 +71,7 @@ To use multiple query parameter in a place, use this format:
 - `400 BAD REQUEST`: when court type is invalid
 - `500 INTERNAL SERVER ERROR`: when fails to get courts
 
-### **GET** `/api/v1/courts/:id`
+### **GET** `/api/v1/vendors/:id/courts/:type`
 
 Endpoint uses to get court finromation from the database using court id.
 
@@ -107,7 +107,7 @@ Endpoint uses to get court finromation from the database using court id.
 - `400 BAD REQUEST`: when court id is invalid
 - `500 INTERNAL SERVER ERROR`: when fails getting court using id
 
-### GET `/api/v1/vendors/me/courts/types/:type`
+### GET `/api/v1/vendors/me/courts/:type`
 
 Endpoint uses to get current vendor courts using court type from database.
 
@@ -147,7 +147,7 @@ Endpoint uses to get current vendor courts using court type from database.
 - `400 BAD REQUEST`: when court type is invalid
 - `500 INTERNAL SERVER ERROR`: when fails getting courts using court type
 
-### **POST** `/api/v1/vendors/me/courts/types/:type/new`
+### **POST** `/api/v1/vendors/me/courts/:type/new`
 
 Endpoint uses to create a new court for a court type.
 
