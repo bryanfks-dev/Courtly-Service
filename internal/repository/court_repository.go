@@ -47,7 +47,8 @@ func (*CourtRepository) GetNewestUsingVendorIDCourtType(vendorID uint, courtType
 	var court models.Court
 
 	// Get the courts by vendor ID and court type
-	err := mysql.Conn.Preload("CourtType", "type = ?", courtType).Where("vendor_id = ?", vendorID).Order("created_at desc").First(&court).Error
+	err :=
+		mysql.Conn.Preload("Vendor").Joins("CourtType").Where("vendor_id = ?", vendorID).Where("CourtType.type = ?", courtType).Order("created_at desc").First(&court).Error
 
 	// Return an error if any
 	if err != nil {

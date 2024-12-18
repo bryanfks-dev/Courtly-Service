@@ -28,7 +28,8 @@ func (*BookingRepository) GetUsingUserID(userID uint) (*[]models.Booking, error)
 	var bookings []models.Booking
 
 	// Get the bookings from the database
-	err := mysql.Conn.Where("user_id = ?", userID).Find(&bookings).Error
+	err :=
+		mysql.Conn.Preload("Vendor").Preload("Court").Preload("Order").Where("user_id = ?", userID).Find(&bookings).Error
 
 	// Return an error if any
 	if err != nil {
@@ -45,7 +46,8 @@ func (*BookingRepository) GetUsingUserIDCourtType(userID uint, courtType string)
 	var bookings []models.Booking
 
 	// Get the bookings using court type from the database
-	err := mysql.Conn.Preload("Court.CourtType", "type = ?", courtType).Where("user_id = ?", userID).Find(&bookings).Error
+	err :=
+		mysql.Conn.Preload("Vendor").Preload("Court").Preload("Order").Joins("Court.CourtType").Where("user_id = ?", userID).Where("Court.CourtType.type = ?", courtType).Find(&bookings).Error
 
 	// Return an error if any
 	if err != nil {
@@ -67,7 +69,8 @@ func (*BookingRepository) GetUsingVendorID(vendorID uint) (*[]models.Booking, er
 	var bookings []models.Booking
 
 	// Get the bookings from the database
-	err := mysql.Conn.Model(&models.Booking{}).Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ?", vendorID).Find(&bookings).Error
+	err :=
+		mysql.Conn.Model(&models.Booking{}).Preload("Vendor").Preload("Court").Joins("Order").Where("vendor_id = ?", vendorID).Where("Order.status = ?", enums.Success.Label()).Find(&bookings).Error
 
 	// Return an error if any
 	if err != nil {
@@ -89,7 +92,8 @@ func (*BookingRepository) GetTotalUsingVendorID(vendorID uint) (int64, error) {
 	var count int64
 
 	// Get the bookings from the database
-	err := mysql.Conn.Model(&models.Booking{}).Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ?", vendorID).Count(&count).Error
+	err :=
+		mysql.Conn.Model(&models.Booking{}).Joins("Order").Where("vendor_id = ?", vendorID).Where("Order.status = ?", enums.Success.Label()).Count(&count).Error
 
 	// Return an error if any
 	if err != nil {
@@ -114,7 +118,8 @@ func (*BookingRepository) GetTotalTodayUsingVendorID(vendorID uint) (int64, erro
 	today := time.Now().Truncate(24 * time.Hour)
 
 	// Get the bookings from the database
-	err := mysql.Conn.Model(&models.Booking{}).Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ? AND date >= ? AND date < ?", vendorID, today, today.Add(24*time.Hour)).Count(&count).Error
+	err :=
+		mysql.Conn.Model(&models.Booking{}).Joins("Order").Where("vendor_id = ? AND date >= ? AND date < ?", vendorID, today, today.Add(24*time.Hour)).Where("Order.status = ?", enums.Success.Label()).Count(&count).Error
 
 	// Return an error if any
 	if err != nil {
@@ -137,7 +142,8 @@ func (*BookingRepository) GetNLatestUsingVendorID(vendorID uint, n int) (*[]mode
 	var bookings []models.Booking
 
 	// Get the bookings from the database
-	err := mysql.Conn.Preload("Order", "status = ?", enums.Success.Label()).Where("vendor_id = ?", vendorID).Order("date desc").Limit(n).Find(&bookings).Error
+	err :=
+		mysql.Conn.Preload("Vendor").Preload("Court").Joins("Order").Where("vendor_id = ?", vendorID).Where("Order.status = ?", enums.Success.Label()).Order("date desc").Limit(n).Find(&bookings).Error
 
 	// Return an error if any
 	if err != nil {
@@ -184,7 +190,8 @@ func (*BookingRepository) GetUsingVendorIDCourtType(vendorID uint, courtType str
 	var bookings []models.Booking
 
 	// Get the bookings using court type from the database
-	err := mysql.Conn.Preload("Court.CourtType", "type = ?", courtType).Where("vendor_id = ?", vendorID).Find(&bookings).Error
+	err :=
+		mysql.Conn.Preload("Vendor").Preload("Court").Preload("Order").Joins("Court.CourtType").Where("vendor_id = ?", vendorID).Where("Court.CourtType = ?", courtType).Find(&bookings).Error
 
 	// Return an error if any
 	if err != nil {
