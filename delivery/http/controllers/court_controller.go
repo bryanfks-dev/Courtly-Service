@@ -69,6 +69,12 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 	})
 }
 
+// GetVendorCourtsUsingCourtType is a controller that handles the get vendor courts using court type endpoint.
+// Endpoint: GET /vendors/:id/courts/:type
+//
+// c: The echo context.
+//
+// Returns an error if any.
 func (co *CourtController) GetVendorCourtsUsingCourtType(c echo.Context) error {
 	// Get the vendor id from the URL
 	vendorID, err := strconv.Atoi(c.Param("id"))
@@ -156,7 +162,7 @@ func (co *CourtController) GetCurrentVendorCourtsUsingCourtType(c echo.Context) 
 }
 
 // CreateNewCourt is a controller that handles the create new court endpoint.
-// Endpoint: POST /vendors/me/courts/types/:type/new
+// Endpoint: POST /vendors/me/courts/:type/new
 //
 // c: The echo context.
 //
@@ -230,7 +236,7 @@ func (co *CourtController) CreateNewCourt(c echo.Context) error {
 }
 
 // AddCourt is a controller that handles the add court endpoint.
-// Endpoint: POST /vendors/me/courts/types/:type
+// Endpoint: POST /vendors/me/courts/:type
 //
 // c: The echo context.
 //
@@ -281,8 +287,9 @@ func (co *CourtController) AddCourt(c echo.Context) error {
 	})
 }
 
-// GetCourtStats is a controller that handles the get court stats endpoint.
-// Endpoint: GET /courts/stats
+// GetCurrentVendorCourtStats is a controller that handles the get current vendor 
+// court stats endpoint.
+// Endpoint: GET /vendors/me/courts/stats
 //
 // c: The echo context.
 //
