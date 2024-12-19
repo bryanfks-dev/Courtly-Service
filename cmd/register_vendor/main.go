@@ -132,10 +132,10 @@ func registerVendor(form *RegisterForm) {
 
 	// Return an error if any
 	if err != nil {
-		panic("Failed to register vendor: " + err.Error())
+		panic("\nFailed to register vendor: " + err.Error())
 	}
 
-	fmt.Println("Vendor registered successfully!")
+	fmt.Println("\nVendor registered successfully!")
 
 	// Print the account details
 	fmt.Println("Email: ", vendor.Email)

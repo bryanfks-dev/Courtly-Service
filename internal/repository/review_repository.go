@@ -100,11 +100,11 @@ func (*ReviewRepository) GetStarCountsUsingVendorID(vendorID uint) (*types.StarC
 	// Get the courts by vendor ID and star
 	err :=
 		mysql.Conn.Model(&models.Review{}).Select(`
-        COUNT(CASE WHEN rating = 1 THEN 1 END),
-        COUNT(CASE WHEN rating = 2 THEN 1 END),
-        COUNT(CASE WHEN rating = 3 THEN 1 END),
-        COUNT(CASE WHEN rating = 4 THEN 1 END),
-        COUNT(CASE WHEN rating = 5 THEN 1 END)
+        COUNT(CASE WHEN rating = 1 THEN 1 END) AS one_star,
+        COUNT(CASE WHEN rating = 2 THEN 1 END) AS two_star,
+        COUNT(CASE WHEN rating = 3 THEN 1 END) AS three_star,
+        COUNT(CASE WHEN rating = 4 THEN 1 END) AS four_star,
+        COUNT(CASE WHEN rating = 5 THEN 1 END) AS five_star
     `).
 			Where("vendor_id = ?", vendorID).Scan(&results).Error
 
@@ -143,11 +143,11 @@ func (*ReviewRepository) GetStarCountsUsingVendorIDCourtType(vendorID uint, cour
 	// Get the courts by vendor ID and court type
 	err :=
 		mysql.Conn.Model(&models.Review{}).Joins("JOIN court_types on court_types.id = reviews.court_type_id").Select(`
-        COUNT(CASE WHEN rating = 1 THEN 1 END),
-        COUNT(CASE WHEN rating = 2 THEN 1 END),
-        COUNT(CASE WHEN rating = 3 THEN 1 END),
-        COUNT(CASE WHEN rating = 4 THEN 1 END),
-        COUNT(CASE WHEN rating = 5 THEN 1 END)
+        COUNT(CASE WHEN rating = 1 THEN 1 END) AS one_star,
+        COUNT(CASE WHEN rating = 2 THEN 1 END) AS two_star,
+        COUNT(CASE WHEN rating = 3 THEN 1 END) AS three_star,
+        COUNT(CASE WHEN rating = 4 THEN 1 END) AS four_star,
+        COUNT(CASE WHEN rating = 5 THEN 1 END) AS five_star
     `).
 			Where("vendor_id = ?", vendorID).Where("court_types.type = ?", courtType).Scan(&results).Error
 

@@ -57,23 +57,15 @@ func (dateOnly DateOnly) GetTime() time.Time {
 //
 // Returns An error if any.
 func (dateOnly *DateOnly) Scan(value any) error {
-	scanned, ok := value.([]byte)
+	scanned, ok := value.(time.Time)
 
 	// If the value is not a byte slice, return an error
 	if !ok {
 		return errors.New(fmt.Sprintln("Failed to scan Date value: ", value))
 	}
 
-	// Parse the scanned string
-	scannedDate, err := time.Parse("2006-01-02", string(scanned))
-
-	// If there is an error parsing the date, return the error
-	if err != nil {
-		return err
-	}
-
 	// Set the date
-	*dateOnly = DateOnly{Time: scannedDate}
+	*dateOnly = DateOnly{Time: scanned}
 
 	return nil
 }
