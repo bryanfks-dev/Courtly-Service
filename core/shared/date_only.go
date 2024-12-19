@@ -41,7 +41,7 @@ func (dateOnly DateOnly) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	return dateOnly.GetTime().Format("Jan 02, 2006"), nil
+	return dateOnly.GetTime().Format("2006-01-02"), nil
 }
 
 // GetTime is a method that returns the time of the date only type.
