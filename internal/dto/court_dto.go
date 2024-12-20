@@ -25,7 +25,7 @@ type CourtDTO struct {
 	Price float64 `json:"price"`
 
 	// Rating is the rating of the court.
-	Rating float64 `json:"rating"`
+	Rating *float64 `json:"rating,omitempty"`
 
 	// ImageUrl is the image URL of the court.
 	ImageUrl string `json:"image_url"`
@@ -43,9 +43,10 @@ func (c CourtDTO) FromModel(m *models.Court) *CourtDTO {
 	return &CourtDTO{
 		ID:       m.ID,
 		Name:     m.Name,
-		Vendor:   c.Vendor.FromModel(&m.Vendor),
+		Vendor:   PublicVendorDTO{}.FromModel(&m.Vendor),
 		Type:     m.CourtType.Type,
 		Price:    m.Price,
+		Rating:   nil,
 		ImageUrl: courtImagePath,
 	}
 }
@@ -62,6 +63,9 @@ func (c CourtDTO) FromCourtMap(m *types.CourtMap) *CourtDTO {
 	// courtImagePath is the path to the court image.
 	courtImagePath := fmt.Sprintf("%s/%s", router.CourtImages, court.Image)
 
+	// Get the rating
+	rating := m.GetTotalRating()
+
 	return &CourtDTO{
 		ID:       court.ID,
 		Name:     court.Name,
@@ -69,6 +73,6 @@ func (c CourtDTO) FromCourtMap(m *types.CourtMap) *CourtDTO {
 		Type:     court.CourtType.Type,
 		Price:    court.Price,
 		ImageUrl: courtImagePath,
-		Rating:   m.GetTotalRating(),
+		Rating:   &rating,
 	}
 }

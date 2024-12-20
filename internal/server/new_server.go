@@ -85,6 +85,8 @@ func NewServer() (*echo.Echo, error) {
 
 	currentUserOrdersPrefix.GET("", c.OrderController.GetCurrentUserOrders)
 
+	currentUserOrdersPrefix.GET("/:id", c.OrderController.GetCurrentUserOrderDetail)
+
 	currentVendorOrdersPrefix := currentVendorPrefix.Group("/orders")
 
 	currentVendorOrdersPrefix.GET("", c.BookingController.GetCurrentVendorOrders)

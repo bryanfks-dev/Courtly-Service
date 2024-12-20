@@ -35,7 +35,7 @@ Endpoint uses to get current user orders overview from database.
         "date": "...",
         "court_type": "...",
         "vendor_name": "...",
-        "payment_mehtod": "...",
+        "payment_method": "...",
         "price": ...,
         "app_fee": ...,
         "status": "..."
@@ -52,6 +52,66 @@ Endpoint uses to get current user orders overview from database.
 
 - `200 OK`: when response is success
 - `500 INTERNAL SERVER ERROR`: when fails getting user bookings
+
+### **GET** `/api/v1/users/me/orders/:id`
+
+Endpoint uses to get current user order details from database.
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "order_detail": {
+      "id": ...,
+      "date": "...",
+      "price": ...,
+      "app_fee": ...,
+      "status": "...",
+      "bookings": [
+        {
+          "id": ...,
+          "court": {
+            "id": ...,
+            "name": "...",
+            "vendor" {
+              "id": ...,
+              "name": "...",
+              "address": "...",
+              "open_time": "...",
+              "close_time": "..."
+            },
+            "type": "...",
+            "price": ...,
+            "image_url": "..."
+          },
+          "book_start_time": "...",
+          "book_end_time": "..."
+        },
+        {...},
+        {...},
+        ...
+      ]
+    }
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response is success
+- `400 BAD REQUEST`: when order is invalid
+- `500 INTERNAL SERVER ERROR`: when fails to get order detail
 
 ### **GET** `/api/v1/vendors/me/orders`
 

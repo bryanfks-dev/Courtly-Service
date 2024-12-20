@@ -24,7 +24,7 @@ type BookingDTO struct {
 // m: The booking model.
 //
 // Returns the booking DTO.
-func (b *BookingDTO) FromModel(m *models.Booking) *BookingDTO {
+func (b BookingDTO) FromModel(m *models.Booking) *BookingDTO {
 	// Get the start time
 	startTime, _ := m.BookStartTime.Value()
 

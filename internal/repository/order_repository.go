@@ -88,3 +88,31 @@ func (*OrderRepository) GetUsingUserIDCourtType(userID uint, courtType string) (
 
 	return &orders, nil
 }
+
+// GetUsingID is a method that returns the order by the given ID.
+//
+// orderID: The ID of the order.
+// userID: The ID of the user.
+//
+// Returns the order and an error if any.
+func (*OrderRepository) GetUsingIDUserID(orderID uint, userID uint) (*models.Order, error) {
+	// order is a placeholder for the order
+	var order models.Order
+
+	// Get the order from the database
+	err :=
+		mysql.Conn.Preload("PaymentMethod").Preload("Bookings").Preload("Bookings.Vendor").
+			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
+			Joins("JOIN bookings ON bookings.order_id = orders.id").
+			Where("orders.id = ?", orderID).Where("bookings.user_id = ?", userID).
+			First(&order).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting order using order id and user id: " + err.Error())
+
+		return nil, err
+	}
+
+	return &order, nil
+}
