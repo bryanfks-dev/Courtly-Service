@@ -287,7 +287,7 @@ func (b *BookingUseCase) CreateBooking(token *jwt.Token, data dto.CreateBookingD
 
 	// Create Order for bookings
 	order := models.Order{
-		Price:           court.Price,
+		Price:           court.Price * float64(len(*data.Bookings)),
 		PaymentMethodID: nil,
 		AppFee:          constants.APP_FEE_PRICE,
 		Status:          "Pending",
