@@ -40,34 +40,6 @@ func NewBookingUseCase(a *AuthUseCase, b *repository.BookingRepository, c *repos
 	}
 }
 
-// GetCurrentUserBookings is a use case that gets the current user bookings
-//
-// token: The JWT token
-//
-// Returns the bookings and an error if any
-func (b *BookingUseCase) GetCurrentUserBookings(token *jwt.Token) (*[]models.Booking, error) {
-	// Get the token claims
-	claims := b.AuthUseCase.DecodeToken(token)
-
-	// Get the bookings from the database
-	return b.BookingRepository.GetUsingUserID(claims.Id)
-}
-
-// GetCurrentUserBookingsUsingCourtType is a use case that gets the current user bookings
-// by the court type.
-//
-// token: The JWT token
-// courtType: The court type
-//
-// Returns the bookings and an error if any
-func (b *BookingUseCase) GetCurrentUserBookingsUsingCourtType(token *jwt.Token, courtType string) (*[]models.Booking, error) {
-	// Get the token claims
-	claims := b.AuthUseCase.DecodeToken(token)
-
-	// Get the bookings from the database
-	return b.BookingRepository.GetUsingUserIDCourtType(claims.Id, courtType)
-}
-
 // GetVendorBookings is a use case that gets the vendor bookings
 // by the vendor ID.
 //
@@ -376,7 +348,7 @@ func (b *BookingUseCase) CreateBooking(token *jwt.Token, data dto.CreateBookingD
 					book := models.Booking{
 						UserID:        claims.Id,
 						VendorID:      data.VendorID,
-						OrderId:       order.ID,
+						OrderID:       order.ID,
 						CourtID:       booking.CourtID,
 						Date:          shared.DateOnly{Time: parsedDate},
 						BookStartTime: shared.TimeOnly{Time: parsedTime},

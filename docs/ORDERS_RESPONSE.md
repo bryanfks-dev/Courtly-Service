@@ -2,6 +2,57 @@
 
 This doc will explain orders endpoints in details.
 
+### **GET** `/api/v1/users/me/orders`
+
+Endpoint uses to get current user orders overview from database.
+
+#### Query parameter (optional)
+
+```js
+?type=...
+```
+
+> **type** query parameter should contains the court type to filter data
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "orders": [
+      {
+        "id": ...,
+        "date": "...",
+        "court_type": "...",
+        "vendor_name": "...",
+        "payment_mehtod": "...",
+        "price": ...,
+        "app_fee": ...,
+        "status": "..."
+      },
+      {...},
+      {...},
+      ...
+    ]
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response is success
+- `500 INTERNAL SERVER ERROR`: when fails getting user bookings
+
 ### **GET** `/api/v1/vendors/me/orders`
 
 Endpoint uses to get current vendor orders from database.

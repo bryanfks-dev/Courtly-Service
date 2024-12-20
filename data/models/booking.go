@@ -10,19 +10,19 @@ type Booking struct {
 	ID uint `gorm:"primary_key;autoIncrement"`
 
 	// OrderID is the foreign key of the order.
-	OrderId uint `gorm:"not null"`
-	Order   Order `gorm:"foreignKey:OrderId"`
+	OrderID uint  `gorm:"not null"`
+	Order   Order `gorm:"foreignKey:OrderID"`
 
 	// UserID is the foreign key of the user.
 	UserID uint `gorm:"not null;index"`
 	User   User `gorm:"foreignKey:UserID"`
 
 	// VendorID is the foreign key of the vendor.
-	VendorID uint `gorm:"not null;index"`
+	VendorID uint   `gorm:"not null;index"`
 	Vendor   Vendor `gorm:"foreignKey:VendorID"`
 
 	// CourtID is the foreign key of the court.
-	CourtID uint `gorm:"not null;index"`
+	CourtID uint  `gorm:"not null;index"`
 	Court   Court `gorm:"foreignKey:CourtID"`
 
 	// Date is the date of the book was created.

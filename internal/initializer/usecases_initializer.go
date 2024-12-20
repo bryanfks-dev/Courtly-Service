@@ -17,6 +17,7 @@ type UseCases struct {
 	CourtUseCase            *usecases.CourtUseCase
 	ReviewUseCase           *usecases.ReviewUseCase
 	BookingUseCase          *usecases.BookingUseCase
+	OrderUseCase            *usecases.OrderUseCase
 }
 
 // InitUseCases is a function that initializes all the use cases.
@@ -48,6 +49,8 @@ func InitUseCases(repos *Repositories) *UseCases {
 	u.ReviewUseCase = usecases.NewReviewUseCase(u.AuthUseCase, repos.ReviewRepository, repos.BookingRepository, repos.CourtRepository)
 
 	u.BookingUseCase = usecases.NewBookingUseCase(u.AuthUseCase, repos.BookingRepository, repos.CourtRepository, repos.OrderRepository)
+
+	u.OrderUseCase = usecases.NewOrderUseCase(u.AuthUseCase, repos.OrderRepository)
 
 	return u
 }

@@ -287,7 +287,7 @@ func (co *CourtController) AddCourt(c echo.Context) error {
 	})
 }
 
-// GetCurrentVendorCourtStats is a controller that handles the get current vendor 
+// GetCurrentVendorCourtStats is a controller that handles the get current vendor
 // court stats endpoint.
 // Endpoint: GET /vendors/me/courts/stats
 //

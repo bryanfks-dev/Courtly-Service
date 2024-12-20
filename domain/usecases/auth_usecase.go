@@ -87,7 +87,16 @@ func (a *AuthUseCase) ExtractToken(c echo.Context) (string, error) {
 //
 // Returns the decoded token.
 func (a *AuthUseCase) DecodeToken(token *jwt.Token) *entities.JWTClaims {
-	return token.Claims.(*entities.JWTClaims)
+	claims, ok := token.Claims.(*entities.JWTClaims)
+
+	// Check if the token claims are valid
+	if !ok {
+		log.Panicln("Error decoding token claims")
+
+		return nil
+	}
+
+	return claims
 }
 
 // HashPassword is a function that hashes a password.
