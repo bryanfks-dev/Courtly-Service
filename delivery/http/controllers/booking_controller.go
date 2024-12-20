@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"main/core/enums"
 	"main/data/models"
 	"main/domain/usecases"
@@ -29,7 +30,7 @@ func NewBookingController(b *usecases.BookingUseCase) *BookingController {
 
 // GetCurrentUserBookings is a controller that gets the current user bookings
 // from the database.
-// GET /users/me/bookings
+// Endpoint: GET /users/me/bookings
 //
 // c: The echo context.
 //
@@ -82,7 +83,7 @@ func (b *BookingController) GetCurrentUserBookings(c echo.Context) error {
 
 // GetCurrentUserBooking is a controller that gets the current user booking
 // from the database.
-// GET /vendors/me/orders
+// Endpoint: GET /vendors/me/orders
 //
 // c: The echo context.
 //
@@ -135,7 +136,7 @@ func (b *BookingController) GetCurrentVendorOrders(c echo.Context) error {
 
 // GetCurrentVendorOrdersStats is a controller that gets the current vendor orders
 // statistics from the database.
-// GET /vendors/me/orders/stats
+// Endpoint: GET /vendors/me/orders/stats
 //
 // c: The echo context.
 //
@@ -160,5 +161,65 @@ func (b *BookingController) GetCurrentVendorOrdersStats(c echo.Context) error {
 		Success: true,
 		Message: "Vendor orders stats retrieved successfully",
 		Data:    dto.CurrentVendorOrdersStatsResponseDTO{}.FromMap(stats),
+	})
+}
+
+// CreateBooking is a controller that creates a new booking.
+// Endpoint: POST /users/me/bookings
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (b *BookingController) CreateBooking(c echo.Context) error {
+	// Create a new CreateBookingDTO object
+	data := new(dto.CreateBookingDTO)
+
+	// Bind the request body to the CreateBookingDTO object
+	if err := c.Bind(data); err != nil {
+		log.Println("Error binding request body: ", err)
+
+		return err
+	}
+
+	// Validate the CreateBookingDTO object
+	errorMsg := b.BookingUseCase.ValidateCreateBooking(*data)
+
+	// Return an error if any
+	if !utils.IsBlank(errorMsg) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: errorMsg,
+			Data:    nil,
+		})
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Create a new booking
+	err := b.BookingUseCase.CreateBooking(cc.Token, *data)
+
+	// Return an error if any
+	if err != nil {
+		// Check if the error is a client error
+		if err.ClientError {
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+				Success: false,
+				Message: err.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: err.Message,
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Booking created successfully",
+		Data:    nil,
 	})
 }

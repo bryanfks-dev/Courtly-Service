@@ -12,4 +12,7 @@ var (
 
 	// PATH_TO_COURT_IMAGES is the path to the court images
 	PATH_TO_COURT_IMAGES = "assets/court_images"
+
+	// APP_FEE_PRICE is the price of the app fee
+	APP_FEE_PRICE = 1000.0
 )

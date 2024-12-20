@@ -6,7 +6,7 @@ type Order struct {
 	ID uint `gorm:"primary_key;autoIncrement"`
 
 	// PaymentMethodID is the foreign key of the payment method.
-	PaymentMethodID uint `gorm:"not null"`
+	PaymentMethodID *uint         `gorm:"nullable"`
 	PaymentMethod   PaymentMethod `gorm:"foreignKey:PaymentMethodID"`
 
 	// Price is the price of the order.

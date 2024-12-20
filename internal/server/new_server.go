@@ -124,5 +124,7 @@ func NewServer() (*echo.Echo, error) {
 
 	currentUserBookingPrefix.GET("", c.BookingController.GetCurrentUserBookings)
 
+	currentUserBookingPrefix.POST("", c.BookingController.CreateBooking)
+
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

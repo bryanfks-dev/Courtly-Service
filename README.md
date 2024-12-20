@@ -30,6 +30,7 @@ There are several available endpoints, such as:
 ##### Booking endpoints
 
 - **GET** `/api/v1/users/me/bookings` - Get current user bookings from database
+- **POST** `/api/v1/users/me/bookings` - Create current user court bookings in database 
 
 ##### Orders endpoints
 

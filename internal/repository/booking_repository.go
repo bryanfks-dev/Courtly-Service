@@ -6,6 +6,8 @@ import (
 	"main/data/models"
 	"main/internal/providers/mysql"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // BookingRepository is a struct that defines the BookingRepository
@@ -16,6 +18,26 @@ type BookingRepository struct{}
 // Returns a pointer to the BookingRepository struct
 func NewBookingRepository() *BookingRepository {
 	return &BookingRepository{}
+}
+
+// Create is a method that creates a booking in the database.
+//
+// tx: The database transaction.
+// booking: The booking to create.
+//
+// Returns an error if any.
+func (*BookingRepository) Create(tx *gorm.DB, booking *models.Booking) error {
+	// Create the booking in the database
+	err := tx.Create(booking).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error creating booking: " + err.Error())
+
+		return err
+	}
+
+	return nil
 }
 
 // GetUsingUserID is a method that returns the bookings by the given user ID.

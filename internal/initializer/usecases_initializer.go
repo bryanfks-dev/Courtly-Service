@@ -47,7 +47,7 @@ func InitUseCases(repos *Repositories) *UseCases {
 
 	u.ReviewUseCase = usecases.NewReviewUseCase(u.AuthUseCase, repos.ReviewRepository, repos.BookingRepository, repos.CourtRepository)
 
-	u.BookingUseCase = usecases.NewBookingUseCase(u.AuthUseCase, repos.BookingRepository)
+	u.BookingUseCase = usecases.NewBookingUseCase(u.AuthUseCase, repos.BookingRepository, repos.CourtRepository, repos.OrderRepository)
 
 	return u
 }
