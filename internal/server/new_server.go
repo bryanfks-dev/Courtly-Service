@@ -122,6 +122,8 @@ func NewServer() (*echo.Echo, error) {
 	// Reviews endpoints
 	vendorTypeCourtsPrefix.GET("/reviews", c.ReviewController.GetCourtTypeReviews)
 
+	vendorTypeCourtsPrefix.POST("/reviews", c.ReviewController.CreateReview, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.UserMiddleware.Shield)
+
 	currentVendorPrefix.GET("/reviews", c.ReviewController.GetCurrentVendorReviews)
 
 	// Bookings endpoints

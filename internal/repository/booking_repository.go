@@ -190,9 +190,9 @@ func (*BookingRepository) CheckUserHasBookCourt(userID uint, vendorID uint, cour
 
 	// Get the bookings from the database
 	err :=
-		mysql.Conn.Model(&models.Booking{}).Joins("JOIN courts ON courts.id = bookings.id").
+		mysql.Conn.Model(&models.Booking{}).Joins("JOIN courts ON courts.id = bookings.court_id").
 			Joins("JOIN court_types ON court_types.id = courts.court_type_id").
-			Where("user_id = ? AND vendor_id = ? AND court_types.type = ?", userID, vendorID, courtType).
+			Where("user_id = ? AND bookings.vendor_id = ? AND court_types.type = ?", userID, vendorID, courtType).
 			Count(&count).Error
 
 	// Return an error if any

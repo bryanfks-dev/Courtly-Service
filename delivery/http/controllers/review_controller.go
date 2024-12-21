@@ -176,14 +176,14 @@ func (r *ReviewController) GetCurrentVendorReviews(c echo.Context) error {
 }
 
 // CreateReview is a controller that handles the request to create a review.
-// Endpoint: POST /vendors/:id/courts/types/:type/reviews
+// Endpoint: POST /vendors/:id/courts/:type/reviews
 //
 // c: The echo context.
 //
 // Returns a response containing the created review.
 func (r *ReviewController) CreateReview(c echo.Context) error {
 	// Get the vendor id from the URL
-	id := c.Param("vendorID")
+	id := c.Param("id")
 
 	// Check if the vendor id is empty
 	if utils.IsBlank(id) {
@@ -219,7 +219,7 @@ func (r *ReviewController) CreateReview(c echo.Context) error {
 	}
 
 	// Validate the court type
-	if !enums.InCourtType(id) {
+	if !enums.InCourtType(courtType) {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
 			Message: "Invalid court type",
