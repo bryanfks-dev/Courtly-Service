@@ -169,7 +169,7 @@ func (*UserRepository) UpdatePassword(userID uint, hashedNewPassword string) err
 // Returns an error if any.
 func (*UserRepository) UpdateUsername(userID uint, newUsername string) error {
 	// Update the user's username
-	err := mysql.Conn.Model(&models.User{}).Update("username", newUsername).Where("id = ?", userID).Error
+	err := mysql.Conn.Model(&models.User{}).Where("id = ?", userID).Update("username", newUsername).Error
 
 	// Check if there is an error
 	if err != nil {
