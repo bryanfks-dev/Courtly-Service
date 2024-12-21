@@ -227,7 +227,7 @@ func (*ReviewRepository) CheckUserHasReviewCourtType(userID uint, vendorID uint,
 
 	// Get the count of courts by vendor ID and court type
 	err :=
-		mysql.Conn.Model(&models.Review{}).Joins("CourtType").Where("user_id = ?", userID).Where("vendor_id = ?", vendorID).Where("CourtType.type = ?", courtType).Count(&count).Error
+		mysql.Conn.Model(&models.Review{}).Joins("JOIN court_types ON court_types.id = reviews.court_type_id").Where("user_id = ?", userID).Where("vendor_id = ?", vendorID).Where("court_types.type = ?", courtType).Count(&count).Error
 
 	// Return an error if any
 	if err != nil {

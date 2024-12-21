@@ -44,7 +44,8 @@ Endpoint uses to get current user orders overview from database.
         "payment_method": "...",
         "price": ...,
         "app_fee": ...,
-        "status": "..."
+        "status": "...",
+        "reviewed": ...
       },
       {...},
       {...},
@@ -57,7 +58,7 @@ Endpoint uses to get current user orders overview from database.
 #### Possible HTTP status codes
 
 - `200 OK`: when response is success
-- `500 INTERNAL SERVER ERROR`: when fails getting user bookings
+- `500 INTERNAL SERVER ERROR`: when fails getting user orders or fails to check if user has reviewed vendor's court type
 
 ### **GET** `/api/v1/users/me/orders/:id`
 

@@ -13,17 +13,20 @@ import (
 
 // OrderController is a struct that defines the OrderController
 type OrderController struct {
-	OrderUseCase *usecases.OrderUseCase
+	OrderUseCase  *usecases.OrderUseCase
+	ReviewUseCase *usecases.ReviewUseCase
 }
 
 // NewOrderController is a function that returns a new OrderController
 //
 // o: The OrderUseCase
+// r: The ReviewUseCase
 //
 // Returns a pointer to the OrderController struct
-func NewOrderController(o *usecases.OrderUseCase) *OrderController {
+func NewOrderController(o *usecases.OrderUseCase, r *usecases.ReviewUseCase) *OrderController {
 	return &OrderController{
-		OrderUseCase: o,
+		OrderUseCase:  o,
+		ReviewUseCase: r,
 	}
 }
 
@@ -62,10 +65,43 @@ func (o *OrderController) GetCurrentUserOrders(c echo.Context) error {
 		})
 	}
 
+	// Check if the orders is empty
+	if len(*orders) == 0 {
+		return c.JSON(http.StatusOK, dto.ResponseDTO{
+			Success: true,
+			Message: "User orders retrieved successfully",
+			Data:    dto.CurrentUserOrdersDTO{}.FromModels(orders),
+		})
+	}
+
+	// Create order dtos
+	// Create a slice of order DTOs
+	dtos := []dto.OrderDTO{}
+
+	// Convert the orders to order DTOs
+	for _, order := range *orders {
+		// Check if user has reviewed for court type
+		reviewed, err := o.ReviewUseCase.CheckCurrentUserHasReviewedUsingVendorIDCourtType(cc.Token, order.Bookings[0].VendorID, order.Bookings[0].Court.CourtType.Type)
+
+		// Return an error if any
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+				Success: false,
+				Message: "Failed to get user orders",
+				Data:    nil,
+			})
+		}
+
+		// Append the order DTO to the slice
+		dtos = append(dtos, *dto.OrderDTO{}.FromModel(&order, &reviewed))
+	}
+
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "User orders retrieved successfully",
-		Data:    dto.CurrentUserOrdersDTO{}.FromModels(orders),
+		Data: dto.CurrentUserOrdersDTO{
+			Orders: &dtos,
+		},
 	})
 }
 

@@ -127,6 +127,20 @@ func (r *ReviewUseCase) ValidateCreateReviewForm(form *dto.CreateReviewFormDTO) 
 	return nil
 }
 
+// CheckCurrentUserHasReviewedUsingCourtType is a use case that checks if the current user has reviewed using the court type.
+//
+// token: The JWT token.
+// vendorID: The id of the vendor.
+// courtType: The type of the court.
+//
+// Returns a boolean value and an error if any.
+func (r *ReviewUseCase) CheckCurrentUserHasReviewedUsingVendorIDCourtType(token *jwt.Token, vendorID uint, courtType string) (bool, error) {
+	// Get the user ID from the token
+	claims := r.AuthUseCase.DecodeToken(token)
+
+	return r.ReviewRepository.CheckUserHasReviewCourtType(claims.Id, uint(vendorID), courtType)
+}
+
 // ProcessCreateReview is a use case that processes the creation of a review.
 //
 // token: The JWT token.

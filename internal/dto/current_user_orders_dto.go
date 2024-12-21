@@ -9,13 +9,17 @@ type CurrentUserOrdersDTO struct {
 }
 
 // FromModels is a function that converts a slice of order models to a current user orders DTO.
+//
+// m: The slice of order models.
+//
+// Returns a pointer to the current user orders DTO.
 func (c CurrentUserOrdersDTO) FromModels(m *[]models.Order) *CurrentUserOrdersDTO {
 	// Create a slice of order DTOs
 	dto := []OrderDTO{}
 
 	// Convert the orders to order DTOs
 	for _, order := range *m {
-		dto = append(dto, *OrderDTO{}.FromModel(&order))
+		dto = append(dto, *OrderDTO{}.FromModel(&order, nil))
 	}
 
 	return &CurrentUserOrdersDTO{
