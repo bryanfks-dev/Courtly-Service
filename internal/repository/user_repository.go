@@ -149,7 +149,7 @@ func (*UserRepository) IsPhoneNumberTaken(phoneNumber string) (bool, error) {
 // Returns an error if any.
 func (*UserRepository) UpdatePassword(userID uint, hashedNewPassword string) error {
 	// Update the user's password
-	err := mysql.Conn.Model(&models.User{}).Update("password", hashedNewPassword).Where("id = ?", userID).Error
+	err := mysql.Conn.Model(&models.User{}).Where("id = ?", userID).Update("password", hashedNewPassword).Error
 
 	// Check if there is an error
 	if err != nil {
