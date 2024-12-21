@@ -77,7 +77,12 @@ func (*OrderRepository) GetUsingUserIDCourtType(userID uint, courtType string) (
 	err :=
 		mysql.Conn.Preload("PaymentMethod").Preload("Bookings").Preload("Bookings.Vendor").
 			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
-			Where("bookings.user_id = ?", userID).Where("courts.").Group("orders.id").Find(&orders).Error
+			Joins("JOIN bookings ON bookings.order_id = orders.id").
+			Joins("JOIN courts ON courts.id = bookings.court_id").
+			Joins("JOIN court_types ON court_types.id = courts.court_type_id").
+			Where("bookings.user_id = ?", userID).Group("orders.id").
+			Where("court_types.type = ?", courtType).
+			Find(&orders).Error
 
 	// Return an error if any
 	if err != nil {
