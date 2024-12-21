@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 // Order is the model for the order table.
 type Order struct {
 	// ID is the primary key of the order.
@@ -20,4 +22,7 @@ type Order struct {
 
 	// Bookings is the list of bookings.
 	Bookings []Booking `gorm:"foreignKey:OrderID"`
+
+	// CreatedAt is the time the order was created.
+	CreatedAt time.Time `gorm:"autoCreateTime"`
 }

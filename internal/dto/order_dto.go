@@ -1,6 +1,8 @@
 package dto
 
-import "main/data/models"
+import (
+	"main/data/models"
+)
 
 // OrderDTO is a struct that represents the order data transfer object.
 type OrderDTO struct {
@@ -10,11 +12,11 @@ type OrderDTO struct {
 	// Bookings is the list of bookings
 	Date string `json:"date"`
 
-	// CourtType is the type of the court
-	CourtType string `json:"court_type"`
+	// Vendor is the vendor of the order
+	Vendor *PublicVendorDTO `json:"vendor"`
 
-	// VendorName is the vendor name of the order
-	VendorName string `json:"vendor_name"`
+	// CourtType is the court type of the order
+	CourtType string `json:"court_type"`
 
 	// PaymentMethod is the payment method of the order
 	PaymentMethod string `json:"payment_method"`
@@ -35,14 +37,11 @@ type OrderDTO struct {
 //
 // Returns the order DTO.
 func (o OrderDTO) FromModel(m *models.Order) *OrderDTO {
-	// Get the date
-	date, _ := m.Bookings[0].Date.Value()
-
 	return &OrderDTO{
 		ID:            m.ID,
-		Date:          date.(string),
+		Date:          m.CreatedAt.Format("2006-01-02"),
+		Vendor:        PublicVendorDTO{}.FromModel(&m.Bookings[0].Vendor),
 		CourtType:     m.Bookings[0].Court.CourtType.Type,
-		VendorName:    m.Bookings[0].Vendor.Name,
 		PaymentMethod: m.PaymentMethod.Method,
 		Price:         m.Price,
 		AppFee:        m.AppFee,

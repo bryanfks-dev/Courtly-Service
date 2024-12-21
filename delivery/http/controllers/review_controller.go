@@ -185,6 +185,15 @@ func (r *ReviewController) CreateReview(c echo.Context) error {
 	// Get the vendor id from the URL
 	id := c.Param("vendorID")
 
+	// Check if the vendor id is empty
+	if utils.IsBlank(id) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Vendor ID is required",
+			Data:    nil,
+		})
+	}
+
 	// Convert the id to an integer
 	vendorID, err := strconv.Atoi(id)
 
@@ -198,16 +207,22 @@ func (r *ReviewController) CreateReview(c echo.Context) error {
 	}
 
 	// Get the court type from the URL
-	id = c.Param("courtID")
+	courtType := c.Param("type")
 
-	// Convert the id to an integer
-	courtID, err := strconv.Atoi(id)
-
-	// Check if the id is invalid
-	if err != nil {
+	// Check if the court type is empty
+	if utils.IsBlank(courtType) {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
-			Message: "Invalid court ID",
+			Message: "Court type is required",
+			Data:    nil,
+		})
+	}
+
+	// Validate the court type
+	if !enums.InCourtType(id) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
 			Data:    nil,
 		})
 	}
@@ -241,7 +256,7 @@ func (r *ReviewController) CreateReview(c echo.Context) error {
 	cc := c.(*dto.CustomContext)
 
 	// Process the creation of the review
-	review, processErr := r.ReviewUseCase.ProcessCreateReview(cc.Token, vendorID, courtID, form)
+	review, processErr := r.ReviewUseCase.ProcessCreateReview(cc.Token, vendorID, courtType, form)
 
 	// Check if there is an error
 	if processErr != nil {

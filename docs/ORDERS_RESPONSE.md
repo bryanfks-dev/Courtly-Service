@@ -34,7 +34,13 @@ Endpoint uses to get current user orders overview from database.
         "id": ...,
         "date": "...",
         "court_type": "...",
-        "vendor_name": "...",
+        "vendor": {
+          "id": ...,
+          "name": "...",
+          "address": "...",
+          "open_time": "...",
+          "close_time": "..."
+        },
         "payment_method": "...",
         "price": ...,
         "app_fee": ...,

@@ -128,7 +128,7 @@ Endpoint uses to get court reviews related to the vendor from database.
 - `400 BAD REQUEST`: when either invalid court type or invalid rating query parameter
 - `500 INTERNAL SERVER ERROR`: when either fails to get total rating or fails to get total reviews or fails to get reviews
 
-### **POST** `/api/v1/vendors/:vendorID/courts/:courtID/reviews`
+### **POST** `/api/v1/vendors/:id/courts/:type/reviews`
 
 Endpoint uses to create a new review for current vendor and court type.
 
@@ -177,6 +177,6 @@ Endpoint uses to create a new review for current vendor and court type.
 #### Possible HTTP status codes
 
 - `200 OK`: when response is success
-- `400 BAD REQUEST`: when either invalid vendor id or invalid court id or fails to validate request body
+- `400 BAD REQUEST`: when either invalid vendor id or invalid court type or fails to validate request body
 - `403 FORBIDDEN`: when either user haven't book the court or user has reviewed the court
-- `500 INTERNAL SERVER ERROR`: when either fails to check user has book a court or fails getting court data or fails checking court has been reviewed by user or fails to create review
+- `500 INTERNAL SERVER ERROR`: when either fails to check user has book a court or fails getting court data or fails checking court has been reviewed by user or fails to get court type data or fails to create review

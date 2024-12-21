@@ -16,10 +16,11 @@ import (
 
 // ReviewUseCase is a struct that defines the review use case.
 type ReviewUseCase struct {
-	AuthUseCase       *AuthUseCase
-	ReviewRepository  *repository.ReviewRepository
-	BookingRepository *repository.BookingRepository
-	CourtRepository   *repository.CourtRepository
+	AuthUseCase         *AuthUseCase
+	ReviewRepository    *repository.ReviewRepository
+	BookingRepository   *repository.BookingRepository
+	CourtRepository     *repository.CourtRepository
+	CourtTypeRepository *repository.CourtTypeRepository
 }
 
 // NewReviewUseCase is a factory function that returns a new instance of the ReviewUseCase.
@@ -28,14 +29,16 @@ type ReviewUseCase struct {
 // r: The review repository.
 // b: The booking repository.
 // c: The court repository.
+// ct: The court type repository.
 //
 // Returns a new instance of the ReviewUseCase.
-func NewReviewUseCase(a *AuthUseCase, r *repository.ReviewRepository, b *repository.BookingRepository, c *repository.CourtRepository) *ReviewUseCase {
+func NewReviewUseCase(a *AuthUseCase, r *repository.ReviewRepository, b *repository.BookingRepository, c *repository.CourtRepository, ct *repository.CourtTypeRepository) *ReviewUseCase {
 	return &ReviewUseCase{
-		AuthUseCase:       a,
-		ReviewRepository:  r,
-		BookingRepository: b,
-		CourtRepository:   c,
+		AuthUseCase:         a,
+		ReviewRepository:    r,
+		BookingRepository:   b,
+		CourtRepository:     c,
+		CourtTypeRepository: ct,
 	}
 }
 
@@ -132,12 +135,13 @@ func (r *ReviewUseCase) ValidateCreateReviewForm(form *dto.CreateReviewFormDTO) 
 // form: The create review form.
 //
 // Returns an error if any.
-func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, courtID int, form *dto.CreateReviewFormDTO) (*models.Review, *entities.ProcessError) {
+func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, courtType string, form *dto.CreateReviewFormDTO) (*models.Review, *entities.ProcessError) {
 	// Get the user ID from the token
 	claims := r.AuthUseCase.DecodeToken(token)
 
 	// Check if user already book the court
-	booked, err := r.BookingRepository.CheckUserHasBookCourt(claims.Id, uint(vendorID), uint(courtID))
+	booked, err :=
+		r.BookingRepository.CheckUserHasBookCourt(claims.Id, uint(vendorID), courtType)
 
 	// Check if there is an error
 	if err != nil {
@@ -155,19 +159,9 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 		}
 	}
 
-	// Get court using court id
-	court, err := r.CourtRepository.GetUsingID(uint(courtID))
-
-	// Check if there is an error
-	if err != nil {
-		return nil, &entities.ProcessError{
-			ClientError: false,
-			Message:     "An error occurred while getting the court",
-		}
-	}
-
 	// Check if user has reviewed the court
-	reviewed, err := r.ReviewRepository.CheckUserHasReviewCourtType(claims.Id, uint(vendorID), court.CourtType.Type)
+	reviewed, err :=
+		r.ReviewRepository.CheckUserHasReviewCourtType(claims.Id, uint(vendorID), courtType)
 
 	// Check if there is an error
 	if err != nil {
@@ -185,11 +179,22 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 		}
 	}
 
+	// Get the court type using the court type
+	courtTypeM, err := r.CourtTypeRepository.GetUsingType(courtType)
+
+	// Check if there is an error
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "An error occurred while getting the court type",
+		}
+	}
+
 	// Create a new review object
 	review := &models.Review{
 		UserID:      claims.Id,
 		VendorID:    uint(vendorID),
-		CourtTypeID: court.CourtTypeID,
+		CourtTypeID: courtTypeM.ID,
 		Rating:      form.Rating,
 		Review:      form.Review,
 	}

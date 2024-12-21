@@ -51,7 +51,7 @@ There are several available endpoints, such as:
 
 - **GET** `/api/v1/vendors/:id/courts/:type/reviews` - Get vendor courts type reviews from database
 - **GET** `/api/v1/vendors/me/reviews` - Get court reviews related to the vendor from database
-- **POST** `/api/v1/vendors/:vendorID/courts/:courtID/reviews` - Create a new review for current vendor and court type
+- **POST** `/api/v1/vendors/:id/courts/:type/reviews` - Create a new review for current vendor and court type
 
 ## Response
 
