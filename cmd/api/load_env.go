@@ -6,7 +6,7 @@ import (
 )
 
 // LoadEnv is a function that loads the environment variables.
-// It loads the database, JWT, and server configuration.
+// It loads the database, JWT, midtrans, and server configuration.
 //
 // Returns void.
 func LoadEnv() {
@@ -14,7 +14,7 @@ func LoadEnv() {
 	var wg sync.WaitGroup
 
 	// Add the number of configurations to load
-	wg.Add(3)
+	wg.Add(4)
 
 	// Load the configurations in parallel
 	go func() {
@@ -26,6 +26,11 @@ func LoadEnv() {
 		config.JWTConfig.LoadData()
 		wg.Done()
 	}()
+
+	go func() {
+		config.MidtransConfig.LoadData()
+		wg.Done()
+	} ()
 
 	go func() {
 		config.ServerConfig.LoadData()
