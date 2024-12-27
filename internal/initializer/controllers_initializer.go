@@ -12,7 +12,6 @@ type Controllers struct {
 	VendorController         *controllers.VendorController
 	CourtController          *controllers.CourtController
 	ReviewController         *controllers.ReviewController
-	BookingController        *controllers.BookingController
 	OrderController          *controllers.OrderController
 }
 
@@ -31,7 +30,6 @@ func InitControllers(usecase *UseCases) *Controllers {
 		VendorController:         controllers.NewVendorController(usecase.VendorUseCase),
 		CourtController:          controllers.NewCourtController(usecase.CourtUseCase),
 		ReviewController:         controllers.NewReviewController(usecase.ReviewUseCase),
-		BookingController:        controllers.NewBookingController(usecase.BookingUseCase, usecase.OrderUseCase),
-		OrderController:          controllers.NewOrderController(usecase.OrderUseCase, usecase.ReviewUseCase),
+		OrderController:          controllers.NewOrderController(usecase.OrderUseCase, usecase.BookingUseCase, usecase.ReviewUseCase),
 	}
 }

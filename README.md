@@ -21,15 +21,12 @@ There are several available endpoints, such as:
 - **GET** `/api/v1/users/me` - Get current user information from the database
 - **PATCH** `/api/v1/users/me/password` - Update user password with a new password
 - **PATCH** `/api/v1/users/me/username` - Update user username with a new available username
+- **PATCH** `/api/v1/users/me/profile-picture` - Update user profile picture with a new profile image
 
 ##### Vendors endpoints
 
 - **GET** `/api/v1/vendors/me` - Get current vendor information from database
 - **PATCH** `/api/v1/vendors/me/password` - Update vendor password with a new password
-
-##### Booking endpoints
-
-- **POST** `/api/v1/users/me/bookings` - Create current user court bookings in database
 
 ##### Orders endpoints
 

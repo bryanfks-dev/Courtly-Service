@@ -113,3 +113,37 @@ Endpoint uses to update user username with a new available username.
 - `200 OK`: when response success
 - `400 BAD REQUEST`: when either fails to validate request body or username is taken
 - `500 INTERNAL SERVER ERROR`: when either fails getting user or fails updating user username
+
+### **PATCH** `/api/v1/users/me/profile-picture`
+
+Endpoint uses to update user profile picture with a new image.
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Request body needed
+
+```json
+{
+  "image": "..."
+}
+```
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": null
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response success
+- `400 BAD REQUEST`: when either fails to validate request body or image is invalid
+- `500 INTERNAL SERVER ERROR`: when either fails to decode image or fails saving image or fails updating user profile picture

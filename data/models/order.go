@@ -8,7 +8,7 @@ type Order struct {
 	ID uint `gorm:"primary_key;autoIncrement"`
 
 	// PaymentMethodID is the foreign key of the payment method.
-	PaymentMethodID *uint         `gorm:"default:null"`
+	PaymentMethodID uint         `gorm:"default:null"`
 	PaymentMethod   PaymentMethod `gorm:"foreignKey:PaymentMethodID"`
 
 	// Price is the price of the order.
@@ -16,6 +16,9 @@ type Order struct {
 
 	// AppFee is the app fee of the order.
 	AppFee float64 `gorm:"not null"`
+
+	// PaymentToken is the payment token of the order.
+	PaymentToken *string `gorm:"default:null"`
 
 	// Status is the status of the order.
 	Status string `gorm:"not null"`

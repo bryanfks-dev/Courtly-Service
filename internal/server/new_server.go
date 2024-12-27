@@ -68,8 +68,12 @@ func NewServer() (*echo.Echo, error) {
 	currentUserPrefix := userPrefix.Group("/me", m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.UserMiddleware.Shield)
 
 	currentUserPrefix.GET("", c.UserController.GetCurrentUser)
+
 	currentUserPrefix.PATCH("/username", c.UserController.UpdateCurrentUserUsername)
+
 	currentUserPrefix.PATCH("/password", c.UserController.UpdateCurrentUserPassword)
+
+	currentUserPrefix.PATCH("/profile-picture", c.UserController.UpdateCurrentUserProfilePicture)
 
 	// Vendors endpoints
 	vendorPrefix := prefix.Group("/vendors")
@@ -85,13 +89,15 @@ func NewServer() (*echo.Echo, error) {
 
 	currentUserOrdersPrefix.GET("", c.OrderController.GetCurrentUserOrders)
 
+	currentUserOrdersPrefix.POST("", c.OrderController.CreateOrder)
+
 	currentUserOrdersPrefix.GET("/:id", c.OrderController.GetCurrentUserOrderDetail)
 
 	currentVendorOrdersPrefix := currentVendorPrefix.Group("/orders")
 
-	currentVendorOrdersPrefix.GET("", c.BookingController.GetCurrentVendorOrders)
+	currentVendorOrdersPrefix.GET("", c.OrderController.GetCurrentVendorOrders)
 
-	currentVendorOrdersPrefix.GET("/stats", c.BookingController.GetCurrentVendorOrdersStats)
+	currentVendorOrdersPrefix.GET("/stats", c.OrderController.GetCurrentVendorOrdersStats)
 
 	// Courts endpoints
 	courtPrefix := prefix.Group("/courts")
@@ -125,12 +131,6 @@ func NewServer() (*echo.Echo, error) {
 	vendorTypeCourtsPrefix.POST("/reviews", c.ReviewController.CreateReview, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.UserMiddleware.Shield)
 
 	currentVendorPrefix.GET("/reviews", c.ReviewController.GetCurrentVendorReviews)
-
-	// Bookings endpoints
-	// Current user bookings endpoints
-	currentUserBookingPrefix := currentUserPrefix.Group("/bookings")
-
-	currentUserBookingPrefix.POST("", c.BookingController.CreateBooking)
 
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

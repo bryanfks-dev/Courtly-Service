@@ -1,7 +1,9 @@
 package usecases
 
 import (
+	"encoding/base64"
 	"fmt"
+	"log"
 	"main/core/constants"
 	"main/core/types"
 	"main/data/models"
@@ -9,6 +11,7 @@ import (
 	"main/internal/dto"
 	"main/internal/repository"
 	"main/pkg/utils"
+	"os"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -206,6 +209,73 @@ func (u *UserUseCase) ProcessChangeUsername(token *jwt.Token, form *dto.ChangeUs
 	if err != nil {
 		return &entities.ProcessError{
 			Message:     "An error occurred while updating the username",
+			ClientError: false,
+		}
+	}
+
+	return nil
+}
+
+// ValidateChangeProfilePictureData is a function that validates the change profile picture data.
+//
+// data: The change profile picture dto.
+//
+// Returns a string of error.
+func (u *UserUseCase) ValidateChangeProfilePictureData(data *dto.ChangeUserProfilePictureDTO) string {
+	// Check if the profile picture is empty
+	if utils.IsBlank(data.Image) {
+		return "Image is required"
+	}
+
+	return ""
+}
+
+// ProcessChangeProfilePicture is a function that processes the change profile picture use case.
+//
+// token: The user token.
+// data: The change profile picture dto.
+//
+// Returns an error if any.
+func (u *UserUseCase) ProcessChangeProfilePicture(token *jwt.Token, data *dto.ChangeUserProfilePictureDTO) *entities.ProcessError {
+	// Get the user ID from the token
+	claims := u.AuthUseCase.DecodeToken(token)
+
+	// Decode the image
+	fileBytes, err := base64.StdEncoding.DecodeString(data.Image)
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to decode court image: ", err)
+
+		return &entities.ProcessError{
+			Message:     "An error occurred while decoding the image",
+			ClientError: false,
+		}
+	}
+
+	// Create the user image name
+	userImageName := fmt.Sprintf("user_%d.jpg", claims.Id)
+
+	// Write the image to a file
+	err = os.WriteFile(fmt.Sprintf("%s/%s", constants.PATH_TO_USER_PROFILE_PICTURES, userImageName), fileBytes, 0644)
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Failed to save user image: ", err)
+
+		return &entities.ProcessError{
+			Message:     "An error occurred while writing the image to a file",
+			ClientError: false,
+		}
+	}
+
+	// Update the profile picture
+	err = u.UserRepository.UpdateProfilePicture(claims.Id, userImageName)
+
+	// Return an error if any
+	if err != nil {
+		return &entities.ProcessError{
+			Message:     "An error occurred while updating the profile picture",
 			ClientError: false,
 		}
 	}

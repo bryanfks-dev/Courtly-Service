@@ -26,11 +26,29 @@ var courtTypes = []string{
 	"Badminton",
 }
 
+// courtTypesApiValue is a list of court types API value.
+var courtTypesApiValue = map[string]int{
+	"Football":   1,
+	"Basketball": 2,
+	"Tennis":     3,
+	"Volleyball": 4,
+	"Badminton":  5,
+}
+
 // Label is a function that returns the label of the court type.
 //
 // Returns the label of the court type.
 func (c CourtType) Label() string {
 	return courtTypes[c]
+}
+
+// GetCourtTypeID is a function that returns the ID of the court type.
+//
+// val: The value of the court type.
+//
+// Returns the ID of the court type.
+func GetCourtTypeID(val string) int {
+	return courtTypesApiValue[val]
 }
 
 // InCourtType is a function that checks if the given string is a court type.

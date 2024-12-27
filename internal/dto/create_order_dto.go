@@ -1,20 +1,23 @@
 package dto
 
-// CreateBookingDTO is a type that defines the create booking DTO.
-type CreateBookingDTO struct {
+// CreateOrderDTO is a type that defines the create booking DTO.
+type CreateOrderDTO struct {
 	// VendorID is the vendor ID.
 	VendorID uint `json:"vendor_id"`
 
 	// Date is the book date.
 	Date string `json:"date"`
 
+	// PaymentMethod is the payment method.
+	PaymentMethod string `json:"payment_method"`
+
 	// Bookings is the bookings.
-	Bookings *[]CreateBookingDTOInner `json:"bookings"`
+	Bookings *[]CreateOrderDTOInner `json:"bookings"`
 }
 
-// CreateBookingDTOInner is a type that defines the create
+// CreateOrderDTOInner is a type that defines the create
 // booking DTO inner.
-type CreateBookingDTOInner struct {
+type CreateOrderDTOInner struct {
 	// CourtID is the court ID.
 	CourtID uint `json:"court_id"`
 

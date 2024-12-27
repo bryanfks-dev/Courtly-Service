@@ -4,17 +4,16 @@ import (
 	"main/core/config"
 
 	"github.com/midtrans/midtrans-go"
-	"github.com/midtrans/midtrans-go/coreapi"
+	"github.com/midtrans/midtrans-go/snap"
 )
 
-// MidtransClient is a global variable that holds the Midtrans client.
-var MidtransClient *coreapi.Client
+var MidtransClient *snap.Client
 
 // CreateClient is a function that creates a new Midtrans client.
 //
-// Returns void
+// Returns 
 func CreateClient() {
-	MidtransClient = &coreapi.Client{}
+	MidtransClient = &snap.Client{}
 
-	MidtransClient.New(config.MidtransConfig.ServerKey, midtrans.Sandbox)
+	MidtransClient.New(config.MidtransConfig.ApiKey, midtrans.Sandbox)
 }

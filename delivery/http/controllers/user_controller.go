@@ -4,6 +4,7 @@ import (
 	"log"
 	"main/domain/usecases"
 	"main/internal/dto"
+	"main/pkg/utils"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -175,6 +176,69 @@ func (u *UserController) UpdateCurrentUserUsername(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Username updated successfully",
+		Data:    nil,
+	})
+}
+
+// UpdateCurrentUserProfilePicture is a handler function that updates the current user's profile picture.
+// Endpoint: PATCH /users/me/profile-picture
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (u *UserController) UpdateCurrentUserProfilePicture(c echo.Context) error {
+	// Create a new dto
+	data := new(dto.ChangeUserProfilePictureDTO)
+
+	if err := c.Bind(data); err != nil {
+		log.Println("Error binding form data: ", err)
+
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid request body",
+			Data:    nil,
+		})
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Validate the form data
+	err := u.UserUseCase.ValidateChangeProfilePictureData(data)
+
+	// Return an error if any
+	if !utils.IsBlank(err) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: err,
+			Data:    nil,
+		})
+	}
+
+	// Update the profile picture
+	processErr := u.UserUseCase.ProcessChangeProfilePicture(cc.Token, data)
+
+	// Return an error if any
+	if processErr != nil {
+		// Check if the error is a client error
+		if processErr.ClientError {
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+				Success: false,
+				Message: processErr.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: processErr.Message,
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Profile picture updated successfully",
 		Data:    nil,
 	})
 }

@@ -121,3 +121,24 @@ func (*OrderRepository) GetUsingIDUserID(orderID uint, userID uint) (*models.Ord
 
 	return &order, nil
 }
+
+// UpdatePaymentTokenUsingID is a method that updates the payment token using the given order ID.
+//
+// tx: The database transaction.
+// paymentToken: The payment token.
+// orderID: The ID of the order.
+//
+// Returns an error if any.
+func (*OrderRepository) UpdatePaymentTokenUsingID(tx *gorm.DB, paymentToken string, orderID uint) error {
+	// Update the payment token using the order ID
+	err := tx.Model(&models.Order{}).Where("id = ?", orderID).Update("payment_token", paymentToken).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error updating payment token using order id: " + err.Error())
+
+		return err
+	}
+
+	return nil
+}

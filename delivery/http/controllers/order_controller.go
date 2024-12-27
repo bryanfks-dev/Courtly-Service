@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"log"
 	"main/core/enums"
+	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"main/pkg/utils"
@@ -13,8 +15,9 @@ import (
 
 // OrderController is a struct that defines the OrderController
 type OrderController struct {
-	OrderUseCase  *usecases.OrderUseCase
-	ReviewUseCase *usecases.ReviewUseCase
+	BookingUseCase *usecases.BookingUseCase
+	OrderUseCase   *usecases.OrderUseCase
+	ReviewUseCase  *usecases.ReviewUseCase
 }
 
 // NewOrderController is a function that returns a new OrderController
@@ -23,11 +26,155 @@ type OrderController struct {
 // r: The ReviewUseCase
 //
 // Returns a pointer to the OrderController struct
-func NewOrderController(o *usecases.OrderUseCase, r *usecases.ReviewUseCase) *OrderController {
+func NewOrderController(o *usecases.OrderUseCase, b *usecases.BookingUseCase, r *usecases.ReviewUseCase) *OrderController {
 	return &OrderController{
-		OrderUseCase:  o,
-		ReviewUseCase: r,
+		OrderUseCase:   o,
+		BookingUseCase: b,
+		ReviewUseCase:  r,
 	}
+}
+
+// GetCurrentUserBooking is a controller that gets the current user booking
+// from the database.
+// Endpoint: GET /vendors/me/orders
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (o *OrderController) GetCurrentVendorOrders(c echo.Context) error {
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the court type from the query parameter
+	courtTypeParam := c.QueryParam("type")
+
+	// Placeholder for the bookings and error
+	var (
+		bookings *[]models.Booking
+		err      error
+	)
+
+	// Check if the court type is not empty
+	if !utils.IsBlank(courtTypeParam) && !enums.InCourtType(courtTypeParam) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
+	// Get the current vendor bookings
+	// Check if the court type is not empty
+	if utils.IsBlank(courtTypeParam) {
+		bookings, err = o.BookingUseCase.GetCurrentVendorBookings(cc.Token)
+	} else {
+		bookings, err = o.BookingUseCase.GetCurrentVendorBookingsUsingCourtType(cc.Token, courtTypeParam)
+	}
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get vendor orders",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Vendor orders retrieved successfully",
+		Data:    dto.CurrentVendorOrdersResponseDTO{}.FromModels(bookings),
+	})
+}
+
+// GetCurrentVendorOrdersStats is a controller that gets the current vendor orders
+// statistics from the database.
+// Endpoint: GET /vendors/me/orders/stats
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (o *OrderController) GetCurrentVendorOrdersStats(c echo.Context) error {
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get current vendor orders stats
+	stats, err := o.BookingUseCase.GetCurrentVendorOrdersStats(cc.Token)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get vendor orders stats",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Vendor orders stats retrieved successfully",
+		Data:    dto.CurrentVendorOrdersStatsResponseDTO{}.FromMap(stats),
+	})
+}
+
+// CreateOrder is a controller that creates a new booking.
+// Endpoint: POST /users/me/orders
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (o *OrderController) CreateOrder(c echo.Context) error {
+	// Create a new CreateBookingDTO object
+	data := new(dto.CreateOrderDTO)
+
+	// Bind the request body to the CreateBookingDTO object
+	if err := c.Bind(data); err != nil {
+		log.Println("Error binding request body: ", err)
+
+		return err
+	}
+
+	// Validate the CreateBookingDTO object
+	errorMsg := o.OrderUseCase.ValidateCreateOrder(*data)
+
+	// Return an error if any
+	if !utils.IsBlank(errorMsg) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: errorMsg,
+			Data:    nil,
+		})
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Create a new booking
+	err := o.OrderUseCase.CreateOrder(cc.Token, *data)
+
+	// Return an error if any
+	if err != nil {
+		// Check if the error is a client error
+		if err.ClientError {
+			return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+				Success: false,
+				Message: err.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: err.Message,
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Order created successfully",
+		Data:    nil,
+	})
 }
 
 // GetCurrentUserOrders is a controller that gets the current user orders

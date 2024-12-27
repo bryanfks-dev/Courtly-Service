@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"main/core/enums"
 	"main/core/types"
 	"main/data/models"
 	"main/domain/entities"
@@ -16,11 +17,10 @@ import (
 
 // ReviewUseCase is a struct that defines the review use case.
 type ReviewUseCase struct {
-	AuthUseCase         *AuthUseCase
-	ReviewRepository    *repository.ReviewRepository
-	BookingRepository   *repository.BookingRepository
-	CourtRepository     *repository.CourtRepository
-	CourtTypeRepository *repository.CourtTypeRepository
+	AuthUseCase       *AuthUseCase
+	ReviewRepository  *repository.ReviewRepository
+	BookingRepository *repository.BookingRepository
+	CourtRepository   *repository.CourtRepository
 }
 
 // NewReviewUseCase is a factory function that returns a new instance of the ReviewUseCase.
@@ -29,16 +29,14 @@ type ReviewUseCase struct {
 // r: The review repository.
 // b: The booking repository.
 // c: The court repository.
-// ct: The court type repository.
 //
 // Returns a new instance of the ReviewUseCase.
-func NewReviewUseCase(a *AuthUseCase, r *repository.ReviewRepository, b *repository.BookingRepository, c *repository.CourtRepository, ct *repository.CourtTypeRepository) *ReviewUseCase {
+func NewReviewUseCase(a *AuthUseCase, r *repository.ReviewRepository, b *repository.BookingRepository, c *repository.CourtRepository) *ReviewUseCase {
 	return &ReviewUseCase{
-		AuthUseCase:         a,
-		ReviewRepository:    r,
-		BookingRepository:   b,
-		CourtRepository:     c,
-		CourtTypeRepository: ct,
+		AuthUseCase:       a,
+		ReviewRepository:  r,
+		BookingRepository: b,
+		CourtRepository:   c,
 	}
 }
 
@@ -193,22 +191,11 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 		}
 	}
 
-	// Get the court type using the court type
-	courtTypeM, err := r.CourtTypeRepository.GetUsingType(courtType)
-
-	// Check if there is an error
-	if err != nil {
-		return nil, &entities.ProcessError{
-			ClientError: false,
-			Message:     "An error occurred while getting the court type",
-		}
-	}
-
 	// Create a new review object
 	review := &models.Review{
 		UserID:      claims.Id,
 		VendorID:    uint(vendorID),
-		CourtTypeID: courtTypeM.ID,
+		CourtTypeID: uint(enums.GetPaymentMethodIDFromRequest(courtType)),
 		Rating:      form.Rating,
 		Review:      form.Review,
 	}

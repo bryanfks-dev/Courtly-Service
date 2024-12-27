@@ -8,7 +8,6 @@ type Repositories struct {
 	BlacklistedTokenRepository *repository.BlacklistedTokenRepository
 	VendorRepository           *repository.VendorRepository
 	CourtRepository            *repository.CourtRepository
-	CourtTypeRepository        *repository.CourtTypeRepository
 	ReviewRepository           *repository.ReviewRepository
 	BookingRepository          *repository.BookingRepository
 	OrderRepository            *repository.OrderRepository
@@ -23,7 +22,6 @@ func InitRepositories() *Repositories {
 		BlacklistedTokenRepository: repository.NewBlacklistedTokenRepository(),
 		VendorRepository:           repository.NewVendorRepository(),
 		CourtRepository:            repository.NewCourtRepository(),
-		CourtTypeRepository:        repository.NewCourtTypeRepository(),
 		ReviewRepository:           repository.NewReviewRepository(),
 		BookingRepository:          repository.NewBookingRepository(),
 		OrderRepository:            repository.NewOrderRepository(),

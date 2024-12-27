@@ -180,3 +180,23 @@ func (*UserRepository) UpdateUsername(userID uint, newUsername string) error {
 
 	return nil
 }
+
+// UpdateProfilePicture is a function that updates a user's profile picture.
+//
+// userID: The user ID.
+// newFileName: The new file name.
+//
+// Returns an error if any.
+func (*UserRepository) UpdateProfilePicture(userID uint, newFileName string) error {
+	// Update the user's username
+	err := mysql.Conn.Model(&models.User{}).Where("id = ?", userID).Update("profile_picture", newFileName).Error
+
+	// Check if there is an error
+	if err != nil {
+		log.Println("Failed to update user's profile picture: " + err.Error())
+
+		return err
+	}
+
+	return nil
+}
