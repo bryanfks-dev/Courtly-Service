@@ -29,7 +29,7 @@ func InitControllers(usecase *UseCases) *Controllers {
 		VerifyPasswordController: controllers.NewVerifyPasswordController(usecase.VerifyPasswordUseCase),
 		UserController:           controllers.NewUserController(usecase.UserUseCase, usecase.AuthUseCase),
 		VendorController:         controllers.NewVendorController(usecase.VendorUseCase),
-		CourtController:          controllers.NewCourtController(usecase.CourtUseCase),
+		CourtController:          controllers.NewCourtController(usecase.CourtUseCase, usecase.BookingUseCase),
 		ReviewController:         controllers.NewReviewController(usecase.ReviewUseCase),
 		OrderController:          controllers.NewOrderController(usecase.OrderUseCase, usecase.BookingUseCase, usecase.ReviewUseCase),
 		MidtransController:       controllers.NewMidtransController(),

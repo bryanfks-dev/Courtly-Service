@@ -105,11 +105,13 @@ func NewServer() (*echo.Echo, error) {
 	courtPrefix.GET("", c.CourtController.GetCourts)
 
 	// Vendor courts endpoints
-	vendorCourtsPrefix := vendorPrefix.Group("/:id/courts")
+	vendorCourtsPrefix := vendorPrefix.Group("/:id/courts", m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.UserMiddleware.Shield)
 
 	vendorTypeCourtsPrefix := vendorCourtsPrefix.Group("/:type")
 
 	vendorTypeCourtsPrefix.GET("", c.CourtController.GetVendorCourtsUsingCourtType)
+
+	vendorTypeCourtsPrefix.GET("/bookings", c.CourtController.GetCourtBookings)
 
 	// Current vendor courts endpoints
 	currentVendorCourtsPrefix := currentVendorPrefix.Group("/courts")

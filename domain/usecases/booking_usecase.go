@@ -167,3 +167,14 @@ func (b *BookingUseCase) GetCurrentVendorBookingsUsingCourtType(token *jwt.Token
 
 	return b.BookingRepository.GetUsingVendorIDCourtType(claims.Id, courtType)
 }
+
+// GetCourtBookings is a use case that gets the court bookings
+//
+// vendorID: the id of the vendor
+// courtType: the court type
+// date: The date of the booking
+//
+// Returns the bookings and an error if any
+func (b *BookingUseCase) GetCourtBookings(vendorID uint, courtType string, date string) (*[]models.Booking, error) {
+	return b.BookingRepository.GetUsingVendorIDCourtTypeDate(vendorID, courtType, date)
+}

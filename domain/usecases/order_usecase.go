@@ -131,7 +131,7 @@ func (o *OrderUseCase) ValidateCreateOrder(data dto.CreateOrderDTO) string {
 			}
 
 			// Check if the book time is valid
-			booked, err := o.BookingRepository.CheckAvailability(booking.CourtID, data.Date, bookTime)
+			available, err := o.BookingRepository.CheckAvailability(booking.CourtID, data.Date, bookTime)
 
 			// Return an error if any
 			if err != nil {
@@ -139,7 +139,7 @@ func (o *OrderUseCase) ValidateCreateOrder(data dto.CreateOrderDTO) string {
 			}
 
 			// Return an error if the court is not available
-			if booked {
+			if !available {
 				return "Court is not available at this time"
 			}
 		}

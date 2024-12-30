@@ -26,14 +26,6 @@ To use multiple query parameter in a place, use this format:
 ?type=...&search=...
 ```
 
-#### Request header needed
-
-```json
-{
-  "Authorization": "Bearer <token here>"
-}
-```
-
 #### Response body
 
 ```json
@@ -75,6 +67,14 @@ To use multiple query parameter in a place, use this format:
 
 Endpoint uses to get court finromation from the database using court id.
 
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
 #### Response body
 
 ```json
@@ -111,6 +111,59 @@ Endpoint uses to get court finromation from the database using court id.
 - `200 OK`: when response success
 - `400 BAD REQUEST`: when court id is invalid
 - `500 INTERNAL SERVER ERROR`: when fails getting court using id
+
+### **GET** `/api/v1/vendors/:id/courts/:type/bookings`
+
+Endpoint uses to get vendor court booking datas using vendor id and court type from database.
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "bookings": [
+      {
+        "id": ...,
+        "court": {
+        "id": ...,
+        "name": "...",
+        "vendor": {
+          "id": ...,
+          "name": "...",
+          "address": "...",
+          "open_time": "...",
+          "close_time": "..."
+        },
+        "type": "...",
+        "price": ...,
+        "image_url": "...",
+      },
+        "book_start_time": "...",
+        "book_end_time": "..."
+      },
+      {...},
+      {...},
+      ...
+    ]
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response success
+- `400 BAD REQUEST`: when either vendor id is invalid or court type is invalid or date is invalid
+- `500 INTERNAL SERVER ERROR`: when fails getting court bookings
 
 ### GET `/api/v1/vendors/me/courts/:type`
 

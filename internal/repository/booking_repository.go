@@ -251,5 +251,29 @@ func (*BookingRepository) CheckAvailability(courtID uint, bookDate string, bookS
 		return false, err
 	}
 
-	return count > 0, nil
+	return count == 0, nil
+}
+
+// GetusingVendorIDCourtTypeDate is a method to get bookings using vendor id, court type, and date.
+//
+// vendorID: the id of the vendor
+// courtType: the type of the court
+// date: the date of booking
+//
+// Returns bookings data and error if any
+func (*BookingRepository) GetUsingVendorIDCourtTypeDate(vendorID uint, courtType string, date string) (*[]models.Booking, error) {
+	// bookings is a placeholder for the bookings
+	var bookings []models.Booking
+
+	err :=
+		mysql.Conn.Joins("Court").Preload("Court.Vendor").Joins("JOIN orders ON orders.id = bookings.order_id").Where("orders.status = ?", enums.Success.Label()).Where("bookings.vendor_id = ?", vendorID).Where("Court.court_type_id = ?", enums.GetCourtTypeID(courtType)).Where("date = ?", date).Find(&bookings).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting bookings using court id and date: " + err.Error())
+
+		return nil, err
+	}
+
+	return &bookings, nil
 }

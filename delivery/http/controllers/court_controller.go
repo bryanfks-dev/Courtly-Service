@@ -8,23 +8,27 @@ import (
 	"main/pkg/utils"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
 // CourtController is a struct that defines the CourtController
 type CourtController struct {
-	CourtUseCase *usecases.CourtUseCase
+	CourtUseCase   *usecases.CourtUseCase
+	BookingUseCase *usecases.BookingUseCase
 }
 
 // NewCourtController is a factory function that returns a new instance of the CourtController.
 //
 // c: The court use case.
+// b: The booking use case.
 //
 // Returns a new instance of the CourtController.
-func NewCourtController(c *usecases.CourtUseCase) *CourtController {
+func NewCourtController(c *usecases.CourtUseCase, b *usecases.BookingUseCase) *CourtController {
 	return &CourtController{
-		CourtUseCase: c,
+		CourtUseCase:   c,
+		BookingUseCase: b,
 	}
 }
 
@@ -320,5 +324,88 @@ func (co *CourtController) GetCurrentVendorCourtStats(c echo.Context) error {
 			VolleyballCourtCount: (*courtCounts)[enums.Volleyball.Label()],
 			BadmintonCourtCount:  (*courtCounts)[enums.Badminton.Label()],
 		},
+	})
+}
+
+// GetCourtBookings is a controller that handles the get court bookings endpoint.
+// Endpoint: GET /vendors/:id/courts/:type/bookings
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) GetCourtBookings(c echo.Context) error {
+	// Get the vendor id from the URL
+	vendorID, err := strconv.Atoi(c.Param("id"))
+
+	// Return an error if the court id is invalid
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court id",
+			Data:    nil,
+		})
+	}
+
+	// Get the court type from the URL
+	courtType := c.Param("type")
+
+	// Check for court type
+	if utils.IsBlank(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Court type is required",
+			Data:    nil,
+		})
+	}
+
+	// Check if court type is valid
+	if !enums.InCourtType(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
+	// Get the date from the query parameter
+	date := c.QueryParam("date")
+
+	// Return an error if the date is invalid
+	if utils.IsBlank(date) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "date query parameter is required",
+			Data:    nil,
+		})
+	}
+
+	// Try parse the date
+	_, err = time.Parse("2006-01-02", date)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid date format",
+			Data:    nil,
+		})
+	}
+
+	// Get the court bookings
+	bookings, err := co.BookingUseCase.GetCourtBookings(uint(vendorID), courtType, date)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get court bookings",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Success retrieve court bookings",
+		Data:    dto.BookingsResponseDTO{}.FromModels(bookings),
 	})
 }

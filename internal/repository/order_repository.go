@@ -51,7 +51,9 @@ func (*OrderRepository) GetUsingUserID(userID uint) (*[]models.Order, error) {
 		mysql.Conn.Preload("Bookings").Preload("Bookings.Vendor").
 			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
 			Joins("JOIN bookings ON bookings.order_id = orders.id").
-			Where("bookings.user_id = ?", userID).Group("orders.id").Find(&orders).Error
+			Where("bookings.user_id = ?", userID).Group("orders.id").
+			Order("orders.created_at DESC").
+			Find(&orders).Error
 
 	// Return an error if any
 	if err != nil {
@@ -106,7 +108,9 @@ func (*OrderRepository) GetUsingID(orderID uint) (*models.Order, error) {
 
 	// Get the order from the database
 	err :=
-		mysql.Conn.Preload("Bookings").Preload("Bookings.Court.Vendor").
+		mysql.Conn.Preload("Bookings", func(db *gorm.DB) *gorm.DB {
+			return db.Order("Bookings.book_start_time ASC")
+		}).Preload("Bookings.Court.Vendor").
 			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
 			Joins("JOIN bookings ON bookings.order_id = orders.id").
 			Where("orders.id = ?", orderID).
