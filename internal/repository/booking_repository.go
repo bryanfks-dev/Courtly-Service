@@ -228,3 +228,28 @@ func (*BookingRepository) GetUsingVendorIDCourtType(vendorID uint, courtType str
 
 	return &bookings, nil
 }
+
+// CheckAvailability is a method that checks if the court is available.
+//
+// courtID: The ID of the court.
+// bookDate: The date of the booking.
+// bookStartTime: The start time of the booking.
+//
+// Returns true if the court is available and an error if any.
+func (*BookingRepository) CheckAvailability(courtID uint, bookDate string, bookStartTime string) (bool, error) {
+	// count is a placeholder for the count
+	var count int64
+
+	// Get the bookings from the database
+	err :=
+		mysql.Conn.Model(&models.Booking{}).Where("court_id = ? AND date = ? AND start_time = ?", courtID, bookDate, bookStartTime).Count(&count).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error checking if a user has booked the court: " + err.Error())
+
+		return false, err
+	}
+
+	return count > 0, nil
+}

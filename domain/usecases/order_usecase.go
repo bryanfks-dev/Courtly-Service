@@ -129,6 +129,19 @@ func (o *OrderUseCase) ValidateCreateOrder(data dto.CreateOrderDTO) string {
 			if utils.IsBlank(bookTime) {
 				return "Book time is required"
 			}
+
+			// Check if the book time is valid
+			booked, err := o.BookingRepository.CheckAvailability(booking.CourtID, data.Date, bookTime)
+
+			// Return an error if any
+			if err != nil {
+				return "Failed to check availability"
+			}
+
+			// Return an error if the court is not available
+			if booked {
+				return "Court is not available at this time"
+			}
 		}
 	}
 
@@ -201,9 +214,9 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) (*
 
 	// Create Order for bookings
 	order := models.Order{
-		Price:           court.Price * float64(len(*data.Bookings)),
-		AppFee:          constants.APP_FEE_PRICE,
-		Status:          "Pending",
+		Price:  court.Price * float64(len(*data.Bookings)),
+		AppFee: constants.APP_FEE_PRICE,
+		Status: "Pending",
 	}
 
 	// Create the order
