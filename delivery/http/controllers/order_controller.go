@@ -150,7 +150,7 @@ func (o *OrderController) CreateOrder(c echo.Context) error {
 	cc := c.(*dto.CustomContext)
 
 	// Create a new booking
-	err := o.OrderUseCase.CreateOrder(cc.Token, *data)
+	paymentToken, err := o.OrderUseCase.CreateOrder(cc.Token, *data)
 
 	// Return an error if any
 	if err != nil {
@@ -173,7 +173,9 @@ func (o *OrderController) CreateOrder(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Order created successfully",
-		Data:    nil,
+		Data: dto.CreateOrderResponseDTO{
+			PaymentToken: *paymentToken,
+		},
 	})
 }
 
@@ -284,12 +286,9 @@ func (o *OrderController) GetCurrentUserOrderDetail(c echo.Context) error {
 		})
 	}
 
-	// Get custom context
-	cc := c.(*dto.CustomContext)
-
 	// Get the current user order detail
 	order, processErr :=
-		o.OrderUseCase.GetCurrentUserOrderDetail(cc.Token, uint(orderID))
+		o.OrderUseCase.GetCurrentUserOrderDetail(uint(orderID))
 
 	// Return an error if any
 	if processErr != nil {

@@ -8,9 +8,6 @@ type CreateOrderDTO struct {
 	// Date is the book date.
 	Date string `json:"date"`
 
-	// PaymentMethod is the payment method.
-	PaymentMethod string `json:"payment_method"`
-
 	// Bookings is the bookings.
 	Bookings *[]CreateOrderDTOInner `json:"bookings"`
 }

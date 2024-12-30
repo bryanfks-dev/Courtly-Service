@@ -10,7 +10,7 @@ type OrderDTO struct {
 	// ID is the ID of the order
 	ID uint `json:"id"`
 
-	// Bookings is the list of bookings
+	// Date is the date of the order was created
 	Date string `json:"date"`
 
 	// Vendor is the vendor of the order
@@ -19,14 +19,14 @@ type OrderDTO struct {
 	// CourtType is the court type of the order
 	CourtType string `json:"court_type"`
 
-	// PaymentMethod is the payment method of the order
-	PaymentMethod string `json:"payment_method"`
-
 	// Price is the price of the order
 	Price float64 `json:"price"`
 
 	// AppFee is the application fee of the order
 	AppFee float64 `json:"app_fee"`
+
+	// PaymentToken is the payment token of the order
+	PaymentToken *string `json:"payment_token"`
 
 	// Status is the status of the order
 	Status string `json:"status"`
@@ -48,14 +48,14 @@ func (o OrderDTO) FromModel(m *models.Order, reviewed *bool) *OrderDTO {
 	}
 
 	return &OrderDTO{
-		ID:            m.ID,
-		Date:          m.CreatedAt.Format("2006-01-02"),
-		Vendor:        PublicVendorDTO{}.FromModel(&m.Bookings[0].Vendor),
-		CourtType:     m.Bookings[0].Court.CourtType.Type,
-		PaymentMethod: m.PaymentMethod.Method,
-		Price:         m.Price,
-		AppFee:        m.AppFee,
-		Status:        m.Status,
-		Reviewed:      reviewed,
+		ID:           m.ID,
+		Date:         m.CreatedAt.Format("2006-01-02"),
+		Vendor:       PublicVendorDTO{}.FromModel(&m.Bookings[0].Vendor),
+		CourtType:    m.Bookings[0].Court.CourtType.Type,
+		Price:        m.Price,
+		AppFee:       m.AppFee,
+		PaymentToken: m.PaymentToken,
+		Status:       m.Status,
+		Reviewed:     reviewed,
 	}
 }

@@ -48,7 +48,7 @@ func (*OrderRepository) GetUsingUserID(userID uint) (*[]models.Order, error) {
 
 	// Get the orders from the database
 	err :=
-		mysql.Conn.Preload("PaymentMethod").Preload("Bookings").Preload("Bookings.Vendor").
+		mysql.Conn.Preload("Bookings").Preload("Bookings.Vendor").
 			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
 			Joins("JOIN bookings ON bookings.order_id = orders.id").
 			Where("bookings.user_id = ?", userID).Group("orders.id").Find(&orders).Error
@@ -75,7 +75,7 @@ func (*OrderRepository) GetUsingUserIDCourtType(userID uint, courtType string) (
 
 	// Get the orders from the database
 	err :=
-		mysql.Conn.Preload("PaymentMethod").Preload("Bookings").Preload("Bookings.Vendor").
+		mysql.Conn.Preload("Bookings").Preload("Bookings.Vendor").
 			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
 			Joins("JOIN bookings ON bookings.order_id = orders.id").
 			Joins("JOIN courts ON courts.id = bookings.court_id").
@@ -94,27 +94,26 @@ func (*OrderRepository) GetUsingUserIDCourtType(userID uint, courtType string) (
 	return &orders, nil
 }
 
-// GetUsingID is a method that returns the order by the given ID.
+// GetUsingID is a method that returns the order by the given order ID.
 //
 // orderID: The ID of the order.
-// userID: The ID of the user.
 //
 // Returns the order and an error if any.
-func (*OrderRepository) GetUsingIDUserID(orderID uint, userID uint) (*models.Order, error) {
+func (*OrderRepository) GetUsingID(orderID uint) (*models.Order, error) {
 	// order is a placeholder for the order
 	var order models.Order
 
 	// Get the order from the database
 	err :=
-		mysql.Conn.Preload("PaymentMethod").Preload("Bookings").Preload("Bookings.Vendor").
+		mysql.Conn.Preload("Bookings").Preload("Bookings.Court.Vendor").
 			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
 			Joins("JOIN bookings ON bookings.order_id = orders.id").
-			Where("orders.id = ?", orderID).Where("bookings.user_id = ?", userID).
+			Where("orders.id = ?", orderID).
 			First(&order).Error
 
 	// Return an error if any
 	if err != nil {
-		log.Println("Error getting order using order id and user id: " + err.Error())
+		log.Println("Error getting order using order id: " + err.Error())
 
 		return nil, err
 	}
@@ -136,6 +135,26 @@ func (*OrderRepository) UpdatePaymentTokenUsingID(tx *gorm.DB, paymentToken stri
 	// Return an error if any
 	if err != nil {
 		log.Println("Error updating payment token using order id: " + err.Error())
+
+		return err
+	}
+
+	return nil
+}
+
+// UpdatePaymentStatusUsingID is a method that updates the payment status using the given order ID.
+//
+// orderID: The ID of the order.
+// status: The status of the payment.
+//
+// Returns an error if any.
+func (*OrderRepository) UpdatePaymentStatusUsingID(orderID uint, status string) error {
+	// Update the payment status using the order ID
+	err := mysql.Conn.Model(&models.Order{}).Where("id = ?", orderID).Update("status", status).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error updating payment status using order id: " + err.Error())
 
 		return err
 	}

@@ -132,5 +132,10 @@ func NewServer() (*echo.Echo, error) {
 
 	currentVendorPrefix.GET("/reviews", c.ReviewController.GetCurrentVendorReviews)
 
+	// Midtrans endpoints
+	midtransPrefix := e.Group("/midtrans")
+
+	midtransPrefix.POST("/payment-callback", c.MidtransController.PaymentCallback)
+
 	return e, e.Start(":" + strconv.Itoa(config.ServerConfig.Port))
 }

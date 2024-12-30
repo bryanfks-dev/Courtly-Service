@@ -41,7 +41,6 @@ Endpoint uses to get current user orders overview from database.
           "open_time": "...",
           "close_time": "..."
         },
-        "payment_method": "...",
         "price": ...,
         "app_fee": ...,
         "status": "...",
@@ -59,6 +58,38 @@ Endpoint uses to get current user orders overview from database.
 
 - `200 OK`: when response is success
 - `500 INTERNAL SERVER ERROR`: when fails getting user orders or fails to check if user has reviewed vendor's court type
+
+### **POST** `/api/v1/users/me/orders`
+
+Endpoint uses to create a new current user order and payment.
+
+> **type** query parameter should contains the court type to filter data
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "payment_token": "..."
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response is success
+- `400 BAD REQUEST`: when either fails to parse date or fails to parse time
+- `500 INTERNAL SERVER ERROR`: when either fails to create order, fails to begin transaction, fails to get court, fails to create transaction, fails to update payment token
 
 ### **GET** `/api/v1/users/me/orders/:id`
 
@@ -84,6 +115,7 @@ Endpoint uses to get current user order details from database.
       "date": "...",
       "price": ...,
       "app_fee": ...,
+      "payment_token": "...",
       "status": "...",
       "bookings": [
         {

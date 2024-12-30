@@ -2,27 +2,32 @@ package midtrans
 
 import (
 	"log"
-	"strconv"
+	"main/core/constants"
+	"time"
 
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/snap"
 )
 
-// CreateRequest is a function that creates a new request.
+// CreateToken is a function that creates a new token for the transaction.
 //
-// orderID: the ID of the order.
-// courtID: the ID of the court.
-// amount: the amount of the transaction.
+// orderID: The order ID.
+// amount: The amount.
 //
-// Returns an error if there is any.
-func CreateRequest(orderID uint, courtID uint, amount int64) (*string, error) {
+// Returns a pointer to the token and an error if any.
+func CreateToken(orderID uint, amount int64) (*string, error) {
 	// Create a new request
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  "MID-Order" + strconv.Itoa(int(orderID)) + "-" + strconv.Itoa(int(courtID)),
-			GrossAmt: amount,
+			OrderID:  CreateMidtransOrderId(orderID),
+			GrossAmt: amount + int64(constants.APP_FEE_PRICE),
 		},
 		EnabledPayments: []snap.SnapPaymentType{snap.PaymentTypeGopay, snap.PaymentTypeShopeepay, snap.PaymentTypeBCAVA, snap.PaymentTypeBRIVA},
+		Expiry: &snap.ExpiryDetails{
+			StartTime: time.Now().Format("2006-01-02 15:04:05 -0700"),
+			Unit:      "minutes",
+			Duration:  60,
+		},
 	}
 
 	// Create a new transaction
@@ -35,5 +40,5 @@ func CreateRequest(orderID uint, courtID uint, amount int64) (*string, error) {
 		return nil, err
 	}
 
-	return &res.RedirectURL, nil
+	return &res.Token, nil
 }

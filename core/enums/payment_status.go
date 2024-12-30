@@ -6,6 +6,7 @@ type PaymentStatus int
 const (
 	Success PaymentStatus = iota
 	Pending
+	Canceled
 )
 
 // Label is a function that returns the label of the payment status.
@@ -13,7 +14,8 @@ const (
 // Returns the label of the payment status.
 func (p PaymentStatus) Label() string {
 	return map[PaymentStatus]string{
-		Success: "Success",
-		Pending: "Pending",
+		Success:  "Success",
+		Pending:  "Pending",
+		Canceled: "Canceled",
 	}[p]
 }

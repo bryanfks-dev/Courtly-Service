@@ -46,7 +46,7 @@ func Seed() error {
 	)
 
 	// Add a new wait group
-	wg.Add(2)
+	wg.Add(1)
 
 	// Seed court types table
 	go func() {
@@ -64,31 +64,6 @@ func Seed() error {
 
 		// Create the court types
 		e := tx.Clauses(clause.Insert{Modifier: "ignore"}).Create(courtTypes).Error
-
-		if e != nil {
-			err = e
-
-			// Rollback the transaction
-			tx.Rollback()
-
-			cancel()
-		}
-	}()
-
-	// Seed court types table
-	go func() {
-		paymentMethods := make([]models.PaymentMethod, 0)
-
-		// Loop through the court types enum
-		for i, v := range enums.PaymentMethods() {
-			paymentMethods = append(paymentMethods, models.PaymentMethod{
-				ID:     uint(i + 1),
-				Method: v,
-			})
-		}
-
-		// Create the payment methods
-		e := tx.Clauses(clause.Insert{Modifier: "ignore"}).Create(paymentMethods).Error
 
 		if e != nil {
 			err = e

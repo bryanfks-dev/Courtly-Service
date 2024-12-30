@@ -3,7 +3,6 @@ package usecases
 import (
 	"context"
 	"main/core/constants"
-	"main/core/enums"
 	"main/core/shared"
 	"main/data/models"
 	"main/domain/entities"
@@ -66,16 +65,12 @@ func (o *OrderUseCase) GetCurrentUserOrders(token *jwt.Token, courtType *string)
 
 // GetCurrentUserOrderDetail is a method that gets the current user order detail from the database.
 //
-// token: The JWT token.
 // orderID: The order ID.
 //
 // Returns the order and an error if any.
-func (o *OrderUseCase) GetCurrentUserOrderDetail(token *jwt.Token, orderID uint) (*models.Order, *entities.ProcessError) {
-	// Get the user ID from the JWT
-	claims := o.AuthUseCase.DecodeToken(token)
-
+func (o *OrderUseCase) GetCurrentUserOrderDetail(orderID uint) (*models.Order, *entities.ProcessError) {
 	// Get the order using the user ID and order ID
-	order, err := o.OrderRepository.GetUsingIDUserID(orderID, claims.Id)
+	order, err := o.OrderRepository.GetUsingID(orderID)
 
 	// Return an error if any
 	if err == gorm.ErrRecordNotFound {
@@ -109,11 +104,6 @@ func (o *OrderUseCase) ValidateCreateOrder(data dto.CreateOrderDTO) string {
 	// Check if the date is empty
 	if utils.IsBlank(data.Date) {
 		return "Date is required"
-	}
-
-	// Check if the payment method is empty
-	if utils.IsBlank(data.PaymentMethod) {
-		return "Payment method is required"
 	}
 
 	// Check if the bookings is empty
@@ -151,8 +141,8 @@ func (o *OrderUseCase) ValidateCreateOrder(data dto.CreateOrderDTO) string {
 // token: The JWT token
 // data: The order data
 //
-// Returns an error if any
-func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) *entities.ProcessError {
+// Returns the payment token and error if any
+func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) (*string, *entities.ProcessError) {
 	// Get the token claims
 	claims := o.AuthUseCase.DecodeToken(token)
 
@@ -161,7 +151,7 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) *e
 
 	// Return an error if any
 	if err != nil {
-		return &entities.ProcessError{
+		return nil, &entities.ProcessError{
 			ClientError: true,
 			Message:     "Invalid date format",
 		}
@@ -180,7 +170,7 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) *e
 
 	// Return an error if any
 	if tx.Error != nil {
-		return &entities.ProcessError{
+		return nil, &entities.ProcessError{
 			ClientError: false,
 			Message:     "Failed to begin transaction",
 		}
@@ -203,7 +193,7 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) *e
 
 	// Return an error if any
 	if err != nil {
-		return &entities.ProcessError{
+		return nil, &entities.ProcessError{
 			ClientError: false,
 			Message:     "Failed to get court",
 		}
@@ -212,7 +202,6 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) *e
 	// Create Order for bookings
 	order := models.Order{
 		Price:           court.Price * float64(len(*data.Bookings)),
-		PaymentMethodID: uint(enums.GetPaymentMethodIDFromRequest(data.PaymentMethod)),
 		AppFee:          constants.APP_FEE_PRICE,
 		Status:          "Pending",
 	}
@@ -225,21 +214,21 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) *e
 		// Rollback the transaction
 		tx.Rollback()
 
-		return &entities.ProcessError{
+		return nil, &entities.ProcessError{
 			ClientError: false,
 			Message:     "Failed to create order",
 		}
 	}
 
 	// Create a payment token
-	paymentToken, err := midtrans.CreateRequest(order.ID, (*data.Bookings)[0].CourtID, int64(order.Price))
+	paymentToken, err := midtrans.CreateToken(order.ID, int64(order.Price))
 
 	// Return an error if any
 	if err != nil {
 		// Rollback the transaction
 		tx.Rollback()
 
-		return &entities.ProcessError{
+		return nil, &entities.ProcessError{
 			ClientError: false,
 			Message:     "Failed to create transaction",
 		}
@@ -253,7 +242,7 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) *e
 		// Rollback the transaction
 		tx.Rollback()
 
-		return &entities.ProcessError{
+		return nil, &entities.ProcessError{
 			ClientError: false,
 			Message:     "Failed to update payment token",
 		}
@@ -346,16 +335,16 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) *e
 
 	// Return an error if any
 	if processErr != nil {
-		return processErr
+		return nil, processErr
 	}
 
 	// Return an error if any
 	if err := tx.Commit().Error; err != nil {
-		return &entities.ProcessError{
+		return nil, &entities.ProcessError{
 			ClientError: false,
 			Message:     "Failed to commit transaction",
 		}
 	}
 
-	return nil
+	return paymentToken, nil
 }
