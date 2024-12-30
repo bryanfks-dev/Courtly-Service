@@ -82,6 +82,7 @@ func (*OrderRepository) GetUsingUserIDCourtType(userID uint, courtType string) (
 			Joins("JOIN court_types ON court_types.id = courts.court_type_id").
 			Where("bookings.user_id = ?", userID).Group("orders.id").
 			Where("court_types.type = ?", courtType).
+			Order("orders.created_at desc").
 			Find(&orders).Error
 
 	// Return an error if any
