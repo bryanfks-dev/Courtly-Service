@@ -242,7 +242,7 @@ func (*BookingRepository) CheckAvailability(courtID uint, bookDate string, bookS
 
 	// Get the bookings from the database
 	err :=
-		mysql.Conn.Model(&models.Booking{}).Where("court_id = ? AND date = ? AND start_time = ?", courtID, bookDate, bookStartTime).Count(&count).Error
+		mysql.Conn.Model(&models.Booking{}).Where("court_id = ? AND date = ? AND book_start_time = ?", courtID, bookDate, bookStartTime).Count(&count).Error
 
 	// Return an error if any
 	if err != nil {

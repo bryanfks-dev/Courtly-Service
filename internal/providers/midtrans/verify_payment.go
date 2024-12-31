@@ -35,6 +35,7 @@ func VerifyPayment(data map[string]any) error {
 	// Check transaction to Midtrans with param orderId
 	transactionStatusResp, err := client.CheckTransaction(midtransOrderID)
 
+	// Check if there is an error
 	if err != nil {
 		return err
 	}
