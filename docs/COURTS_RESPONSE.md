@@ -116,6 +116,12 @@ Endpoint uses to get court finromation from the database using court id.
 
 Endpoint uses to get vendor court booking datas using vendor id and court type from database.
 
+```js
+?date=...
+```
+
+> **date** query parameter should contains the date to get court bookings agenda in certain date (this query parameter is rqeuired)
+
 #### Request header needed
 
 ```json

@@ -31,6 +31,7 @@ There are several available endpoints, such as:
 ##### Orders endpoints
 
 - **GET** `/api/v1/users/me/orders` - Get current user orders overview from database
+- **GET** `/api/v1/users/me/orders/reorder` - Create a new order from existing order from database
 - **POST** `/api/v1/users/me/orders` - Create a new current user order and payment
 - **GET** `/api/v1/users/me/orders/:id` - Get current user order details from database
 - **GET** `/api/v1/vendors/me/orders` - Get current vendor orders from database
