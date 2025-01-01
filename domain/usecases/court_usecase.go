@@ -12,6 +12,7 @@ import (
 	"main/internal/repository"
 	"main/pkg/utils"
 	"os"
+	"sort"
 	"strconv"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -87,6 +88,11 @@ func (c *CourtUseCase) GetCourts(courtType *string, search *string) (*[]types.Co
 			"total_rating": totalRating,
 		}
 	}
+
+	// Sort the courts based by total rating
+	sort.Slice(*courts, func(i, j int) bool {
+		return courtMaps[i].GetTotalRating() > courtMaps[j].GetTotalRating()
+	})
 
 	return &courtMaps, nil
 }
