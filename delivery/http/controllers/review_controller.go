@@ -157,7 +157,8 @@ func (r *ReviewController) GetCurrentVendorReviews(c echo.Context) error {
 	}
 
 	// Get the reviews from the database
-	reviewsMap, err := r.ReviewUseCase.GetCurrentVendorReviews(cc.Token, &rating)
+	reviewsMap, err := 
+		r.ReviewUseCase.GetCurrentVendorReviews(cc.Token, &rating)
 
 	// Check if there is an error
 	if err != nil {

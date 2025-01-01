@@ -46,7 +46,7 @@ func (*ReviewRepository) GetCountUsingVendorID(vendorID uint) (int64, error) {
 	var count int64
 
 	// Get the count of courts by vendor ID
-	err := mysql.Conn.Model(&models.Court{}).Where("vendor_id = ?", vendorID).Count(&count).Error
+	err := mysql.Conn.Model(&models.Review{}).Where("vendor_id = ?", vendorID).Count(&count).Error
 
 	// Return an error if any
 	if err != nil {
@@ -179,7 +179,7 @@ func (*ReviewRepository) GetUsingVendorIDCourtType(vendorID uint, courtType stri
 
 	// Get the reviews using the vendor ID and court type
 	err :=
-		mysql.Conn.Preload("User").Preload("Vendor").Joins("CourtType").Where("vendor_id = ?", vendorID).Where("CourtType.type = ?", courtType).Find(&reviews).Error
+		mysql.Conn.Preload("User").Preload("Vendor").Joins("CourtType").Where("vendor_id = ?", vendorID).Where("CourtType.type = ?", courtType).Order("reviews.date DESC").Find(&reviews).Error
 
 	// Return an error if any
 	if err != nil {
@@ -202,7 +202,7 @@ func (*ReviewRepository) GetUsingVendorID(vendorID uint) (*[]models.Review, erro
 
 	// Get the reviews using the vendor ID
 	err :=
-		mysql.Conn.Preload("User").Preload("Vendor").Preload("CourtType").Where("vendor_id = ?", vendorID).Find(&reviews).Error
+		mysql.Conn.Preload("User").Preload("Vendor").Preload("CourtType").Where("vendor_id = ?", vendorID).Order("reviews.date DESC").Find(&reviews).Error
 
 	// Return an error if any
 	if err != nil {
@@ -252,7 +252,7 @@ func (*ReviewRepository) GetUsingVendorIDCourtTypeRating(vendorID uint, courtTyp
 
 	// Get the reviews using the vendor ID and court type
 	err :=
-		mysql.Conn.Preload("User").Preload("Vendor").Joins("CourtType").Where("vendor_id = ?", vendorID).Where("rating = ?", rating).Where("CourtType.type = ?", courtType).Find(&reviews).Error
+		mysql.Conn.Preload("User").Preload("Vendor").Joins("CourtType").Where("vendor_id = ?", vendorID).Where("rating = ?", rating).Where("CourtType.type = ?", courtType).Order("reviews.date DESC").Find(&reviews).Error
 
 	// Return an error if any
 	if err != nil {
@@ -276,7 +276,7 @@ func (*ReviewRepository) GetUsingVendorIDRating(vendorID uint, rating int) (*[]m
 
 	// Get the reviews using the vendor ID and court type
 	err :=
-		mysql.Conn.Preload("User").Preload("Vendor").Preload("CourtType").Where("vendor_id = ?", vendorID).Where("rating = ?", rating).Find(&reviews).Error
+		mysql.Conn.Preload("User").Preload("Vendor").Preload("CourtType").Where("vendor_id = ?", vendorID).Where("rating = ?", rating).Order("reviews.date DESC").Find(&reviews).Error
 
 	// Return an error if any
 	if err != nil {

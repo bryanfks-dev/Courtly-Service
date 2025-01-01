@@ -417,7 +417,7 @@ func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token, rating *int) (
 
 		// Get the reviews
 		// Check if the rating query parameter is empty
-		if rating != nil {
+		if rating != nil && *rating != 0 {
 			records, e =
 				r.ReviewRepository.GetUsingVendorIDRating(claims.Id, *rating)
 		} else {

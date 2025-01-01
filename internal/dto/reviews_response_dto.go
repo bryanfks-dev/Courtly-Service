@@ -27,17 +27,17 @@ type ReviewsResponseDTO struct {
 // Returns a pointer to the reviews response DTO.
 func (r ReviewsResponseDTO) FromMap(m *types.CourtReviewsMap) *ReviewsResponseDTO {
 	// Create a slice of review DTOs
-	dto := []ReviewDTO{}
+	dtos := []ReviewDTO{}
 
 	// Convert the reviews to review DTOs
 	for _, review := range *(*m)["reviews"].(*[]models.Review) {
-		dto = append(dto, *ReviewDTO{}.FromModel(&review))
+		dtos = append(dtos, *ReviewDTO{}.FromModel(&review))
 	}
 
 	return &ReviewsResponseDTO{
 		TotalRating:  (*m)["total_rating"].(float64),
 		ReviewsTotal: (*m)["reviews_total"].(int64),
 		Stars:        ReviewsStarsDTO{}.FromMap((*m)["star_counts"].(*types.StarCountsMap)),
-		Reviews:      &dto,
+		Reviews:      &dtos,
 	}
 }
