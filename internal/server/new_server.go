@@ -84,7 +84,7 @@ func NewServer() (*echo.Echo, error) {
 	currentVendorPrefix.GET("", c.VendorController.GetCurrentVendor)
 	currentVendorPrefix.PATCH("/password", c.VendorController.UpdateCurrentVendorPassword)
 
-	// Orders endpoints
+	// Current user orders endpoints
 	currentUserOrdersPrefix := currentUserPrefix.Group("/orders")
 
 	currentUserOrdersPrefix.GET("", c.OrderController.GetCurrentUserOrders)
@@ -93,6 +93,7 @@ func NewServer() (*echo.Echo, error) {
 
 	currentUserOrdersPrefix.GET("/:id", c.OrderController.GetCurrentUserOrderDetail)
 
+	// Current vendor orders endpoints
 	currentVendorOrdersPrefix := currentVendorPrefix.Group("/orders")
 
 	currentVendorOrdersPrefix.GET("", c.OrderController.GetCurrentVendorOrders)

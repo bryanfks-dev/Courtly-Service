@@ -3,7 +3,6 @@ package controllers
 import (
 	"log"
 	"main/core/enums"
-	"main/data/models"
 	"main/domain/usecases"
 	"main/internal/dto"
 	"main/pkg/utils"
@@ -42,17 +41,8 @@ func NewOrderController(o *usecases.OrderUseCase, b *usecases.BookingUseCase, r 
 //
 // Returns an error if any.
 func (o *OrderController) GetCurrentVendorOrders(c echo.Context) error {
-	// Get custom context
-	cc := c.(*dto.CustomContext)
-
 	// Get the court type from the query parameter
 	courtTypeParam := c.QueryParam("type")
-
-	// Placeholder for the bookings and error
-	var (
-		bookings *[]models.Booking
-		err      error
-	)
 
 	// Check if the court type is not empty
 	if !utils.IsBlank(courtTypeParam) && !enums.InCourtType(courtTypeParam) {
@@ -63,13 +53,12 @@ func (o *OrderController) GetCurrentVendorOrders(c echo.Context) error {
 		})
 	}
 
-	// Get the current vendor bookings
-	// Check if the court type is not empty
-	if utils.IsBlank(courtTypeParam) {
-		bookings, err = o.BookingUseCase.GetCurrentVendorBookings(cc.Token)
-	} else {
-		bookings, err = o.BookingUseCase.GetCurrentVendorBookingsUsingCourtType(cc.Token, courtTypeParam)
-	}
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the current vendor orders
+	orders, err :=
+		o.OrderUseCase.GetCurrentVendorOrders(cc.Token, &courtTypeParam)
 
 	// Return an error if any
 	if err != nil {
@@ -83,7 +72,7 @@ func (o *OrderController) GetCurrentVendorOrders(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Vendor orders retrieved successfully",
-		Data:    dto.CurrentVendorOrdersResponseDTO{}.FromModels(bookings),
+		Data:    dto.CurrentVendorOrdersResponseDTO{}.FromModels(orders),
 	})
 }
 
@@ -269,7 +258,7 @@ func (o *OrderController) GetCurrentUserOrderDetail(c echo.Context) error {
 	if utils.IsBlank(id) {
 		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
 			Success: false,
-			Message: "Invalid order ID",
+			Message: "Order id is required",
 			Data:    nil,
 		})
 	}
@@ -286,9 +275,12 @@ func (o *OrderController) GetCurrentUserOrderDetail(c echo.Context) error {
 		})
 	}
 
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
 	// Get the current user order detail
 	order, processErr :=
-		o.OrderUseCase.GetCurrentUserOrderDetail(uint(orderID))
+		o.OrderUseCase.GetCurrentUserOrderDetail(cc.Token, uint(orderID))
 
 	// Return an error if any
 	if processErr != nil {

@@ -63,13 +63,34 @@ func (o *OrderUseCase) GetCurrentUserOrders(token *jwt.Token, courtType *string)
 	return o.OrderRepository.GetUsingUserIDCourtType(claims.Id, *courtType)
 }
 
+// GetCurrentVendorOrders is a method that gets the current vendor order from the database.
+//
+// token: The JWT token.
+// courtType: The court type.
+// 
+// Returns the orders and an error if any.
+func (o *OrderUseCase) GetCurrentVendorOrders(token *jwt.Token, courtType *string) (*[]models.Order, error) {
+	// Get the user ID from the JWT
+	claims := o.AuthUseCase.DecodeToken(token)
+
+	// Check if the court type is not empty
+	if courtType != nil && utils.IsBlank(*courtType) {
+		// Get the orders using the user ID
+		return o.OrderRepository.GetUsingVendorID(claims.Id)
+	}
+
+	// Get the orders using the user ID
+	return o.OrderRepository.GetUsingVendorIDCourtType(claims.Id, *courtType)
+}
+
 // GetCurrentUserOrderDetail is a method that gets the current user order detail from the database.
 //
+// token: The JWT token.
 // orderID: The order ID.
 //
 // Returns the order and an error if any.
-func (o *OrderUseCase) GetCurrentUserOrderDetail(orderID uint) (*models.Order, *entities.ProcessError) {
-	// Get the order using the user ID and order ID
+func (o *OrderUseCase) GetCurrentUserOrderDetail(token *jwt.Token, orderID uint) (*models.Order, *entities.ProcessError) {
+	// Get the order using the order ID
 	order, err := o.OrderRepository.GetUsingID(orderID)
 
 	// Return an error if any
@@ -84,6 +105,17 @@ func (o *OrderUseCase) GetCurrentUserOrderDetail(orderID uint) (*models.Order, *
 		return nil, &entities.ProcessError{
 			ClientError: false,
 			Message:     "Failed to get user order",
+		}
+	}
+
+	// Get the user ID from the JWT
+	claims := o.AuthUseCase.DecodeToken(token)
+
+	// Return an error if the order is not belongs to the user
+	if order.Bookings[0].UserID != claims.Id {
+		return nil, &entities.ProcessError{
+			ClientError: true,
+			Message:     "This order is not belongs to this user",
 		}
 	}
 

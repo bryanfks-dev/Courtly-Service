@@ -65,6 +65,35 @@ func (*OrderRepository) GetUsingUserID(userID uint) (*[]models.Order, error) {
 	return &orders, nil
 }
 
+// GetUsingVendorID is a method that returns the orders by the given vendor ID.
+//
+// vendorID: The ID of the vendor.
+//
+// Returns the orders and an error if any.
+func (*OrderRepository) GetUsingVendorID(vendorID uint) (*[]models.Order, error) {
+	// orders is a placeholder for the orders
+	var orders []models.Order
+
+	// Get the orders from the database
+	err :=
+		mysql.Conn.Preload("Bookings").Preload("Bookings.Vendor").
+			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
+			Preload("Bookings.User").
+			Joins("JOIN bookings ON bookings.order_id = orders.id").
+			Where("bookings.vendor_id = ?", vendorID).Group("orders.id").
+			Order("orders.created_at DESC").
+			Find(&orders).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting orders using vendor id: " + err.Error())
+
+		return nil, err
+	}
+
+	return &orders, nil
+}
+
 // GetUsingUserIDCourtType is a method that returns the orders by the given user ID and court type.
 //
 // userID: The ID of the user.
@@ -83,6 +112,39 @@ func (*OrderRepository) GetUsingUserIDCourtType(userID uint, courtType string) (
 			Joins("JOIN courts ON courts.id = bookings.court_id").
 			Joins("JOIN court_types ON court_types.id = courts.court_type_id").
 			Where("bookings.user_id = ?", userID).Group("orders.id").
+			Where("court_types.type = ?", courtType).
+			Order("orders.created_at desc").
+			Find(&orders).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting orders using user id and court type: " + err.Error())
+
+		return nil, err
+	}
+
+	return &orders, nil
+}
+
+// GetUsingVendorIDCourtType is a method that returns the orders by the given vendor ID and court type.
+//
+// vendorID: The ID of the vendor.
+// courtType: The type of the court.
+//
+// Returns the orders and an error if any.
+func (*OrderRepository) GetUsingVendorIDCourtType(vendorID uint, courtType string) (*[]models.Order, error) {
+	// orders is a placeholder for the orders
+	var orders []models.Order
+
+	// Get the orders from the database
+	err :=
+		mysql.Conn.Preload("Bookings").Preload("Bookings.Vendor").
+			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
+			Preload("Bookings.User").
+			Joins("JOIN bookings ON bookings.order_id = orders.id").
+			Joins("JOIN courts ON courts.id = bookings.court_id").
+			Joins("JOIN court_types ON court_types.id = courts.court_type_id").
+			Where("bookings.vendor_id = ?", vendorID).Group("orders.id").
 			Where("court_types.type = ?", courtType).
 			Order("orders.created_at desc").
 			Find(&orders).Error

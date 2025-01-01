@@ -27,6 +27,6 @@ func (c CurrentVendorOrdersStatsResponseDTO) FromMap(m *types.OrdersStatsMap) *C
 	return &CurrentVendorOrdersStatsResponseDTO{
 		TotalOrders:      (*m)["total_orders"].(int64),
 		TotalOrdersToday: (*m)["total_orders_today"].(int64),
-		RecentOrders:     CurrentVendorOrderDTO{}.FromModels((*m)["recent_orders"].(*[]models.Booking)),
+		RecentOrders:     CurrentVendorOrderDTO{}.FromModels((*m)["recent_orders"].(*[]models.Order)),
 	}
 }

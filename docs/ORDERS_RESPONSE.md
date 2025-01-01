@@ -149,7 +149,7 @@ Endpoint uses to get current user order details from database.
 #### Possible HTTP status codes
 
 - `200 OK`: when response is success
-- `400 BAD REQUEST`: when order is invalid
+- `400 BAD REQUEST`: when either order is invalid or order is not belongs to the user
 - `500 INTERNAL SERVER ERROR`: when fails to get order detail
 
 ### **GET** `/api/v1/vendors/me/orders`
