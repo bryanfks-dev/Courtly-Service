@@ -14,7 +14,6 @@ import (
 
 // OrderController is a struct that defines the OrderController
 type OrderController struct {
-	BookingUseCase *usecases.BookingUseCase
 	OrderUseCase   *usecases.OrderUseCase
 	ReviewUseCase  *usecases.ReviewUseCase
 }
@@ -25,10 +24,9 @@ type OrderController struct {
 // r: The ReviewUseCase
 //
 // Returns a pointer to the OrderController struct
-func NewOrderController(o *usecases.OrderUseCase, b *usecases.BookingUseCase, r *usecases.ReviewUseCase) *OrderController {
+func NewOrderController(o *usecases.OrderUseCase, r *usecases.ReviewUseCase) *OrderController {
 	return &OrderController{
 		OrderUseCase:   o,
-		BookingUseCase: b,
 		ReviewUseCase:  r,
 	}
 }
@@ -88,7 +86,7 @@ func (o *OrderController) GetCurrentVendorOrdersStats(c echo.Context) error {
 	cc := c.(*dto.CustomContext)
 
 	// Get current vendor orders stats
-	stats, err := o.BookingUseCase.GetCurrentVendorOrdersStats(cc.Token)
+	stats, err := o.OrderUseCase.GetCurrentVendorOrdersStats(cc.Token)
 
 	// Return an error if any
 	if err != nil {

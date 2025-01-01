@@ -4,6 +4,7 @@ import (
 	"context"
 	"main/core/constants"
 	"main/core/shared"
+	"main/core/types"
 	"main/data/models"
 	"main/domain/entities"
 	"main/internal/dto"
@@ -67,7 +68,7 @@ func (o *OrderUseCase) GetCurrentUserOrders(token *jwt.Token, courtType *string)
 //
 // token: The JWT token.
 // courtType: The court type.
-// 
+//
 // Returns the orders and an error if any.
 func (o *OrderUseCase) GetCurrentVendorOrders(token *jwt.Token, courtType *string) (*[]models.Order, error) {
 	// Get the user ID from the JWT
@@ -392,4 +393,115 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) (*
 	}
 
 	return paymentToken, nil
+}
+
+// GetCurrentVendorOrdersStats is a use case that gets the current vendor orders
+// statistics from the database.
+//
+// token: The JWT token
+//
+// Returns the map of order stat and an error if any
+func (o *OrderUseCase) GetCurrentVendorOrdersStats(token *jwt.Token) (*types.OrdersStatsMap, error) {
+	// Get the token claims
+	claims := o.AuthUseCase.DecodeToken(token)
+
+	// Placeholder for the bookings and error
+	stats := make(types.OrdersStatsMap)
+
+	// Get the total bookings
+	var err error
+
+	// Create a context with a cancel function
+	_, cancel := context.WithCancel(context.Background())
+
+	// Defer the cancel function
+	defer cancel()
+
+	// Create a wait group
+	var (
+		wg sync.WaitGroup
+	)
+
+	// Add a wait group
+	wg.Add(1)
+
+	// Get the total bookings
+	go func() {
+		// Defer done
+		defer wg.Done()
+
+		// Get the total bookings
+		totalOrders, e := o.OrderRepository.GetTotalUsingVendorID(claims.Id)
+
+		// Return an error if any
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the total orders to the stats
+		stats["total_orders"] = totalOrders
+	}()
+
+	// Add a wait group
+	wg.Add(1)
+
+	// Get the total bookings today
+	go func() {
+		// Defer done
+		defer wg.Done()
+
+		// Get the total bookings today
+		totalOrdersToday, e := o.OrderRepository.GetTotalTodayUsingVendorID(claims.Id)
+
+		// Return an error if any
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the total orders today to the stats
+		stats["total_orders_today"] = totalOrdersToday
+	}()
+
+	// Add a wait group
+	wg.Add(1)
+
+	// Get the recent bookings
+	go func() {
+		// Defer done
+		defer wg.Done()
+
+		// Get the recent bookings
+		recentBooking, e :=
+			o.OrderRepository.GetNLatestUsingVendorID(claims.Id, constants.LATEST_ORDER_LIMIT)
+
+		// Return an error if any
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the recent bookings to the stats
+		stats["recent_orders"] = recentBooking
+	}()
+
+	// Wait for the wait group to finish
+	wg.Wait()
+
+	// Wait for the wait group to finish
+	if err != nil {
+		return nil, err
+	}
+
+	return &stats, nil
 }

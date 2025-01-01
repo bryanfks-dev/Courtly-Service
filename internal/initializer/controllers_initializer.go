@@ -31,7 +31,7 @@ func InitControllers(usecase *UseCases) *Controllers {
 		VendorController:         controllers.NewVendorController(usecase.VendorUseCase),
 		CourtController:          controllers.NewCourtController(usecase.CourtUseCase, usecase.BookingUseCase),
 		ReviewController:         controllers.NewReviewController(usecase.ReviewUseCase),
-		OrderController:          controllers.NewOrderController(usecase.OrderUseCase, usecase.BookingUseCase, usecase.ReviewUseCase),
+		OrderController:          controllers.NewOrderController(usecase.OrderUseCase, usecase.ReviewUseCase),
 		MidtransController:       controllers.NewMidtransController(),
 	}
 }

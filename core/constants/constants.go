@@ -15,4 +15,7 @@ var (
 
 	// APP_FEE_PRICE is the price of the app fee
 	APP_FEE_PRICE = 1000.0
+
+	// LATEST_ORDER_LIMIT is the limit of latest order to get from database
+	LATEST_ORDER_LIMIT = 3
 )

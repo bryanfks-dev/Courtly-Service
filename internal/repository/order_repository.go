@@ -2,8 +2,10 @@ package repository
 
 import (
 	"log"
+	"main/core/enums"
 	"main/data/models"
 	"main/internal/providers/mysql"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -227,4 +229,84 @@ func (*OrderRepository) UpdatePaymentStatusUsingID(orderID uint, status string) 
 	}
 
 	return nil
+}
+
+// GetTotalUsingVendorID is a method that used to get vendor total order using the
+// given vendor ID.
+//
+// vendorID: the id of the vendor
+//
+// Returns order count and error if any
+func (*OrderRepository) GetTotalUsingVendorID(vendorID uint) (*int64, error) {
+	// count is a placeholder for the count
+	var count int64
+
+	// Get the orders count from the database
+	err :=
+		mysql.Conn.Model(&models.Order{}).Joins("JOIN bookings ON bookings.order_id = orders.id").Where("orders.status = ?", enums.Success.Label()).Count(&count).Error
+
+	if err != nil {
+		log.Println("Error getting order total using vendor id: " + err.Error())
+
+		return nil, err
+	}
+
+	return &count, err
+}
+
+// GetTotalTodayUsingVendorID is a method that used to get vendor total order
+// today using the given vendor id.
+//
+// vendorID: the id of the vendor
+//
+// Returns the total order today and error if any
+func (*OrderRepository) GetTotalTodayUsingVendorID(vendorID uint) (*int64, error) {
+	// count is a placeholder for the count
+	var count int64
+
+	// Get the current date
+	today := time.Now().Truncate(24 * time.Hour)
+
+	// Get the orders count from the database
+	err :=
+		mysql.Conn.Model(&models.Order{}).Joins("JOIN bookings ON bookings.order_id = orders.id").Where("orders.status = ?", enums.Success.Label()).Where("created_at >= ?", today).Where("created_at < ?", today.Add(24*time.Hour)).Count(&count).Error
+
+	if err != nil {
+		log.Println("Error getting order total today using vendor id: " + err.Error())
+
+		return nil, err
+	}
+
+	return &count, err
+}
+
+// GetNLatestUsingVendorID is a method to get the n latest order using the given
+// vendor id.
+//
+// vendorID: the id of the vendor
+// n: the number of order to fetch
+//
+// Return n of latest order and error if any
+func (*OrderRepository) GetNLatestUsingVendorID(vendorID uint, n int) (*[]models.Order, error) {
+	// orders is a placeholder for the orders
+	var orders []models.Order
+
+	// Get the orders from the database
+	err :=
+		mysql.Conn.Preload("Bookings").Preload("Bookings.Vendor").
+			Preload("Bookings.Court").Preload("Bookings.Court.CourtType").
+			Preload("Bookings.User").
+			Joins("JOIN bookings ON bookings.order_id = orders.id").
+			Where("bookings.vendor_id = ?", vendorID).Group("orders.id").
+			Order("orders.created_at DESC").Limit(n).
+			Find(&orders).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting n latest orders using vendor id: " + err.Error())
+
+		return nil, err
+	}
+
+	return &orders, nil
 }

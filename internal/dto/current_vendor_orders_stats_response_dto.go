@@ -25,8 +25,8 @@ type CurrentVendorOrdersStatsResponseDTO struct {
 // Returns the current vendor orders stats response DTO.
 func (c CurrentVendorOrdersStatsResponseDTO) FromMap(m *types.OrdersStatsMap) *CurrentVendorOrdersStatsResponseDTO {
 	return &CurrentVendorOrdersStatsResponseDTO{
-		TotalOrders:      (*m)["total_orders"].(int64),
-		TotalOrdersToday: (*m)["total_orders_today"].(int64),
+		TotalOrders:      *(*m)["total_orders"].(*int64),
+		TotalOrdersToday: *(*m)["total_orders_today"].(*int64),
 		RecentOrders:     CurrentVendorOrderDTO{}.FromModels((*m)["recent_orders"].(*[]models.Order)),
 	}
 }
