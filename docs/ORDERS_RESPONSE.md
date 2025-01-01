@@ -123,7 +123,7 @@ Endpoint uses to get current user order details from database.
           "court": {
             "id": ...,
             "name": "...",
-            "vendor" {
+            "vendor": {
               "id": ...,
               "name": "...",
               "address": "...",
