@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"fmt"
 	"main/core/enums"
 	"main/core/types"
 )
@@ -31,9 +32,11 @@ type CurrentVendorCourtStatsResponseDTO struct {
 // m: The court counts map.
 //
 // Returns the current vendor court stats response DTO.
-func (c *CurrentVendorCourtStatsResponseDTO) FromMap(m *types.CourtCountsMap) *CurrentVendorCourtStatsResponseDTO {
+func (c CurrentVendorCourtStatsResponseDTO) FromMap(m *types.CourtCountsMap) *CurrentVendorCourtStatsResponseDTO {
 	// Calculate the total court count
 	total := (*m)[enums.Football.Label()] + (*m)[enums.Basketball.Label()] + (*m)[enums.Tennis.Label()] + (*m)[enums.Volleyball.Label()] + (*m)[enums.Badminton.Label()]
+
+	fmt.Printf("Total court count: %d\n", total)
 
 	return &CurrentVendorCourtStatsResponseDTO{
 		TotalCourtCount:      total,

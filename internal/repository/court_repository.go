@@ -255,12 +255,12 @@ func (*CourtRepository) GetCountsUsingVendorID(vendorID uint) (*types.CourtCount
 
 	// Get the counts of the courts by vendor ID
 	err := mysql.Conn.Model(&models.Court{}).Select(`
-        COUNT(CASE WHEN type = ? THEN 1 END),
-        COUNT(CASE WHEN rating = ? THEN 1 END),
-        COUNT(CASE WHEN rating = ? THEN 1 END),
-        COUNT(CASE WHEN rating = ? THEN 1 END),
-        COUNT(CASE WHEN rating = ? THEN 1 END)
-    `, enums.Football.Label(), enums.Basketball.Label(), enums.Volleyball.Label(), enums.Tennis.Label(), enums.Badminton.Label()).
+        COUNT(CASE WHEN court_type_id = ? THEN 1 END) AS football_count,
+        COUNT(CASE WHEN court_type_id = ? THEN 1 END) AS basketball_count,
+        COUNT(CASE WHEN court_type_id = ? THEN 1 END) AS volleyball_count,
+        COUNT(CASE WHEN court_type_id = ? THEN 1 END) AS tennis_count,
+        COUNT(CASE WHEN court_type_id = ? THEN 1 END) AS badminton_count
+    `, enums.Football, enums.Basketball, enums.Volleyball, enums.Tennis, enums.Badminton).
 		Where("vendor_id = ?", vendorID).Scan(&results).Error
 
 	// Return an error if any

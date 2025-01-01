@@ -317,13 +317,7 @@ func (co *CourtController) GetCurrentVendorCourtStats(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve current vendor court stats",
-		Data: &dto.CurrentVendorCourtStatsResponseDTO{
-			FootballCourtCount:   (*courtCounts)[enums.Football.Label()],
-			BasketballCourtCount: (*courtCounts)[enums.Basketball.Label()],
-			TennisCourtCount:     (*courtCounts)[enums.Tennis.Label()],
-			VolleyballCourtCount: (*courtCounts)[enums.Volleyball.Label()],
-			BadmintonCourtCount:  (*courtCounts)[enums.Badminton.Label()],
-		},
+		Data:    dto.CurrentVendorCourtStatsResponseDTO{}.FromMap(courtCounts),
 	})
 }
 
