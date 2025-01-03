@@ -403,3 +403,79 @@ func (co *CourtController) GetCourtBookings(c echo.Context) error {
 		Data:    dto.CurrentUserCourtBookingsResponseDTO{}.FromModels(bookings),
 	})
 }
+
+// GetCurrentVendorCourtBookings is a controller that handles the get current vendor
+// court bookings endpoint.
+// Endpoint: GET /vendors/me/courts/:type/bookings
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) GetCurrentVendorCourtBookings(c echo.Context) error {
+	// Get the court type from the URL
+	courtType := c.Param("type")
+
+	// Check for court type
+	if utils.IsBlank(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Court type is required",
+			Data:    nil,
+		})
+	}
+
+	// Check if court type is valid
+	if !enums.InCourtType(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
+	// Get the date from the query parameter
+	date := c.QueryParam("date")
+
+	// Return an error if the date is invalid
+	if utils.IsBlank(date) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "date query parameter is required",
+			Data:    nil,
+		})
+	}
+
+	// Try parse the date
+	_, err := time.Parse("2006-01-02", date)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid date format",
+			Data:    nil,
+		})
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the current vendor court bookings
+	bookings, err :=
+		co.BookingUseCase.GetCurrentVendorCourtBookings(cc.Token, courtType, date)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to get current vendor court bookings",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Success retrieve current vendor court bookings",
+		Data:    dto.CurrentUserCourtBookingsResponseDTO{}.FromModels(bookings),
+	})
+}

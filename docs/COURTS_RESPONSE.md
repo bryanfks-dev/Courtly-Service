@@ -171,6 +171,58 @@ Endpoint uses to get vendor court booking datas using vendor id and court type f
 - `400 BAD REQUEST`: when either vendor id is invalid or court type is invalid or date is invalid
 - `500 INTERNAL SERVER ERROR`: when fails getting court bookings
 
+### **GET** `/api/v1/vendors/:me/courts/:type/bookings`
+
+Endpoint uses to get vendor court booking datas using vendor id and court type from database.
+
+```js
+?date=...
+```
+
+> **date** query parameter should contains the date to get court bookings agenda in certain date (this query parameter is rqeuired)
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "bookings": [
+      {
+        "id": ...,
+        "court": {
+        "id": ...,
+        "name": "...",
+        "type": "...",
+        "price": ...,
+        "image_url": "...",
+      },
+        "book_start_time": "...",
+        "book_end_time": "..."
+      },
+      {...},
+      {...},
+      ...
+    ]
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response success
+- `400 BAD REQUEST`: when either court type is invalid or date is invalid
+- `500 INTERNAL SERVER ERROR`: when fails getting court bookings
+
 ### GET `/api/v1/vendors/me/courts/:type`
 
 Endpoint uses to get current vendor courts using court type from database.

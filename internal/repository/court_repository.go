@@ -260,7 +260,7 @@ func (*CourtRepository) GetCountsUsingVendorID(vendorID uint) (*types.CourtCount
         COUNT(CASE WHEN court_type_id = ? THEN 1 END) AS volleyball_count,
         COUNT(CASE WHEN court_type_id = ? THEN 1 END) AS tennis_count,
         COUNT(CASE WHEN court_type_id = ? THEN 1 END) AS badminton_count
-    `, enums.Football, enums.Basketball, enums.Volleyball, enums.Tennis, enums.Badminton).
+    `, enums.GetCourtTypeID(enums.Football.Label()), enums.GetCourtTypeID(enums.Basketball.Label()), enums.GetCourtTypeID(enums.Volleyball.Label()), enums.GetCourtTypeID(enums.Tennis.Label()), enums.GetCourtTypeID(enums.Badminton.Label())).
 		Where("vendor_id = ?", vendorID).Scan(&results).Error
 
 	// Return an error if any
