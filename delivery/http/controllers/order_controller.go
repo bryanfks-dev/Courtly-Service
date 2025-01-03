@@ -14,8 +14,8 @@ import (
 
 // OrderController is a struct that defines the OrderController
 type OrderController struct {
-	OrderUseCase   *usecases.OrderUseCase
-	ReviewUseCase  *usecases.ReviewUseCase
+	OrderUseCase  *usecases.OrderUseCase
+	ReviewUseCase *usecases.ReviewUseCase
 }
 
 // NewOrderController is a function that returns a new OrderController
@@ -26,8 +26,8 @@ type OrderController struct {
 // Returns a pointer to the OrderController struct
 func NewOrderController(o *usecases.OrderUseCase, r *usecases.ReviewUseCase) *OrderController {
 	return &OrderController{
-		OrderUseCase:   o,
-		ReviewUseCase:  r,
+		OrderUseCase:  o,
+		ReviewUseCase: r,
 	}
 }
 
@@ -302,6 +302,72 @@ func (o *OrderController) GetCurrentUserOrderDetail(c echo.Context) error {
 		Message: "User order detail retrieved successfully",
 		Data: dto.CurrentUserOrderDetailResponseDTO{
 			OrderDetail: dto.OrderDetailDTO{}.FromModel(order),
+		},
+	})
+}
+
+// GetCurrentVendorOrderDetail is a controller that gets the current vendor order detail
+// from the database.
+// Endpoint: GET /vendors/me/orders/:id
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (o *OrderController) GetCurrentVendorOrderDetail(c echo.Context) error {
+	// Get the order ID from the path parameter
+	id := c.Param("id")
+
+	// Check if the id is not empty
+	if utils.IsBlank(id) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Order id is required",
+			Data:    nil,
+		})
+	}
+
+	// Convert the order ID to uint
+	orderID, err := strconv.Atoi(id)
+
+	// Return an error if any
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid order ID",
+			Data:    nil,
+		})
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Get the current user order detail
+	order, processErr :=
+		o.OrderUseCase.GetCurrentVendorOrderDetail(cc.Token, uint(orderID))
+
+	// Return an error if any
+	if processErr != nil {
+		// Check if the error is a client error
+		if processErr.ClientError {
+			return c.JSON(http.StatusNotFound, dto.ResponseDTO{
+				Success: false,
+				Message: processErr.Message,
+				Data:    nil,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: processErr.Message,
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "User order detail retrieved successfully",
+		Data: dto.CurrentVendorOrderDetailResponseDTO{
+			OrderDetail: dto.CurrentVendorOrderDetailDTO{}.FromModel(order),
 		},
 	})
 }

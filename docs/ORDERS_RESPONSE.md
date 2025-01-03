@@ -263,3 +263,55 @@ Endpoint uses to get current vendor orders stats from database.
 
 - `200 OK`: when response is success
 - `500 INTERNAL SERVER ERROR`: when either fails to get total orders or fails to get total orders today or tails to get recent orders
+
+### **GET** `/api/v1/vendors/me/orders/:id`
+
+Endpoint uses to get current vendor order details from database.
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": {
+    "order_detail": {
+      "id": ...,
+      "date": "...",
+      "price": ...,
+      "app_fee": ...,
+      "bookings": [
+        {
+          "id": ...,
+          "court": {
+            "id": ...,
+            "name": "...",
+            "type": "...",
+            "price": ...,
+            "image_url": "..."
+          },
+          "book_start_time": "...",
+          "book_end_time": "..."
+        },
+        {...},
+        {...},
+        ...
+      ]
+    }
+  }
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response is success
+- `400 BAD REQUEST`: when either order is invalid or order is not belongs to the vendor
+- `500 INTERNAL SERVER ERROR`: when fails to get order detail

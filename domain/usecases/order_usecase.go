@@ -123,6 +123,45 @@ func (o *OrderUseCase) GetCurrentUserOrderDetail(token *jwt.Token, orderID uint)
 	return order, nil
 }
 
+// GetCurrentVendorOrderDetail is a method that gets the current vendor order detail from the database.
+//
+// token: The JWT token.
+// orderID: The order ID.
+//
+// Returns the order and an error if any.
+func (o *OrderUseCase) GetCurrentVendorOrderDetail(token *jwt.Token, orderID uint) (*models.Order, *entities.ProcessError) {
+	// Get the order using the order ID
+	order, err := o.OrderRepository.GetUsingID(orderID)
+
+	// Return an error if any
+	if err == gorm.ErrRecordNotFound {
+		return nil, &entities.ProcessError{
+			ClientError: true,
+			Message:     "Order not found",
+		}
+	}
+
+	if err != nil {
+		return nil, &entities.ProcessError{
+			ClientError: false,
+			Message:     "Failed to get user order",
+		}
+	}
+
+	// Get the user ID from the JWT
+	claims := o.AuthUseCase.DecodeToken(token)
+
+	// Return an error if the order is not belongs to the user
+	if order.Bookings[0].VendorID != claims.Id {
+		return nil, &entities.ProcessError{
+			ClientError: true,
+			Message:     "This order is not belongs to this vendor",
+		}
+	}
+
+	return order, nil
+}
+
 // ValidateCreateOrder is a use case that validates the create order data
 //
 // data: The order data

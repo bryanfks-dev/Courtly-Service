@@ -100,6 +100,8 @@ func NewServer() (*echo.Echo, error) {
 
 	currentVendorOrdersPrefix.GET("/stats", c.OrderController.GetCurrentVendorOrdersStats)
 
+	currentVendorOrdersPrefix.GET("/:id", c.OrderController.GetCurrentVendorOrderDetail)
+
 	// Courts endpoints
 	courtPrefix := prefix.Group("/courts")
 
