@@ -69,7 +69,7 @@ func (co *CourtController) GetCourts(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve courts",
-		Data:    dto.CourtsResponseDTO{}.FromCourtMaps(courtMaps),
+		Data:    dto.UserCourtsResponseDTO{}.FromCourtMaps(courtMaps),
 	})
 }
 
@@ -119,7 +119,7 @@ func (co *CourtController) GetVendorCourtsUsingCourtType(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve vendor courts",
-		Data:    dto.CourtsResponseDTO{}.FromCourtMaps(courts),
+		Data:    dto.UserCourtsResponseDTO{}.FromCourtMaps(courts),
 	})
 }
 
@@ -400,6 +400,6 @@ func (co *CourtController) GetCourtBookings(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "Success retrieve court bookings",
-		Data:    dto.BookingsResponseDTO{}.FromModels(bookings),
+		Data:    dto.CurrentUserCourtBookingsResponseDTO{}.FromModels(bookings),
 	})
 }

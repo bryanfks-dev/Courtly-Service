@@ -206,13 +206,13 @@ func (o *OrderController) GetCurrentUserOrders(c echo.Context) error {
 		return c.JSON(http.StatusOK, dto.ResponseDTO{
 			Success: true,
 			Message: "User orders retrieved successfully",
-			Data:    dto.CurrentUserOrdersDTO{}.FromModels(orders),
+			Data:    dto.CurrentUserOrdersResponseDTO{}.FromModels(orders),
 		})
 	}
 
 	// Create order dtos
 	// Create a slice of order DTOs
-	dtos := []dto.OrderDTO{}
+	dtos := []dto.CurrentUserOrderDTO{}
 
 	// Convert the orders to order DTOs
 	for _, order := range *orders {
@@ -229,13 +229,13 @@ func (o *OrderController) GetCurrentUserOrders(c echo.Context) error {
 		}
 
 		// Append the order DTO to the slice
-		dtos = append(dtos, *dto.OrderDTO{}.FromModel(&order, &reviewed))
+		dtos = append(dtos, *dto.CurrentUserOrderDTO{}.FromModel(&order, &reviewed))
 	}
 
 	return c.JSON(http.StatusOK, dto.ResponseDTO{
 		Success: true,
 		Message: "User orders retrieved successfully",
-		Data: dto.CurrentUserOrdersDTO{
+		Data: dto.CurrentUserOrdersResponseDTO{
 			Orders: &dtos,
 		},
 	})
@@ -301,7 +301,7 @@ func (o *OrderController) GetCurrentUserOrderDetail(c echo.Context) error {
 		Success: true,
 		Message: "User order detail retrieved successfully",
 		Data: dto.CurrentUserOrderDetailResponseDTO{
-			OrderDetail: dto.OrderDetailDTO{}.FromModel(order),
+			OrderDetail: dto.CurrentUserOrderDetailDTO{}.FromModel(order),
 		},
 	})
 }

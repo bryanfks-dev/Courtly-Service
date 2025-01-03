@@ -8,7 +8,7 @@ type ReviewDTO struct {
 	ID uint `json:"id"`
 
 	// User is the user of the review
-	User *PublicUserDTO `json:"user"`
+	User *UserDTO `json:"user"`
 
 	// CourtType is the type of the court
 	CourtType string `json:"court_type"`
@@ -34,7 +34,7 @@ func (r ReviewDTO) FromModel(m *models.Review) *ReviewDTO {
 
 	return &ReviewDTO{
 		ID:        m.ID,
-		User:      PublicUserDTO{}.FromModel(&m.User),
+		User:      UserDTO{}.FromModel(&m.User),
 		CourtType: m.CourtType.Type,
 		Rating:    m.Rating,
 		Review:    m.Review,

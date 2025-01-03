@@ -5,8 +5,9 @@ import (
 	"main/data/models"
 )
 
-// OrderDTO is a struct that represents the order data transfer object.
-type OrderDTO struct {
+// CurrentUserOrderDTO is a struct that represents the order data transfer object
+// for user client type.
+type CurrentUserOrderDTO struct {
 	// ID is the ID of the order
 	ID uint `json:"id"`
 
@@ -14,7 +15,7 @@ type OrderDTO struct {
 	Date string `json:"date"`
 
 	// Vendor is the vendor of the order
-	Vendor *PublicVendorDTO `json:"vendor"`
+	Vendor *VendorDTO `json:"vendor"`
 
 	// CourtType is the court type of the order
 	CourtType string `json:"court_type"`
@@ -35,22 +36,23 @@ type OrderDTO struct {
 	Reviewed *bool `json:"reviewed,omitempty"`
 }
 
-// FromModel is a function that converts an order model to an order DTO.
+// FromModel is a function that converts an order model to an current
+// user order DTO.
 //
 // m: The order model.
 // reviewed: The review status of the order.
 //
-// Returns the order DTO.
-func (o OrderDTO) FromModel(m *models.Order, reviewed *bool) *OrderDTO {
+// Returns the current user order DTO.
+func (o CurrentUserOrderDTO) FromModel(m *models.Order, reviewed *bool) *CurrentUserOrderDTO {
 	// Check if the order status is pending
 	if m.Status == enums.Pending.Label() {
 		reviewed = nil
 	}
 
-	return &OrderDTO{
+	return &CurrentUserOrderDTO{
 		ID:           m.ID,
 		Date:         m.CreatedAt.Format("2006-01-02"),
-		Vendor:       PublicVendorDTO{}.FromModel(&m.Bookings[0].Vendor),
+		Vendor:       VendorDTO{}.FromModel(&m.Bookings[0].Vendor),
 		CourtType:    m.Bookings[0].Court.CourtType.Type,
 		Price:        m.Price,
 		AppFee:       m.AppFee,

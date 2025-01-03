@@ -5,8 +5,9 @@ import (
 	"main/internal/providers/midtrans"
 )
 
-// OrderDetailDTO is a struct that defines the OrderDetailDTO
-type OrderDetailDTO struct {
+// CurrentUserOrderDetailDTO is a data transfer object that represents
+// the current user order detail.
+type CurrentUserOrderDetailDTO struct {
 	// ID is the ID of the order
 	ID uint `json:"id"`
 
@@ -32,7 +33,7 @@ type OrderDetailDTO struct {
 	Status string `json:"status"`
 
 	// Bookings is the bookings of the order
-	Bookings *[]BookingDTO `json:"bookings"`
+	Bookings *[]CurrentUserBookingDTO `json:"bookings"`
 }
 
 // FromModel is a method that converts a model to a DTO
@@ -40,17 +41,17 @@ type OrderDetailDTO struct {
 // m: The order model
 //
 // Returns the DTO
-func (o OrderDetailDTO) FromModel(m *models.Order) *OrderDetailDTO {
+func (o CurrentUserOrderDetailDTO) FromModel(m *models.Order) *CurrentUserOrderDetailDTO {
 	// bookingDto is a placeholder for the booking DTO
-	bookingDtos := []BookingDTO{}
+	bookingDtos := []CurrentUserBookingDTO{}
 
 	// Loop through the bookings
 	for _, booking := range m.Bookings {
 		// Append the booking DTO
-		bookingDtos = append(bookingDtos, *BookingDTO{}.FromModel(&booking))
+		bookingDtos = append(bookingDtos, *CurrentUserBookingDTO{}.FromModel(&booking))
 	}
 
-	return &OrderDetailDTO{
+	return &CurrentUserOrderDetailDTO{
 		ID:              m.ID,
 		MidtransOrderID: midtrans.CreateMidtransOrderId(m.ID),
 		OrderDate:       m.Bookings[0].Date.Format("2006-01-02"),

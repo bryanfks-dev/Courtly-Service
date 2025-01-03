@@ -7,8 +7,8 @@ import (
 	"main/pkg/utils"
 )
 
-// PublicUserDTO is a struct that represents the public user dto.
-type PublicUserDTO struct {
+// UserDTO is a struct that represents the user dto.
+type UserDTO struct {
 	// ID is the primary key of the user.
 	ID uint `json:"id"`
 
@@ -19,15 +19,15 @@ type PublicUserDTO struct {
 	ProfilePictureUrl string `json:"profile_picture_url"`
 }
 
-// FromModel creates a PublicUser DTO from a User model.
+// FromModel creates a User DTO from a User model.
 //
 // m: The User model.
 //
-// Returns a PublicUser DTO.
-func (p PublicUserDTO) FromModel(m *models.User) *PublicUserDTO {
-	// If the profile picture is blank, return the PublicUserDTO DTO without the profile picture.
+// Returns a User DTO.
+func (p UserDTO) FromModel(m *models.User) *UserDTO {
+	// If the profile picture is blank, return the UserDTO without the profile picture.
 	if utils.IsBlank(m.ProfilePicture) {
-		return &PublicUserDTO{
+		return &UserDTO{
 			ID:                m.ID,
 			Username:          m.Username,
 			ProfilePictureUrl: m.ProfilePicture,
@@ -37,7 +37,7 @@ func (p PublicUserDTO) FromModel(m *models.User) *PublicUserDTO {
 	// profilePicturePath is the path to the profile picture.
 	profilePicturePath := fmt.Sprintf("%s/%s", router.UserProfiles, m.ProfilePicture)
 
-	return &PublicUserDTO{
+	return &UserDTO{
 		ID:                m.ID,
 		Username:          m.Username,
 		ProfilePictureUrl: profilePicturePath,

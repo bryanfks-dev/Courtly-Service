@@ -11,7 +11,7 @@ type CurrentVendorOrderDTO struct {
 	Date string `json:"date"`
 
 	// User is the user of the order
-	User *PublicUserDTO `json:"user"`
+	User *UserDTO `json:"user"`
 
 	// CourtType is the court type of the order
 	CourtType string `json:"court_type"`
@@ -32,7 +32,7 @@ func (c CurrentVendorOrderDTO) FromModel(m *models.Order) *CurrentVendorOrderDTO
 	return &CurrentVendorOrderDTO{
 		ID:        m.ID,
 		Date:      m.CreatedAt.Format("2006-01-02"),
-		User:      PublicUserDTO{}.FromModel(&m.Bookings[0].User),
+		User:      UserDTO{}.FromModel(&m.Bookings[0].User),
 		CourtType: m.Bookings[0].Court.CourtType.Type,
 		Price:     m.Price,
 		AppFee:    m.AppFee,

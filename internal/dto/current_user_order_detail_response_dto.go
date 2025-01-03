@@ -4,5 +4,5 @@ package dto
 // detail response data transfer object.
 type CurrentUserOrderDetailResponseDTO struct {
 	// OrderDetail is the order detail.
-	OrderDetail *OrderDetailDTO `json:"order_detail"`
+	OrderDetail *CurrentUserOrderDetailDTO `json:"order_detail"`
 }

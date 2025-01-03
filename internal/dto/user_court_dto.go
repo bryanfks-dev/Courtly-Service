@@ -7,8 +7,9 @@ import (
 	"main/delivery/http/router"
 )
 
-// CourtDTO is a struct that defines the court data transfer object.
-type CourtDTO struct {
+// UserCourtDTO is a struct that defines the court data transfer object
+// for user client type.
+type UserCourtDTO struct {
 	// ID is the primary key of the court.
 	ID uint `json:"id"`
 
@@ -16,7 +17,7 @@ type CourtDTO struct {
 	Name string `json:"name"`
 
 	// Vendor is the vendor of the court.
-	Vendor *PublicVendorDTO `json:"vendor"`
+	Vendor *VendorDTO `json:"vendor"`
 
 	// CourtType is the type of the court.
 	Type string `json:"type"`
@@ -35,15 +36,15 @@ type CourtDTO struct {
 //
 // m: The court model.
 //
-// Returns the court DTO.
-func (c CourtDTO) FromModel(m *models.Court) *CourtDTO {
+// Returns the user court DTO.
+func (c UserCourtDTO) FromModel(m *models.Court) *UserCourtDTO {
 	// courtImagePath is the path to the court image.
 	courtImagePath := fmt.Sprintf("%s/%s", router.CourtImages, m.Image)
 
-	return &CourtDTO{
+	return &UserCourtDTO{
 		ID:       m.ID,
 		Name:     m.Name,
-		Vendor:   PublicVendorDTO{}.FromModel(&m.Vendor),
+		Vendor:   VendorDTO{}.FromModel(&m.Vendor),
 		Type:     m.CourtType.Type,
 		Price:    m.Price,
 		Rating:   nil,
@@ -55,8 +56,8 @@ func (c CourtDTO) FromModel(m *models.Court) *CourtDTO {
 //
 // m: The court map.
 //
-// Returns the court DTO.
-func (c CourtDTO) FromCourtMap(m *types.CourtMap) *CourtDTO {
+// Returns the user court DTO.
+func (c UserCourtDTO) FromCourtMap(m *types.CourtMap) *UserCourtDTO {
 	// Get the court
 	court := m.GetCourt()
 
@@ -66,10 +67,10 @@ func (c CourtDTO) FromCourtMap(m *types.CourtMap) *CourtDTO {
 	// Get the rating
 	rating := m.GetTotalRating()
 
-	return &CourtDTO{
+	return &UserCourtDTO{
 		ID:       court.ID,
 		Name:     court.Name,
-		Vendor:   PublicVendorDTO{}.FromModel(&court.Vendor),
+		Vendor:   VendorDTO{}.FromModel(&court.Vendor),
 		Type:     court.CourtType.Type,
 		Price:    court.Price,
 		ImageUrl: courtImagePath,
