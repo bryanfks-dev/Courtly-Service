@@ -130,6 +130,8 @@ func NewServer() (*echo.Echo, error) {
 
 	currentVendorCourtsTypePrefix.POST("", c.CourtController.AddCourt)
 
+	currentVendorCourtsTypePrefix.PUT("", c.CourtController.UpdateCourtUsingCourtType)
+
 	currentVendorCourtsTypePrefix.POST("/new", c.CourtController.CreateNewCourt)
 
 	// Reviews endpoints

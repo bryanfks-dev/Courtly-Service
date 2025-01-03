@@ -263,6 +263,42 @@ Endpoint uses to get current vendor courts using court type from database.
 - `400 BAD REQUEST`: when court type is invalid
 - `500 INTERNAL SERVER ERROR`: when fails getting courts using court type
 
+### **PUT** `/api/v1/vendors/me/courts/:type`
+
+Endpoint uses to update current vendor courts using court type from database.
+
+#### Request header needed
+
+```json
+{
+  "Authorization": "Bearer <token here>"
+}
+```
+
+#### Request body needed
+
+```json
+{
+  "price_per_hour": ...
+}
+```
+
+#### Response body
+
+```json
+{
+  "success": ...,
+  "message": "...",
+  "data": null
+}
+```
+
+#### Possible HTTP status codes
+
+- `200 OK`: when response success
+- `400 BAD REQUEST`: when either court type is invalid or fails to validate request body 
+- `500 INTERNAL SERVER ERROR`: when fails update courts data
+
 ### **POST** `/api/v1/vendors/me/courts/:type/new`
 
 Endpoint uses to create a new court for a court type.

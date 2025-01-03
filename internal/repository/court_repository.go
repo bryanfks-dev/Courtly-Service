@@ -278,3 +278,26 @@ func (*CourtRepository) GetCountsUsingVendorID(vendorID uint) (*types.CourtCount
 		enums.Badminton.Label():  results.BadmintonCount,
 	}, nil
 }
+
+// UpdateUsingVendorIDCourtType is a method to update court using the given vendor id and court type.
+//
+// vendorID: The vendor id
+// courtType: The court type
+// pricePerHour: The court price
+//
+// Return error if any
+func (*CourtRepository) UpdateUsingVendorIDCourtType(vendorID uint, courtType string, pricePerHour float64) error {
+	// Update court
+	err := mysql.Conn.Model(models.Court{}).Where("vendor_id = ?", vendorID).Where("court_type_id = ?", enums.GetCourtTypeID(courtType)).Updates(models.Court{
+		Price: pricePerHour,
+	}).Error
+
+	// Return error if any
+	if err != nil {
+		log.Println("Error updating court using vendor id and court type: " + err.Error())
+
+		return err
+	}
+
+	return nil
+}

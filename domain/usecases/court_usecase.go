@@ -355,3 +355,39 @@ func (c *CourtUseCase) GetCurrentVendorCourtStats(token *jwt.Token) (*types.Cour
 	// Get the court counts
 	return c.CourtRepository.GetCountsUsingVendorID(claims.Id)
 }
+
+// ValidateUpdateCourtForm is a function to validate the update court form.
+//
+// form: The update court form dto
+//
+// Returns a form error response message
+func (c *CourtUseCase) ValidateUpdateCourtForm(form *dto.UpdateCourtFormDTO) types.FormErrorResponseMsg {
+	// Make an empty error map
+	errs := make(types.FormErrorResponseMsg)
+
+	// Check if the price per hour is less than or equal to 0
+	if form.PricePerHour <= 0 {
+		errs["price_per_hour"] = append(errs["price_per_hour"], "Price per hour must be greater than 0")
+	}
+
+	// Check if error is exists
+	if len(errs) > 0 {
+		return errs
+	}
+
+	return nil
+}
+
+// UpdateCourtUsingCourtType is a function to update court using the given court type.
+//
+// token: The jwt token
+// courtType: The court type
+//
+// Returns error if any
+func (c *CourtUseCase) UpdateCourtUsingCourtType(token *jwt.Token, courtType string, form *dto.UpdateCourtFormDTO) error {
+	// Get the token claims
+	claims := c.AuthUseCase.DecodeToken(token)
+
+	// Update the court
+	return c.CourtRepository.UpdateUsingVendorIDCourtType(claims.Id, courtType, form.PricePerHour)
+}

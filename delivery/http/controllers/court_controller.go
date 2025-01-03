@@ -479,3 +479,78 @@ func (co *CourtController) GetCurrentVendorCourtBookings(c echo.Context) error {
 		Data:    dto.CurrentUserCourtBookingsResponseDTO{}.FromModels(bookings),
 	})
 }
+
+// UpdateCourtUsingCourtType is a controller that handles the update court using court type endpoint.
+// Endpoint: PUT /vendors/me/courts/:type
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) UpdateCourtUsingCourtType(c echo.Context) error {
+	// Get the court type from the URL
+	courtType := c.Param("type")
+
+	// Check for court type
+	if utils.IsBlank(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Court type is required",
+			Data:    nil,
+		})
+	}
+
+	// Check if court type is valid
+	if !enums.InCourtType(courtType) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: "Invalid court type",
+			Data:    nil,
+		})
+	}
+
+	// Create a new UpdateCourtFormDTO object
+	form := new(dto.UpdateCourtFormDTO)
+
+	// Bind the request body to the UserLoginForm object
+	if err := c.Bind(form); err != nil {
+		log.Println("Error binding request body: ", err)
+
+		return err
+	}
+
+	println("Court price: ", form.PricePerHour)
+
+	// Validate the update court form
+	errs := co.CourtUseCase.ValidateUpdateCourtForm(form)
+
+	// Returns error if any
+	if errs != nil {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: errs,
+			Data:    nil,
+		})
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Update the court
+	err :=
+		co.CourtUseCase.UpdateCourtUsingCourtType(cc.Token, courtType, form)
+
+	// Return error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, &dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to update courts",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, &dto.ResponseDTO{
+		Success: true,
+		Message: "Success update courts",
+		Data:    nil,
+	})
+}
