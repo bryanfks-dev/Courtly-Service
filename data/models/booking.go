@@ -22,7 +22,7 @@ type Booking struct {
 	Vendor   Vendor `gorm:"foreignKey:VendorID"`
 
 	// CourtID is the foreign key of the court.
-	CourtID uint  `gorm:"not null;index"`
+	CourtID uint  `gorm:"not null;index;constraint:OnDelete:SET NULL"`
 	Court   Court `gorm:"foreignKey:CourtID"`
 
 	// Date is the date of the book was created.

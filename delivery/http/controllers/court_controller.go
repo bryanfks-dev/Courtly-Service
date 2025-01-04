@@ -518,8 +518,6 @@ func (co *CourtController) UpdateCourtUsingCourtType(c echo.Context) error {
 		return err
 	}
 
-	println("Court price: ", form.PricePerHour)
-
 	// Validate the update court form
 	errs := co.CourtUseCase.ValidateUpdateCourtForm(form)
 
@@ -551,6 +549,57 @@ func (co *CourtController) UpdateCourtUsingCourtType(c echo.Context) error {
 	return c.JSON(http.StatusOK, &dto.ResponseDTO{
 		Success: true,
 		Message: "Success update courts",
+		Data:    nil,
+	})
+}
+
+// DeleteCourts is a controller that handles the delete courts endpoint.
+// Endpoint: DELETE /vendors/me/courts
+//
+// c: The echo context.
+//
+// Returns an error if any.
+func (co *CourtController) DeleteCourts(c echo.Context) error {
+	// Create a new DeleteCourtsDTO object
+	data := new(dto.DeleteCourtsDTO)
+
+	// Bind the request body to the DeleteCourtsDTO object
+	if err := c.Bind(data); err != nil {
+		log.Println("Error binding request body: ", err)
+
+		return err
+	}
+
+	// Validate the delete courts form
+	errs := co.CourtUseCase.ValidateDeleteCourts(data)
+
+	// Returns error if any
+	if !utils.IsBlank(errs) {
+		return c.JSON(http.StatusBadRequest, dto.ResponseDTO{
+			Success: false,
+			Message: errs,
+			Data:    nil,
+		})
+	}
+
+	// Get custom context
+	cc := c.(*dto.CustomContext)
+
+	// Delete the courts
+	err := co.CourtUseCase.DeleteCourts(cc.Token, data)
+
+	// Return error if any
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ResponseDTO{
+			Success: false,
+			Message: "Failed to delete courts",
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.ResponseDTO{
+		Success: true,
+		Message: "Success delete courts",
 		Data:    nil,
 	})
 }

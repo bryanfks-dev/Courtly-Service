@@ -121,6 +121,8 @@ func NewServer() (*echo.Echo, error) {
 
 	currentVendorCourtsPrefix.GET("/stats", c.CourtController.GetCurrentVendorCourtStats)
 
+	currentVendorCourtsPrefix.DELETE("", c.CourtController.DeleteCourts)
+
 	// Current vendor courts types endpoints
 	currentVendorCourtsTypePrefix := currentVendorCourtsPrefix.Group("/:type")
 

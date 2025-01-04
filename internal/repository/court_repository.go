@@ -301,3 +301,23 @@ func (*CourtRepository) UpdateUsingVendorIDCourtType(vendorID uint, courtType st
 
 	return nil
 }
+
+// DeleteUsingCourtIDsVendorID is a function that deletes the courts using court IDs and vendor ID.
+//
+// courtIDs: The court IDs.
+// vendorID: The vendor ID.
+//
+// Returns an error if any.
+func (*CourtRepository) DeleteUsingCourtIDsVendorID(courtIDs []uint, vendorID uint) error {
+	// Delete the courts
+	err := mysql.Conn.Where("id IN (?)", courtIDs).Where("vendor_id = ?", vendorID).Delete(models.Court{}).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error deleting courts using court ids and vendor id: " + err.Error())
+
+		return err
+	}
+
+	return nil
+}

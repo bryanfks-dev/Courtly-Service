@@ -393,3 +393,31 @@ func (c *CourtUseCase) UpdateCourtUsingCourtType(token *jwt.Token, courtType str
 	// Update the court
 	return c.CourtRepository.UpdateUsingVendorIDCourtType(claims.Id, courtType, form.PricePerHour)
 }
+
+// ValidateDeleteCourts is a function to validate the delete courts.
+//
+// data: The delete courts dto
+//
+// Returns a form error response message
+func (c *CourtUseCase) ValidateDeleteCourts(data *dto.DeleteCourtsDTO) string {
+	// Check if the court IDs is empty
+	if len(data.CourtIDs) == 0 {
+		return "Court IDs is required"
+	}
+
+	return ""
+}
+
+// DeleteCourts is a function to delete courts.
+//
+// token: The jwt token
+// data: The delete courts dto
+//
+// Returns error if any
+func (c *CourtUseCase) DeleteCourts(token *jwt.Token, data *dto.DeleteCourtsDTO) error {
+	// Get the token claims
+	claims := c.AuthUseCase.DecodeToken(token)
+
+	// Delete the courts
+	return c.CourtRepository.DeleteUsingCourtIDsVendorID(data.CourtIDs, claims.Id)
+}
