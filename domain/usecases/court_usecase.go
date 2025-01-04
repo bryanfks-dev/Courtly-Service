@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"main/core/constants"
+	"main/core/enums"
 	"main/core/types"
 	"main/data/models"
 	"main/domain/entities"
@@ -220,8 +221,11 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 		}
 	}
 
+	// Get the court type ID
+	courtTypeId := enums.GetCourtTypeID(courtType)
+
 	// Create the court image name
-	courtImageName := fmt.Sprintf("court_%s_%s.jpg", claims.ID, courtType)
+	courtImageName := fmt.Sprintf("court_%d_%d.jpg", claims.Id, courtTypeId)
 
 	// Write the image to a file
 	err = os.WriteFile(fmt.Sprintf("%s/%s", constants.PATH_TO_COURT_IMAGES, courtImageName), fileBytes, 0644)
@@ -238,13 +242,11 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 
 	// Create a new court object
 	court := &models.Court{
-		VendorID: claims.Id,
-		CourtType: models.CourtType{
-			Type: courtType,
-		},
-		Name:  "Court 1",
-		Price: form.PricePerHour,
-		Image: courtImageName,
+		VendorID:    claims.Id,
+		CourtTypeID: uint(courtTypeId),
+		Name:        "Court 1",
+		Price:       form.PricePerHour,
+		Image:       courtImageName,
 	}
 
 	// Return an error if any
