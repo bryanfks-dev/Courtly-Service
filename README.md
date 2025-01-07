@@ -56,11 +56,15 @@ There are several available endpoints, such as:
 - **GET** `/api/v1/vendors/me/reviews` - Get court reviews related to the vendor from database
 - **POST** `/api/v1/vendors/:id/courts/:type/reviews` - Create a new review for current vendor and court type
 
-###### Fees endpoint
+##### Fees endpoint
 
 - **GET** `/api/v1/fees` - Get all service fees related to bussiness transactions
 
-###### Payment gateway endpoints
+##### Advertisements endpoint
+
+- **GET** `/api/v1/advertisements` - Get all available advertisements related to the vendor and vendor's court
+
+##### Payment gateway endpoints
 
 - **GET** `/midtrans/payment-callback` - A payment callback endpoint to mark an order status as success
 
