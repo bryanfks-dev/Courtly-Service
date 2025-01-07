@@ -301,7 +301,30 @@ func (*ReviewRepository) GetAvgRatingUsingCourtTypeVendorID(courtType string, ve
 
 	// Get the count of courts by vendor ID and court type
 	err :=
-		mysql.Conn.Model(&models.Review{}).Joins("JOIN court_types ON court_types.id = reviews.court_type_id").Where("vendor_id = ?", vendorID).Where("court_types.type = ?", courtType).Select("COALESCE(AVG(rating), 0)").Scan(&avgRating).Error
+		mysql.Conn.Model(&models.Review{}).Joins("JOIN court_types ON court_types.id = reviews.court_type_id").Where("vendor_id = ?", vendorID).Where("court_types.type = ?", courtType).Select("COALESCE(ROUND(AVG(rating), 1), 0)").Scan(&avgRating).Error
+
+	// Return an error if any
+	if err != nil {
+		log.Println("Error getting avg rating using court type and vendor id: " + err.Error())
+
+		return 0, err
+	}
+
+	return avgRating, nil
+}
+
+// GetAvgRatingUsingVendorID is a function that returns the average rating using the vendor ID.
+//
+// vendorID: The vendor ID.
+//
+// Returns the average rating and an error if any.
+func (*ReviewRepository) GetAvgRatingUsingVendorID(vendorID uint) (float64, error) {
+	// Create new count variable
+	var avgRating float64
+
+	// Get the count of courts by vendor ID and court type
+	err :=
+		mysql.Conn.Model(&models.Review{}).Where("vendor_id = ?", vendorID).Select("COALESCE(ROUND(AVG(rating), 1), 0)").Scan(&avgRating).Error
 
 	// Return an error if any
 	if err != nil {

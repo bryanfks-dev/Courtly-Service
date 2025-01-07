@@ -8,7 +8,6 @@ import (
 	"main/domain/entities"
 	"main/internal/dto"
 	"main/internal/repository"
-	"main/pkg/utils"
 	"strings"
 	"sync"
 
@@ -317,6 +316,27 @@ func (r *ReviewUseCase) GetCourtTypeReviews(vendorID uint, courtType string, rat
 		reviews["reviews"] = records
 	}()
 
+	wg.Add(1)
+
+	go func() {
+		defer wg.Done()
+
+		// Get total rating
+		totalRating, e := r.ReviewRepository.GetAvgRatingUsingCourtTypeVendorID(courtType, vendorID)
+
+		// Check if there is an error
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the total rating to the reviews map
+		reviews["total_rating"] = totalRating
+	}()
+
 	// Wait for all goroutines to finish
 	wg.Wait()
 
@@ -324,9 +344,6 @@ func (r *ReviewUseCase) GetCourtTypeReviews(vendorID uint, courtType string, rat
 	if err != nil {
 		return nil, err
 	}
-
-	// Calculate the total rating
-	reviews["total_rating"] = utils.CalculateTotalRating(reviews["star_counts"].(*types.StarCountsMap), reviews["reviews_total"].(int64))
 
 	return &reviews, err
 }
@@ -437,6 +454,28 @@ func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token, rating *int) (
 		reviews["reviews"] = records
 	}()
 
+	// Add a new wait group
+	wg.Add(1)
+
+	go func() {
+		defer wg.Done()
+
+		// Get total rating
+		totalRating, e := r.ReviewRepository.GetAvgRatingUsingVendorID(claims.Id)
+
+		// Check if there is an error
+		if e != nil {
+			err = e
+
+			cancel()
+
+			return
+		}
+
+		// Add the total rating to the reviews map
+		reviews["total_rating"] = totalRating
+	}()
+
 	// Wait for all goroutines to finish
 	wg.Wait()
 
@@ -444,9 +483,6 @@ func (r *ReviewUseCase) GetCurrentVendorReviews(token *jwt.Token, rating *int) (
 	if err != nil {
 		return nil, err
 	}
-
-	// Calculate the total rating
-	reviews["total_rating"] = utils.CalculateTotalRating(reviews["star_counts"].(*types.StarCountsMap), reviews["reviews_total"].(int64))
 
 	return &reviews, nil
 }
