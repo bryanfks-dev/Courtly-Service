@@ -141,19 +141,19 @@ Endpoint uses to get vendor court booking datas using vendor id and court type f
       {
         "id": ...,
         "court": {
-        "id": ...,
-        "name": "...",
-        "vendor": {
           "id": ...,
           "name": "...",
-          "address": "...",
-          "open_time": "...",
-          "close_time": "..."
+          "vendor": {
+            "id": ...,
+            "name": "...",
+            "address": "...",
+            "open_time": "...",
+            "close_time": "..."
+          },
+          "type": "...",
+          "price": ...,
+          "image_url": "...",
         },
-        "type": "...",
-        "price": ...,
-        "image_url": "...",
-      },
         "book_start_time": "...",
         "book_end_time": "..."
       },
