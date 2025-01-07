@@ -109,7 +109,7 @@ func (*VendorRepository) GetUsingEmail(email string) (*models.Vendor, error) {
 // Returns an error if any.
 func (*VendorRepository) UpdatePassword(vendorID uint, hashedNewPassword string) error {
 	// Update the vendor's password
-	err := mysql.Conn.Model(&models.Vendor{}).Update("password", hashedNewPassword).Where("id = ?", vendorID).Error
+	err := mysql.Conn.Model(&models.Vendor{}).Where("id = ?", vendorID).Update("password", hashedNewPassword).Error
 
 	// Check if there is an error
 	if err != nil {
