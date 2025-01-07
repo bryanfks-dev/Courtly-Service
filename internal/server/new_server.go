@@ -39,11 +39,10 @@ func NewServer() (*echo.Echo, error) {
 
 	e.Static(router.CourtImages, constants.PATH_TO_COURT_IMAGES)
 
+	e.Static(router.Advertisements, constants.PATH_TO_ADVERTISEMENTS)
+
 	// Register prefix endpoint
 	prefix := e.Group("/api/v1")
-
-	// Fees endpoint
-	prefix.GET("/fees", c.FeesController.GetFees, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
 
 	// Register routes
 	// Auth endpoints
@@ -145,6 +144,12 @@ func NewServer() (*echo.Echo, error) {
 	vendorTypeCourtsPrefix.POST("/reviews", c.ReviewController.CreateReview, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield, m.UserMiddleware.Shield)
 
 	currentVendorPrefix.GET("/reviews", c.ReviewController.GetCurrentVendorReviews)
+
+	// Fees endpoint
+	prefix.GET("/fees", c.FeesController.GetFees, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+
+	// Advertisements endpoints
+	prefix.GET("/advertisements", c.AdvertisementController.GetAdvertisements)
 
 	// Midtrans endpoints
 	midtransPrefix := e.Group("/midtrans")

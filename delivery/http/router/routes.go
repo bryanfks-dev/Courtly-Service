@@ -8,5 +8,5 @@ var (
 	CourtImages = "static/court_images"
 
 	// Fees is the path to the service fees.
-	Fees = "fees"
+	Advertisements = "static/ads"
 )

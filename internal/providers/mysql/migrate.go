@@ -16,5 +16,6 @@ func Migrate() error {
 		&models.Court{},
 		&models.Review{},
 		&models.Booking{},
-		&models.Order{})
+		&models.Order{},
+		&models.Advertisement{})
 }

@@ -14,6 +14,7 @@ type Controllers struct {
 	CourtController          *controllers.CourtController
 	ReviewController         *controllers.ReviewController
 	OrderController          *controllers.OrderController
+	AdvertisementController  *controllers.AdvertisementController
 	MidtransController       *controllers.MidtransController
 }
 
@@ -34,6 +35,7 @@ func InitControllers(usecase *UseCases) *Controllers {
 		CourtController:          controllers.NewCourtController(usecase.CourtUseCase, usecase.BookingUseCase),
 		ReviewController:         controllers.NewReviewController(usecase.ReviewUseCase),
 		OrderController:          controllers.NewOrderController(usecase.OrderUseCase, usecase.ReviewUseCase),
+		AdvertisementController:  controllers.NewAdvertisementController(usecase.AdvertisementUseCase),
 		MidtransController:       controllers.NewMidtransController(),
 	}
 }
