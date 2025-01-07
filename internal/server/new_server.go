@@ -39,6 +39,9 @@ func NewServer() (*echo.Echo, error) {
 
 	e.Static(router.CourtImages, constants.PATH_TO_COURT_IMAGES)
 
+	// Fees endpoint
+	e.GET(router.Fees, c.FeesController.GetFees, m.AuthMiddleware.Shield, m.BlacklistedTokenMiddleware.Shield)
+
 	// Register prefix endpoint
 	prefix := e.Group("/api/v1")
 

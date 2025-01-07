@@ -4,6 +4,7 @@ import "main/delivery/http/controllers"
 
 // Controllers is a struct that holds all the controllers.
 type Controllers struct {
+	FeesController           *controllers.FeesController
 	LoginController          *controllers.LoginController
 	RegisterController       *controllers.RegisterController
 	LogoutController         *controllers.LogoutController
@@ -23,6 +24,7 @@ type Controllers struct {
 // Returns an instance of Controllers.
 func InitControllers(usecase *UseCases) *Controllers {
 	return &Controllers{
+		FeesController:           controllers.NewFeesController(),
 		LoginController:          controllers.NewLoginController(usecase.LoginUseCase, usecase.AuthUseCase),
 		RegisterController:       controllers.NewRegisterController(usecase.RegisterUseCase),
 		LogoutController:         controllers.NewLogoutController(usecase.LogoutUseCase),

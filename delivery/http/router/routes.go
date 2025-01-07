@@ -6,4 +6,7 @@ var (
 
 	// CourtImages is the path to the court images.
 	CourtImages = "static/court_images"
+
+	// Fees is the path to the service fees.
+	Fees = "fees"
 )
