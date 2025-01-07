@@ -28,7 +28,7 @@ type AdvertisementDTO struct {
 // Returns an ad DTO.
 func (a AdvertisementDTO) FromModel(m *models.Advertisement) *AdvertisementDTO {
 	// adImagePath is the path to the ad image.
-	adImagePath := fmt.Sprintf("%s/%s", router.UserProfiles, m.Image)
+	adImagePath := fmt.Sprintf("%s/%s", router.Advertisements, m.Image)
 
 	return &AdvertisementDTO{
 		ID:        m.ID,

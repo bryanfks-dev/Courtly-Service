@@ -27,7 +27,7 @@ var courtTypes = []string{
 }
 
 // courtTypesApiValue is a list of court types API value.
-var courtTypesApiValue = map[string]int{
+var courtTypesApiValue = map[string]uint{
 	"Football":   1,
 	"Basketball": 2,
 	"Tennis":     3,
@@ -47,7 +47,7 @@ func (c CourtType) Label() string {
 // val: The value of the court type.
 //
 // Returns the ID of the court type.
-func GetCourtTypeID(val string) int {
+func GetCourtTypeID(val string) uint {
 	return courtTypesApiValue[val]
 }
 
