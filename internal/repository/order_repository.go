@@ -265,11 +265,11 @@ func (*OrderRepository) GetTotalTodayUsingVendorID(vendorID uint) (*int64, error
 	var count int64
 
 	// Get the current date
-	today := time.Now().Truncate(24 * time.Hour)
+	today := time.Now().Format("2006-01-02")
 
 	// Get the orders count from the database
 	err :=
-		mysql.Conn.Model(&models.Order{}).Joins("JOIN bookings ON bookings.order_id = orders.id").Where("orders.status = ?", enums.Success.Label()).Where("created_at >= ?", today).Where("created_at < ?", today.Add(24*time.Hour)).Count(&count).Error
+		mysql.Conn.Model(&models.Order{}).Joins("JOIN bookings ON bookings.order_id = orders.id").Where("orders.status = ?", enums.Success.Label()).Where("vendor_id = ?", vendorID).Where("DATE(created_at) = ?", today).Count(&count).Error
 
 	if err != nil {
 		log.Println("Error getting order total today using vendor id: " + err.Error())
