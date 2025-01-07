@@ -43,3 +43,9 @@ This doc will explains each endpoint in details, like request body needed, respo
 ---
 
 [![reviews-response-doc](https://img.shields.io/badge/visit-reviews--response--doc-gold)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/REVIEWS_RESPONSE.md)
+
+### Fees endpoints
+
+---
+
+[![fees-response-doc](https://img.shields.io/badge/visit-fees--response--doc-green)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/FEES_RESPONSE.md)

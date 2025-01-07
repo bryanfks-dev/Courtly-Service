@@ -58,7 +58,7 @@ There are several available endpoints, such as:
 
 ###### Fees endpoint
 
-- **GET** `/fees` - Get all service fees related to bussiness transactions
+- **GET** `/api/v1/fees` - Get all service fees related to bussiness transactions
 
 ###### Payment gateway endpoints
 
