@@ -22,6 +22,8 @@ func Seed() error {
 	defer func() {
 		// Recover from panic
 		if r := recover(); r != nil {
+			log.Println("Recovered from panic while seeding database " + r.(string))
+
 			tx.Rollback()
 		}
 	}()
@@ -66,6 +68,8 @@ func Seed() error {
 		e := tx.Clauses(clause.Insert{Modifier: "ignore"}).Create(courtTypes).Error
 
 		if e != nil {
+			log.Println("Failed to seed court types table: " + e.Error())
+
 			err = e
 
 			// Rollback the transaction

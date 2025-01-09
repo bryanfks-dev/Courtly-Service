@@ -227,8 +227,11 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 	// Create the court image name
 	courtImageName := fmt.Sprintf("court_%d_%d.jpg", claims.Id, courtTypeId)
 
+	// Create the court image name path
+	courtImageNamePath := fmt.Sprintf("%s/%s", constants.PATH_TO_COURT_IMAGES, courtImageName)
+
 	// Write the image to a file
-	err = os.WriteFile(fmt.Sprintf("%s/%s", constants.PATH_TO_COURT_IMAGES, courtImageName), fileBytes, 0644)
+	err = os.WriteFile(courtImageNamePath, fileBytes, 0644)
 
 	// Return an error if any
 	if err != nil {
@@ -254,6 +257,17 @@ func (c *CourtUseCase) CreateNewCourt(token *jwt.Token, courtType string, form *
 
 	// Return an error if any
 	if err != nil {
+		// Remove the court image
+		err = os.Remove(courtImageNamePath)
+
+		// Return an error if any
+		if err != nil {
+			return nil, &entities.ProcessError{
+				ClientError: false,
+				Message:     "An error occured while creating a new court and removing the court image",
+			}
+		}
+
 		return nil, &entities.ProcessError{
 			ClientError: false,
 			Message:     "An error occured while creating a new court",
