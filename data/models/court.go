@@ -29,7 +29,4 @@ type Court struct {
 
 	// UpdatedAt is the time when the court was updated.
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
-
-	// Reviews is the list of reviews that have the court.
-	Reviews []Review `gorm:"foreignKey:CourtTypeID"`
 }

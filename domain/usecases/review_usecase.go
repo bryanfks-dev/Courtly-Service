@@ -194,7 +194,7 @@ func (r *ReviewUseCase) ProcessCreateReview(token *jwt.Token, vendorID int, cour
 	review := &models.Review{
 		UserID:      claims.Id,
 		VendorID:    uint(vendorID),
-		CourtTypeID: uint(enums.GetCourtTypeID(courtType)),
+		CourtTypeID: enums.GetCourtTypeID(courtType),
 		Rating:      form.Rating,
 		Review:      form.Review,
 	}
