@@ -284,9 +284,16 @@ func (o *OrderUseCase) CreateOrder(token *jwt.Token, data dto.CreateOrderDTO) (*
 		}
 	}
 
+	// Get the total bookings
+	totalBookings := 0
+
+	for i := 0; i < len(*data.Bookings); i++ {
+		totalBookings += len((*data.Bookings)[i].BookTime)
+	}
+
 	// Create Order for bookings
 	order := models.Order{
-		Price:  court.Price * float64(len(*data.Bookings)),
+		Price:  court.Price * float64(totalBookings),
 		AppFee: constants.APP_FEE_PRICE,
 		Status: "Pending",
 	}
