@@ -73,6 +73,24 @@ Endpoint uses to create a new current user order and payment.
 }
 ```
 
+#### Request body
+
+```json
+{
+  "vendor_id": ...,
+  "date": "...",
+  "bookings": [
+    {
+      "court_id": ...,
+      "book_times": ["...", "...", ...]
+    },
+    {...},
+    {...},
+    ...
+  ]
+}
+```
+
 #### Response body
 
 ```json
@@ -185,6 +203,7 @@ Endpoint uses to get current vendor orders from database.
       "user": {
         "id": ...,
         "username" : "...",
+        "phone_number": "...",
         "profile_picture_url": "..."
       },
       "court": {
