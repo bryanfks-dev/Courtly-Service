@@ -54,4 +54,4 @@ This doc will explains each endpoint in details, like request body needed, respo
 
 ---
 
-[![advertisement-response-doc](https://img.shields.io/badge/visit-fees--response--doc-black)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/ADVERTISEMENT_RESPONSE.md)
+[![advertisement-response-doc](https://img.shields.io/badge/visit-advertisement--response--doc-black)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/ADVERTISEMENT_RESPONSE.md)
