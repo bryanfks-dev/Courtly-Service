@@ -91,7 +91,7 @@ func (c *CourtUseCase) GetCourts(courtType *string, search *string) (*[]types.Co
 	}
 
 	// Sort the courts based by total rating
-	sort.Slice(*courts, func(i, j int) bool {
+	sort.Slice(courtMaps, func(i, j int) bool {
 		return courtMaps[i].GetTotalRating() > courtMaps[j].GetTotalRating()
 	})
 
