@@ -139,7 +139,7 @@ go mod tidy
 cp .env.example .env
 ```
 
-3. Go to [midtrans website](https://dashboard.midtrans.com/), find your midtrans server key, and copy it to clipboard.
+3. Go to [midtrans website](https://dashboard.sandbox.midtrans.com/integrations/configurations), find your midtrans server key, and copy it to clipboard.
 
 4. Set up the environment variables:
 
@@ -176,7 +176,7 @@ The server will start on port that you've set based on the environtment variable
 ngrok http <port-to-listen>
 ```
 
-6. Copy the generated ngrok link, then paste the link into the **Payment Notification URL** in the midtrans website (in dashboard/integration/configurations) with this format:
+6. Copy the generated ngrok link, then paste the link into the **Payment Notification URL** in the [midtrans website](https://dashboard.sandbox.midtrans.com/integrations/configurations) with the given format:
 
 ```txt
 <ngrok-url>/midtrans/payment-callback
