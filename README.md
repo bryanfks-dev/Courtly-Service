@@ -1,6 +1,27 @@
-# Courtly-Service
+# Courtly Service
 
-Courtly-Service is a backend service of Courtly: Easily Order Court Application. Courtly-Service built with Golang, with several library like Echo web framework and GORM.
+Courtly Service is a backend service of Courtly: Easily Order Court Application. Courtly-Service is designed to facilitate seamless service management for sports court rentals. This server is built to manage user offerings, handle bookings, and connect efficiently.
+
+## Features
+
+- **API for Booking Management**: Manage bookings and availability for sports fields.
+- **Vendor Service Management**: APIs for vendors to add and manage their services.
+- **Authentication and Authorization**: Secure access with token-based authentication.
+- **Scalable Architecture**: Designed for high performance and scalability.
+
+## Technologies Used
+
+- **Programming Language**: Go (Golang)
+- **Framework**: Echo and GORM
+- **Database**: MySQL
+- **Authentication**: JWT (JSON Web Tokens)
+
+## Getting Started
+
+### Requirement(s):
+
+- **Go**: [Install Go](https://go.dev/doc/install).
+- **MySQL**: Ensure MySQL is installed and running.
 
 ## Endpoint List
 
@@ -94,14 +115,21 @@ To see responses structure in details, please read this doc.
 
 [![visit-docs](https://img.shields.io/badge/visit-response--docs-blue)](https://github.com/bryanfks-dev/Courtly-Service/blob/main/docs/RESPONSES.md)
 
-## Run Proccess
+## Installation
 
 To start the service, make sure to follow the steps below.
 
-1. Make sure you're in the root of the project. If not, simply run the command below.
+1. Clone the repository:
 
 ```bash
-cd courtly-service
+git clone https://github.com/bryanfks-dev/Courtly-Service.git
+cd Courtly-Service
+```
+
+2. Install depedencies:
+
+```bash
+go mod tidy
 ```
 
 2. Clone the environment file
@@ -110,8 +138,35 @@ cd courtly-service
 cp .env.example .env
 ```
 
-3. Setup the configuration inside the environment file.<br>
-   Open the environment file and start editing the configuration, like database connection configuration, jwt, and server.
+3. Set up the environment variables:
 
-4. Start the service.<br>
-   To start the service simply run `go run cmd/main.go`, or to make things easier, run the `start.bash` script via terminal with `./start.bash` command.
+```env
+# Database Configuration
+DB_HOST=<your-db-host>
+DB_PORT=<your-db-port>
+DB_USERNAME=<your-dh-username>
+DB_PASSWORD=<your-dh-password>
+DB_DATABASE=courtly_db
+
+# Server Configuration
+SERVER_HOST=localhost
+SERVER_PORT=3000
+
+# JWT Configuration
+JWT_SECRET=<your-jwt-secret>
+
+# Payment Gateway Configuration
+MIDTRANS_API_KEY=<your-midtrans-server-key>
+```
+
+4. Run the server:
+
+```bash
+go run main.go
+```
+
+The server will start on port that you've set based on the environtment variable (e.g. :3000).
+
+### License
+
+This project is open-source and available under the [MIT License](https://github.com/bryanfks-dev/Courtly-Service/blob/main/LICENSE).
