@@ -22,6 +22,7 @@ Courtly Service is a backend service of Courtly: Easily Order Court Application.
 
 - **Go**: [Install Go](https://go.dev/doc/install).
 - **MySQL**: Ensure MySQL is installed and running.
+- **ngrok**: Temporary deploy the service server for midtrans payment callback, [Install ngrok](https://download.ngrok.com).
 
 ## Endpoint List
 
@@ -138,7 +139,9 @@ go mod tidy
 cp .env.example .env
 ```
 
-3. Set up the environment variables:
+3. Go to [midtrans website](https://dashboard.midtrans.com/), find your midtrans server key, and copy it to clipboard.
+
+4. Set up the environment variables:
 
 ```env
 # Database Configuration
@@ -166,6 +169,18 @@ go run main.go
 ```
 
 The server will start on port that you've set based on the environtment variable (e.g. :3000).
+
+5. Start ngrok:
+
+```bash
+ngrok http <port-to-listen>
+```
+
+6. Copy the generated ngrok link, then paste the link into the **Payment Notification URL** in the midtrans website (in dashboard/integration/configurations) with this format:
+
+```txt
+<ngrok-url>/midtrans/payment-callback
+```
 
 ### License
 
