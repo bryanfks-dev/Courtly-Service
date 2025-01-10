@@ -44,7 +44,7 @@ func (d Database) LoadData() {
 
 	d.Password = utils.GetEnv("DB_PASSWORD", "")
 
-	d.DatabaseName = utils.GetEnv("DB_NAME", "courtly_db")
+	d.DatabaseName = utils.GetEnv("DB_DATABASE", "courtly_db")
 
 	DBConfig = d
 }

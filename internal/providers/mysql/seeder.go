@@ -1,7 +1,6 @@
 package mysql
 
 import (
-	"context"
 	"log"
 	"main/core/enums"
 	"main/data/models"
@@ -15,32 +14,6 @@ import (
 //
 // Returns an error if any
 func Seed() error {
-	// Begin a transaction
-	tx := Conn.Begin()
-
-	// Defer the rollback
-	defer func() {
-		// Recover from panic
-		if r := recover(); r != nil {
-			log.Println("Recovered from panic while seeding database " + r.(string))
-
-			tx.Rollback()
-		}
-	}()
-
-	// Return an error if any
-	if tx.Error != nil {
-		log.Println("Failed to begin transaction")
-
-		return tx.Error
-	}
-
-	// Create a context with a cancel function
-	_, cancel := context.WithCancel(context.Background())
-
-	// Defer the cancel function
-	defer cancel()
-
 	// Create a wait group and error
 	var (
 		wg  sync.WaitGroup
@@ -65,27 +38,16 @@ func Seed() error {
 		}
 
 		// Create the court types
-		e := tx.Clauses(clause.Insert{Modifier: "ignore"}).Create(courtTypes).Error
+		e := Conn.Clauses(clause.Insert{Modifier: "ignore"}).Create(courtTypes).Error
 
 		if e != nil {
 			log.Println("Failed to seed court types table: " + e.Error())
 
 			err = e
-
-			// Rollback the transaction
-			tx.Rollback()
-
-			cancel()
 		}
 	}()
 
-	// Check if there is an error
-	if err != nil {
-		return err
-	}
-
-	// Return an error if any
-	err = tx.Commit().Error
+	wg.Wait()
 
 	return err
 }
