@@ -243,7 +243,7 @@ func (*OrderRepository) GetTotalUsingVendorID(vendorID uint) (*int64, error) {
 
 	// Get the orders count from the database
 	err :=
-		mysql.Conn.Model(&models.Order{}).Joins("JOIN bookings ON bookings.order_id = orders.id").Where("orders.status = ?", enums.Success.Label()).Count(&count).Error
+		mysql.Conn.Model(&models.Order{}).Joins("JOIN bookings ON bookings.order_id = orders.id").Where("bookings.vendor_id = ?", vendorID).Where("orders.status = ?", enums.Success.Label()).Group("bookings.order_id").Count(&count).Error
 
 	if err != nil {
 		log.Println("Error getting order total using vendor id: " + err.Error())
